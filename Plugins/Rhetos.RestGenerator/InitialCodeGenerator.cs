@@ -54,8 +54,6 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Text;
-using System.Data.Services;
-using System.Data.Services.Common;
 using Autofac;
 using Rhetos.Logging;
 using Rhetos.Processing;
@@ -194,8 +192,6 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Autofac.Integration.Wcf.AutofacServiceHostFactory));
 
             // wcf dataservices
-            codeBuilder.AddReferencesFromDependency(typeof(System.Data.Services.DataServiceException));
-            codeBuilder.AddReferencesFromDependency(typeof(System.Data.Services.Common.DataServiceEntityAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.ServiceContractAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.Activation.AspNetCompatibilityRequirementsAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.Web.WebServiceHost));
