@@ -93,12 +93,8 @@ namespace Rhetos.Rest
             this.AddServiceEndpoint(_serviceType, new BasicHttpBinding(""rhetosBasicHttpBinding""), ""SOAP"");
 
             ((ServiceEndpoint)(Description.Endpoints.Where(e => e.Binding is WebHttpBinding).Single())).Behaviors.Add(new WebHttpBehavior()); 
-            if (Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
-                Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
-            if (Description.Behaviors.Find<ServiceDebugBehavior>() == null)
-                Description.Behaviors.Add(new ServiceDebugBehavior { IncludeExceptionDetailInFaults = true });
-            else 
-                Description.Behaviors.Find<ServiceDebugBehavior>().IncludeExceptionDetailInFaults = true;
+            if (Description.Behaviors.Find<Rhetos.JsonErrorServiceBehavior>() == null)
+                Description.Behaviors.Add(new Rhetos.JsonErrorServiceBehavior());
         }
     }
 
