@@ -70,19 +70,31 @@ namespace Rhetos.RestGenerator.DefaultConcepts
             .GroupBy(typeName => typeName.Item1)
             .ToDictionary(g => g.Key, g => g.Select(typeName => typeName.Item2).Distinct().ToArray());
 
-        [System.ServiceModel.OperationContract]
+        [OperationContract]
         [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public QueryResult<{0}.{1}> GetCommonClaim(string filter, string fparam, string genericfilter, int page, int psize, string sort)
+        public GetResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, int page, int psize, string sort)
         {{
             object filterObject;
             Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
             ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, null, out genericFilter, out filterObject);
-            return _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
+            var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
+            return new GetResult<{0}.{1}> {{ Records = queryResult.Records }};
+        }}
+
+        [OperationContract]
+        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public CountResult Count(string filter, string fparam, string genericfilter, int page, int psize, string sort)
+        {{
+            object filterObject;
+            Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
+            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, null, out genericFilter, out filterObject);
+            var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
+            return new CountResult {{ TotalRecords = queryResult.TotalRecords }};
         }}
 
         [OperationContract]
         [WebGet(UriTemplate = ""/{{id}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public {0}.{1} Get{0}{1}ById(string id)
+        public {0}.{1} GetById(string id)
         {{
             var filter = new [] {{ Guid.Parse(id) }};
 
@@ -236,9 +248,19 @@ namespace Rhetos.RestGenerator.DefaultConcepts
 ", InitialCodeGenerator.ServiceLoaderMembersTag);
 
             codeBuilder.InsertCode(@"
+    public class GetResult<T>
+    {
+        public IList<T> Records { get; set; }
+    }
+
+    public class CountResult
+    {
+        public int TotalRecords { get; set; }
+    }
+
     public class QueryResult<T>
     {
-        public List<T> Records { get; set; }
+        public IList<T> Records { get; set; }
         public int TotalRecords { get; set; }
         public QueryDataSourceCommandInfo CommandArguments { get; set; }
     }
