@@ -180,7 +180,6 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(System.Diagnostics.Stopwatch));
             codeBuilder.AddReferencesFromDependency(typeof(XmlReader));
             
-
             // registration
             codeBuilder.AddReferencesFromDependency(typeof(System.ComponentModel.Composition.ExportAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(Autofac.Integration.Wcf.AutofacServiceHostFactory));
@@ -205,6 +204,7 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.UserException));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Utilities.XmlUtility));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.XmlSerialization.XmlData));
+            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.JsonErrorServiceBehavior));
 
             codeBuilder.AddReference(Path.Combine(_rootPath, "ServerDom.dll"));
             codeBuilder.AddReference(Path.Combine(_rootPath, "Autofac.dll"));
