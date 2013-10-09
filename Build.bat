@@ -13,8 +13,8 @@ IF "%VS100COMNTOOLS%" NEQ "" SET VSTOOLS=%VS100COMNTOOLS%
 IF "%VS110COMNTOOLS%" NEQ "" SET VSTOOLS=%VS110COMNTOOLS%
 CALL "%VSTOOLS%\..\..\VC\vcvarsall.bat" x86 2>> %LogFile%
 
-CALL %~dp0Packages\Rhetos\UpdateRhetosDlls.bat
-CALL:BUILD %~dp0Rhetos.RestGenerator.sln
+CALL "%~dp0Packages\Rhetos\UpdateRhetosDlls.bat"
+CALL:BUILD "%~dp0Rhetos.RestGenerator.sln"
 
 ECHO. >> %LogFile%
 DATE /T >> %LogFile%
