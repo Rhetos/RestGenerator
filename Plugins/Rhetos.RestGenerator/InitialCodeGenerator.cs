@@ -200,7 +200,6 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Logging.ILogger));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Logging.LoggerHelper));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.IProcessingEngine));
-            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Security.IClaim));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.UserException));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Utilities.XmlUtility));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.XmlSerialization.XmlData));
