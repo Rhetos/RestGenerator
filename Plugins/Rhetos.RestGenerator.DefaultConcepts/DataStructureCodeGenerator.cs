@@ -76,7 +76,7 @@ namespace Rhetos.RestGenerator.DefaultConcepts
         {{
             object filterObject;
             Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
-            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, null, out genericFilter, out filterObject);
+            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
             var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
             return new GetResult<{0}.{1}> {{ Records = queryResult.Records }};
         }}
@@ -87,7 +87,7 @@ namespace Rhetos.RestGenerator.DefaultConcepts
         {{
             object filterObject;
             Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
-            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, null, out genericFilter, out filterObject);
+            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
             var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
             return new CountResult {{ TotalRecords = queryResult.TotalRecords }};
         }}
