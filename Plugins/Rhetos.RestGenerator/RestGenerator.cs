@@ -71,7 +71,7 @@ namespace Rhetos.RestGenerator
                 GenerateInMemory = false,
                 OutputAssembly = GetAssemblyPath(),
                 IncludeDebugInformation = true,
-                CompilerOptions = "/optimize"
+                CompilerOptions = ""
             };
             _assemblyGenerator.Generate(assemblySource, parameters);
         }
