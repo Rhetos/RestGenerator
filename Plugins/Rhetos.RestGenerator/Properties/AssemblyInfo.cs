@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2013 Omega software d.o.o.
+    Copyright (C) 2014 Omega software d.o.o.
 
     This file is part of Rhetos.
 
@@ -16,6 +16,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -28,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Omega software")]
 [assembly: AssemblyProduct("Rhetos.ODataGenerator")]
-[assembly: AssemblyCopyright("Copyright (C) Omega software 2013")]
+[assembly: AssemblyCopyright("Copyright (C) Omega software 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -50,5 +51,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.3.0.1")]
-[assembly: AssemblyFileVersion("1.3.0.1")]
+[assembly: AssemblyVersion("1.4.0.1")]
+[assembly: AssemblyFileVersion("1.4.0.1")]
