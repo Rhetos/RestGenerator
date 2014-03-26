@@ -23,7 +23,6 @@ using Rhetos.Compiler;
 using Rhetos.Dsl;
 using System.IO;
 using System.ServiceModel;
-using System.Runtime.Serialization.Json;
 using System.Xml;
 using System.Net;
 using System.Runtime.Serialization;
@@ -40,6 +39,14 @@ namespace Rhetos.RestGenerator
 
         private const string CodeSnippet =
 @"
+using Autofac;
+using Module = Autofac.Module;
+using Rhetos.Logging;
+using Rhetos.Dom.DefaultConcepts;
+using Rhetos.Processing;
+using Rhetos.Processing.DefaultCommands;
+using Rhetos.XmlSerialization;
+using Rhetos.RestGenerator.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,16 +60,7 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Text;
-using Autofac;
-using Rhetos.Logging;
-using Rhetos.Processing;
-using Rhetos.XmlSerialization;
-using Rhetos.Dom.DefaultConcepts;
-using System.Runtime.Serialization.Json;
-using Rhetos.Processing.DefaultCommands;
-using Rhetos.RestGenerator.Utilities;
 using System.Web.Routing;
-using Module = Autofac.Module;
 
 namespace Rhetos.Rest
 {
@@ -103,7 +101,7 @@ namespace Rhetos.Rest
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ServiceLoader>().InstancePerLifetimeScope();
+            builder.RegisterType<ServiceUtility>().InstancePerLifetimeScope();
             " + ServiceRegistrationTag + @"
             base.Load(builder);
         }
@@ -167,7 +165,7 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.IProcessingEngine));
 
             // RestGenerator
-            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceLoader));
+            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceUtility));
 
             codeBuilder.AddReference(Path.Combine(_rootPath, "ServerDom.dll"));
             codeBuilder.AddReference(Path.Combine(_rootPath, "Autofac.dll"));

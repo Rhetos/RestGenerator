@@ -57,9 +57,9 @@ namespace Rhetos.RestGenerator.Plugins
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
     public class RestService{0}{1}
     {{
-        private ServiceLoader _serviceLoader;
+        private ServiceUtility _serviceLoader;
 
-        public RestService{0}{1}(ServiceLoader serviceLoader)
+        public RestService{0}{1}(ServiceUtility serviceLoader)
         {{
             _serviceLoader = serviceLoader;
         }}
@@ -77,7 +77,7 @@ namespace Rhetos.RestGenerator.Plugins
         {{
             object filterObject;
             Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
-            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
+            ServiceUtility.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
             var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
             return new GetResult<{0}.{1}> {{ Records = queryResult.Records }};
         }}
@@ -88,7 +88,7 @@ namespace Rhetos.RestGenerator.Plugins
         {{
             object filterObject;
             Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
-            ServiceLoader.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
+            ServiceUtility.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
             var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
             return new CountResult {{ TotalRecords = queryResult.TotalRecords }};
         }}
@@ -130,8 +130,6 @@ namespace Rhetos.RestGenerator.Plugins
 
             if (IsTypeSupported(info))
             {
-                codeBuilder.AddReferencesFromDependency(typeof(System.Runtime.Serialization.Json.DataContractJsonSerializer));
-
                 codeBuilder.InsertCode(ServiceRegistrationCodeSnippet(info), InitialCodeGenerator.ServiceRegistrationTag);
                 codeBuilder.InsertCode(ServiceInitializationCodeSnippet(info), InitialCodeGenerator.ServiceInitializationTag);
                 codeBuilder.InsertCode(ServiceDefinitionCodeSnippet(info), InitialCodeGenerator.RhetosRestClassesTag);

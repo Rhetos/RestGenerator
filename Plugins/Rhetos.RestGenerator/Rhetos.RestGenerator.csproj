@@ -44,6 +44,9 @@
     <Reference Include="Autofac.Integration.Wcf">
       <HintPath>..\..\packages\Autofac.Wcf.2.5.2.830\lib\NET40\Autofac.Integration.Wcf.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Rhetos.Compiler.Interfaces, Version=0.9.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Packages\Rhetos\Rhetos.Compiler.Interfaces.dll</HintPath>
@@ -136,7 +139,7 @@
     <Compile Include="Utilities\InsertDataResult.cs" />
     <Compile Include="Utilities\MessagesResult.cs" />
     <Compile Include="Utilities\QueryResult.cs" />
-    <Compile Include="Utilities\ServiceLoader.cs" />
+    <Compile Include="Utilities\ServiceUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -55,9 +55,9 @@ namespace Rhetos.RestGenerator.Plugins
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
     public class RestService{0}{1}
     {{
-        private ServiceLoader _serviceLoader;
+        private ServiceUtility _serviceLoader;
 
-        public RestService{0}{1}(ServiceLoader serviceLoader) 
+        public RestService{0}{1}(ServiceUtility serviceLoader) 
         {{
             _serviceLoader = serviceLoader;
         }}

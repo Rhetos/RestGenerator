@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Logging;
 using Rhetos.Processing;
@@ -27,13 +29,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization.Json;
 using System.ServiceModel.Web;
 using System.Text;
 
 namespace Rhetos.RestGenerator.Utilities
 {
-    public class ServiceLoader
+    public class ServiceUtility
     {
         private IProcessingEngine _processingEngine;
         private ILogger _logger;
@@ -50,7 +51,7 @@ namespace Rhetos.RestGenerator.Utilities
                 );
         }
 
-        public ServiceLoader(
+        public ServiceUtility(
             Rhetos.Processing.IProcessingEngine processingEngine,
             Rhetos.Logging.ILogProvider logProvider) 
         {
@@ -99,25 +100,19 @@ namespace Rhetos.RestGenerator.Utilities
             };
         }
 
-        private static T DeserializeJson<T>(string json)
-        {
-            return (T) DeserializeJson(typeof(T), json);
-        }
-
-        private static object DeserializeJson(Type type, string json)
-        {
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
-            {
-                var serializer = new DataContractJsonSerializer(type);
-                return serializer.ReadObject(stream);
-            }
-        }
-
         public static void GetFilterParameters(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> filterTypesByName, out Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilterInstance, out object filterInstance) 
         {
             if (!string.IsNullOrEmpty(genericfilter))
             {
-                genericFilterInstance = DeserializeJson<Rhetos.Dom.DefaultConcepts.FilterCriteria[]>(genericfilter);
+                genericFilterInstance = JsonConvert.DeserializeObject<Rhetos.Dom.DefaultConcepts.FilterCriteria[]>(genericfilter);
+
+                foreach (var filterCriteria in genericFilterInstance)
+                    if (!string.IsNullOrEmpty(filterCriteria.Filter) && filterCriteria.Value is JObject)
+                    {
+                        Type filterType = GetFilterType(filterCriteria.Filter, filterTypesByName);
+                        filterCriteria.Value = ((JObject)filterCriteria.Value).ToObject(filterType);
+                    }
+
                 if (genericFilterInstance == null)
                         throw new Rhetos.UserException("Invalid format of the generic filter: '" + genericfilter + "'.");
             }
@@ -130,7 +125,7 @@ namespace Rhetos.RestGenerator.Utilities
 
                 if (!string.IsNullOrEmpty(fparam))
                 {
-                    filterInstance = DeserializeJson(filterType, fparam);
+                    filterInstance = JsonConvert.DeserializeObject(fparam, filterType);
                     if (filterInstance == null)
                         throw new Rhetos.UserException("Invalid filter parameter format for filter '" + filter + "', data: '" + fparam + "'.");
                 }
@@ -159,7 +154,7 @@ namespace Rhetos.RestGenerator.Utilities
                 filterType = Type.GetType(filterName);
 
             if (filterType == null)
-                throw new Rhetos.UserException("Filter type '" + filterName + "' is not recognised.");
+                throw new Rhetos.UserException("Filter type '" + filterName + "' is not recognized.");
 
             return filterType;
         }
