@@ -25,12 +25,13 @@ using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.RestGenerator;
 
-namespace Rhetos.RestGenerator.DefaultConcepts
+namespace Rhetos.RestGenerator.Plugins
 {
-    [Export(typeof(IRestGeneratorPlugin))]
-    [ExportMetadata(MefProvider.Implements, typeof(WriteInfo))]
-    public class WriteCodeGenerator : IRestGeneratorPlugin
-    {
+    /// <summary>
+    /// This is not exported, but called from DataStructureCodeGenerator if exists.
+    /// </summary>
+    public class WritableOrmDataStructureCodeGenerator
+    {      
         private const string ImplementationCodeSnippet = @"
         [OperationContract]
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -67,16 +68,16 @@ namespace Rhetos.RestGenerator.DefaultConcepts
 
 ";
 
-        public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
+        public static void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
-            WritableOrmDataStructureCodeGenerator.GenerateInitialCode(codeBuilder);
+            DataStructureInfo info = (DataStructureInfo) conceptInfo;
 
-            WriteInfo info = (WriteInfo)conceptInfo;
-
-            codeBuilder.InsertCode(
-                String.Format(ImplementationCodeSnippet, info.DataStructure.Module.Name, info.DataStructure.Name),
-                DataStructureCodeGenerator.AdditionalOperationsTag.Evaluate(info.DataStructure));
+            if (info is IWritableOrmDataStructure)
+            {
+                codeBuilder.InsertCode(
+                    String.Format(ImplementationCodeSnippet, info.Module.Name, info.Name),
+                    DataStructureCodeGenerator.AdditionalOperationsTag.Evaluate(info));
+            }
         }
-
     }
 }

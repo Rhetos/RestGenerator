@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,13 +35,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.5.2.830, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\Autofac\Autofac.dll</HintPath>
+    <Reference Include="Autofac">
+      <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Autofac.Integration.Wcf, Version=2.5.2.830, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Packages\Autofac\Autofac.Integration.Wcf.dll</HintPath>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Wcf">
+      <HintPath>..\..\packages\Autofac.Wcf.2.5.2.830\lib\NET40\Autofac.Integration.Wcf.dll</HintPath>
     </Reference>
     <Reference Include="Rhetos.Compiler.Interfaces, Version=0.9.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -117,11 +120,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IRestGeneratorPlugin.cs" />
+    <Compile Include="Plugins\ActionCodeGenerator.cs" />
+    <Compile Include="Plugins\DataStructureCodeGenerator.cs" />
+    <Compile Include="Plugins\FilterByCodeGenerator.cs" />
+    <Compile Include="Plugins\ModuleExternalReferenceCodeGenerator.cs" />
+    <Compile Include="Plugins\WritableOrmDataStructureCodeGenerator.cs" />
+    <Compile Include="Plugins\WriteCodeGenerator.cs" />
     <Compile Include="RestGeneratorModuleConfiguration.cs" />
     <Compile Include="RestGenerator.cs" />
     <Compile Include="InitialCodeGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\CountResult.cs" />
+    <Compile Include="Utilities\GetResult.cs" />
+    <Compile Include="Utilities\InsertDataResult.cs" />
+    <Compile Include="Utilities\MessagesResult.cs" />
+    <Compile Include="Utilities\QueryResult.cs" />
+    <Compile Include="Utilities\ServiceLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -133,6 +148,13 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

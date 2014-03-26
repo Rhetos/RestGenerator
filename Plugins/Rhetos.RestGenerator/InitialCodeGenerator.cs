@@ -37,8 +37,6 @@ namespace Rhetos.RestGenerator
         public const string RhetosRestClassesTag = "/*InitialCodeGenerator.RhetosRestClassesTag*/";
         public const string ServiceRegistrationTag = "/*InitialCodeGenerator.ServiceRegistrationTag*/";
         public const string ServiceInitializationTag = "/*InitialCodeGenerator.ServiceInitializationTag*/";
-        public const string ServiceLoaderMembersTag = "/*InitialCodeGenerator.ServiceLoaderMembersTag*/";
-        
 
         private const string CodeSnippet =
 @"
@@ -62,6 +60,7 @@ using Rhetos.XmlSerialization;
 using Rhetos.Dom.DefaultConcepts;
 using System.Runtime.Serialization.Json;
 using Rhetos.Processing.DefaultCommands;
+using Rhetos.RestGenerator.Utilities;
 using System.Web.Routing;
 using Module = Autofac.Module;
 
@@ -123,50 +122,6 @@ namespace Rhetos.Rest
         }
     }
 
-    public class MessagesResult 
-    {
-        public string SystemMessage;
-        public string UserMessage;
-
-        public override string ToString() 
-        {
-            return ""SystemMessage: "" + (SystemMessage ?? ""<null>"") + "", UserMessage: "" + (UserMessage ?? ""<null>"");
-        }
-    } 
-
-    public class ServiceLoader
-    {
-        private Rhetos.Processing.IProcessingEngine _processingEngine;
-
-        private Rhetos.Logging.ILogger _logger;
-        private Rhetos.Logging.ILogger _commandsLogger;
-        private Rhetos.Logging.ILogger _performanceLogger;
-        private System.Diagnostics.Stopwatch _stopwatch;
-
-        private static void CheckForErrors(ProcessingResult result)
-        {
-            if (!result.Success)
-                throw new WebFaultException<MessagesResult>(
-                        new MessagesResult { SystemMessage = result.SystemMessage, UserMessage = result.UserMessage }, 
-                        string.IsNullOrEmpty(result.UserMessage) ? HttpStatusCode.InternalServerError : HttpStatusCode.BadRequest
-                );
-        }
-
-        public ServiceLoader(
-            Rhetos.Processing.IProcessingEngine processingEngine,
-            Rhetos.Logging.ILogProvider logProvider) 
-        {
-            _processingEngine = processingEngine;
-            _logger = logProvider.GetLogger(""RestService"");
-            _commandsLogger = logProvider.GetLogger(""RestService Commands"");
-            _performanceLogger = logProvider.GetLogger(""Performance"");
-            _stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            _logger.Trace(""Rest Service loader initialized."");
-        }
-
-" + ServiceLoaderMembersTag + @"
-    }
-
 " + RhetosRestClassesTag + @"
 
 }
@@ -178,18 +133,18 @@ namespace Rhetos.Rest
         {
             codeBuilder.InsertCode(CodeSnippet);
 
-            // global
+            // Global
             codeBuilder.AddReferencesFromDependency(typeof(Guid));
             codeBuilder.AddReferencesFromDependency(typeof(System.Linq.Enumerable));
             codeBuilder.AddReferencesFromDependency(typeof(System.Configuration.ConfigurationElement));
             codeBuilder.AddReferencesFromDependency(typeof(System.Diagnostics.Stopwatch));
             codeBuilder.AddReferencesFromDependency(typeof(XmlReader));
             
-            // registration
+            // Registration
             codeBuilder.AddReferencesFromDependency(typeof(System.ComponentModel.Composition.ExportAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(Autofac.Integration.Wcf.AutofacServiceHostFactory));
 
-            // wcf dataservices
+            // WCF Data Services
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.ServiceContractAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.Activation.AspNetCompatibilityRequirementsAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.Web.WebServiceHost));
@@ -198,7 +153,7 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.Activation.ServiceHostFactory));
             codeBuilder.AddReferencesFromDependency(typeof(Route));
             
-            // rhetos
+            // Rhetos
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.DefaultCommands.QueryDataSourceCommandResult));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.IService));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Dom.DefaultConcepts.IEntity));
@@ -209,6 +164,10 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Utilities.XmlUtility));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.XmlSerialization.XmlData));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Web.JsonErrorServiceBehavior));
+            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.IProcessingEngine));
+
+            // RestGenerator
+            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceLoader));
 
             codeBuilder.AddReference(Path.Combine(_rootPath, "ServerDom.dll"));
             codeBuilder.AddReference(Path.Combine(_rootPath, "Autofac.dll"));

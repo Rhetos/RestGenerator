@@ -27,7 +27,7 @@ using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.RestGenerator;
 
-namespace Rhetos.RestGenerator.DefaultConcepts
+namespace Rhetos.RestGenerator.Plugins
 {
     [Export(typeof(IRestGeneratorPlugin))]
     [ExportMetadata(MefProvider.Implements, typeof(DataStructureInfo))]
@@ -59,7 +59,7 @@ namespace Rhetos.RestGenerator.DefaultConcepts
     {{
         private ServiceLoader _serviceLoader;
 
-        public RestService{0}{1}(ServiceLoader serviceLoader) 
+        public RestService{0}{1}(ServiceLoader serviceLoader)
         {{
             _serviceLoader = serviceLoader;
         }}
@@ -113,8 +113,6 @@ namespace Rhetos.RestGenerator.DefaultConcepts
             info.Name);
         }
 
-        private static bool _isInitialCallMade;
-
         public static bool IsTypeSupported(DataStructureInfo conceptInfo)
         {
             return conceptInfo is EntityInfo
@@ -132,7 +130,6 @@ namespace Rhetos.RestGenerator.DefaultConcepts
 
             if (IsTypeSupported(info))
             {
-                GenerateInitialCode(codeBuilder);
                 codeBuilder.AddReferencesFromDependency(typeof(System.Runtime.Serialization.Json.DataContractJsonSerializer));
 
                 codeBuilder.InsertCode(ServiceRegistrationCodeSnippet(info), InitialCodeGenerator.ServiceRegistrationTag);
@@ -142,132 +139,6 @@ namespace Rhetos.RestGenerator.DefaultConcepts
                 if (info is IWritableOrmDataStructure) 
                     WritableOrmDataStructureCodeGenerator.GenerateCode(conceptInfo, codeBuilder);
             }
-        }
-
-        private static void GenerateInitialCode(ICodeBuilder codeBuilder)
-        {
-            if (_isInitialCallMade)
-                return;
-            _isInitialCallMade = true;
-
-            codeBuilder.InsertCode(@"
-
-        public QueryResult<T> GetData<T>(object filter, Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter=null, int page=0, int psize=0, string sort="""")
-        {
-            _performanceLogger.Write(_stopwatch, ""RestService: GetData(""+typeof (T).FullName+"") Started."");
-            _commandsLogger.Trace(""GetData("" + typeof (T).FullName + "");"");
-            var commandInfo = new QueryDataSourceCommandInfo
-                                  {
-                                      DataSource = typeof (T).FullName,
-                                      Filter = filter,
-                                      GenericFilter = genericFilter,
-                                      PageNumber = page,
-                                      RecordsPerPage = psize
-                                  };
-
-            if (!String.IsNullOrWhiteSpace(sort))
-            {
-                var sortParameters = sort.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                commandInfo.OrderByProperty = sortParameters[0];
-                commandInfo.OrderDescending = sortParameters.Count() >= 2 && sortParameters[1].ToLower().Equals(""desc"");
-            }
-
-            var result = _processingEngine.Execute(new[]{commandInfo});
-            CheckForErrors(result);
-
-            var resultData = (QueryDataSourceCommandResult)(((Rhetos.XmlSerialization.XmlBasicData<QueryDataSourceCommandResult>)(result.CommandResults.Single().Data)).Value);
-
-            commandInfo.Filter = null;
-            commandInfo.GenericFilter = null;
-
-            _performanceLogger.Write(_stopwatch, ""RestService: GetData(""+typeof (T).FullName+"") Executed."");
-            return new QueryResult<T>
-            {
-                Records = resultData.Records.Select(o => (T)o).ToList(),
-                TotalRecords = resultData.TotalRecords,
-                CommandArguments = commandInfo
-            };
-        }
-
-        private static T DeserializeJson<T>(string json)
-        {
-            return (T) DeserializeJson(typeof(T), json);
-        }
-
-        private static object DeserializeJson(Type type, string json)
-        {
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
-            {
-                var serializer = new DataContractJsonSerializer(type);
-                return serializer.ReadObject(stream);
-            }
-        }
-
-        public static void GetFilterParameters(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> FilterTypes, out Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilterInstance, out object filterInstance) 
-        {
-            genericFilterInstance = null;
-            if (!string.IsNullOrEmpty(genericfilter))
-            {
-                genericFilterInstance = DeserializeJson<Rhetos.Dom.DefaultConcepts.FilterCriteria[]>(genericfilter);
-                if (genericFilterInstance == null)
-                        throw new Rhetos.UserException(""Invalid format of the generic filter: '"" + genericfilter + ""'."");
-            }
-            Type filterType = null;
-            if (!string.IsNullOrEmpty(filter))
-            {
-                Type[] filterTypes = null;
-                FilterTypes.TryGetValue(filter, out filterTypes);
-                if (filterTypes != null && filterTypes.Count() > 1)
-                    throw new Rhetos.UserException(""Filter type '"" + filter + ""' is ambiguous ("" + filterTypes[0].FullName + "", "" + filterTypes[1].FullName +"")."");
-                if (filterTypes != null && filterTypes.Count() == 1)
-                    filterType = filterTypes[0];
-
-                if (filterType == null)    
-                    filterType = Type.GetType(filter);
-
-                if (filterType == null && Rhetos.Utilities.XmlUtility.Dom != null)
-                    filterType = Rhetos.Utilities.XmlUtility.Dom.GetType(filter);
-
-                if (filterType == null)
-                    throw new Rhetos.UserException(""Filter type '"" + filter + ""' is not recognised."");
-            }
-            
-            filterInstance = null;
-            if (filterType != null)
-            {
-                if (!string.IsNullOrEmpty(fparam))
-                {
-                    filterInstance = DeserializeJson(filterType, fparam);
-                    if (filterInstance == null)
-                        throw new Rhetos.UserException(""Invalid filter parameter format for filter '"" + filter + ""', data: '"" + fparam + ""'."");
-                }
-                else
-                    filterInstance = Activator.CreateInstance(filterType);
-            }
-        }
-
-", InitialCodeGenerator.ServiceLoaderMembersTag);
-
-            codeBuilder.InsertCode(@"
-    public class GetResult<T>
-    {
-        public IList<T> Records { get; set; }
-    }
-
-    public class CountResult
-    {
-        public int TotalRecords { get; set; }
-    }
-
-    public class QueryResult<T>
-    {
-        public IList<T> Records { get; set; }
-        public int TotalRecords { get; set; }
-        public QueryDataSourceCommandInfo CommandArguments { get; set; }
-    }
-
-", InitialCodeGenerator.RhetosRestClassesTag);
-
         }
     }
 }

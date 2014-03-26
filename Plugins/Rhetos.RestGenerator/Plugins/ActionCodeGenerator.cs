@@ -28,7 +28,7 @@ using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.RestGenerator;
 
-namespace Rhetos.RestGenerator.DefaultConcepts
+namespace Rhetos.RestGenerator.Plugins
 {
     [Export(typeof(IRestGeneratorPlugin))]
     [ExportMetadata(MefProvider.Implements, typeof(ActionInfo))]
@@ -73,31 +73,13 @@ namespace Rhetos.RestGenerator.DefaultConcepts
 ", info.Module.Name, info.Name);
         }
         
-        private static bool _isInitialCallMade;
-
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             var info = (ActionInfo)conceptInfo;
-            GenerateInitialCode(codeBuilder);
 
             codeBuilder.InsertCode(ServiceRegistrationCodeSnippet(info), InitialCodeGenerator.ServiceRegistrationTag);
             codeBuilder.InsertCode(ServiceInitializationCodeSnippet(info), InitialCodeGenerator.ServiceInitializationTag);
             codeBuilder.InsertCode(ServiceDefinitionCodeSnippet(info), InitialCodeGenerator.RhetosRestClassesTag);
-        }
-
-        private void GenerateInitialCode(ICodeBuilder codeBuilder)
-        {
-            if (_isInitialCallMade)
-                return;
-            _isInitialCallMade = true;
-            codeBuilder.InsertCode(@"
-        public void Execute<T>(T action)
-        {
-            var commandInfo = new ExecuteActionCommandInfo { Action = action };
-            var result = _processingEngine.Execute(new[]{commandInfo});
-            CheckForErrors(result);
-        }
-", InitialCodeGenerator.ServiceLoaderMembersTag);
         }
     }
 }

@@ -1,9 +1,8 @@
 RestGenerator
-=================
+=============
 
 RestGenerator is a DSL package (a plugin module) for [Rhetos development platform](https://github.com/Rhetos/Rhetos).
-
-RestGenerator automatically generates REST interface for all data structures and actions that are defined in a Rhetos application.
+It automatically generates **REST interface** for all data structures and actions that are defined in a Rhetos application.
 
 See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
@@ -13,10 +12,22 @@ Features
 RestGenerator provides one service for every data structure and action.
 That way it is not possible to get one wsdl that combines all services, but initialization of each service and usage is faster.
 
-Prerequisites
-=============
+Deployment
+==========
 
-Utilities in this project are based on relative path to Rhetos repository. [Rhetos source](https://github.com/Rhetos/Rhetos) must be downloaded to a folder with relative path `..\..\Rhetos`.
+### Prerequisites
+
+* *CommonConcepts* package must be deployed along with *RestGenerator*.
+
+Building binaries from source
+=============================
+
+### Prerequisites
+
+* Build utilities in this project are based on relative path to Rhetos repository.
+  [Rhetos source](https://github.com/Rhetos/Rhetos) should be downloaded to a folder
+  with relative path `..\..\Rhetos` and compiled (use `Build.bat`),
+  before this package's `Build.bat` script is executed.
 
 Sample folder structure:
  
@@ -25,13 +36,13 @@ Sample folder structure:
 		\RhetosPackages
 			\RestGenerator
 
+### Build
 
-Build and Installation
-======================
+1. Build this package by executing `Build.bat`. The script will pause in case of an error.
+   * The script automatically copies all needed dll files from Rhetos folder and builds the Rhetos.RestGenerator.sln using Visual Studio (command-line).
 
-Build package with `Build.bat`. Check BuildError.log for errors.
+### Create installation package
 
-Instalation package creation:
-
-1. Set the new version number in `ChangeVersion.bat` and start it.
-2. Start `CreatePackage.bat`. Instalation package (.zip) is going to be created in parent directory of RestGenerator.
+1. Set the new version number in `ChangeVersion.bat` and execute it.
+2. Execute `Build.bat`.
+3. Execute `CreatePackage.bat`. It creates installation package (.zip) in parent directory of RestGenerator.

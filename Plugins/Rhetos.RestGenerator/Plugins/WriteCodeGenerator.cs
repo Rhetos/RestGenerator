@@ -25,13 +25,12 @@ using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.RestGenerator;
 
-namespace Rhetos.RestGenerator.DefaultConcepts
+namespace Rhetos.RestGenerator.Plugins
 {
-    /// <summary>
-    /// This is not exported, but called from DataStructureCodeGenerator if exists.
-    /// </summary>
-    public class WritableOrmDataStructureCodeGenerator
-    {      
+    [Export(typeof(IRestGeneratorPlugin))]
+    [ExportMetadata(MefProvider.Implements, typeof(WriteInfo))]
+    public class WriteCodeGenerator : IRestGeneratorPlugin
+    {
         private const string ImplementationCodeSnippet = @"
         [OperationContract]
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -68,81 +67,14 @@ namespace Rhetos.RestGenerator.DefaultConcepts
 
 ";
 
-        public static void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
+        public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
-            GenerateInitialCode(codeBuilder);
+            WriteInfo info = (WriteInfo)conceptInfo;
 
-            DataStructureInfo info = (DataStructureInfo) conceptInfo;
-
-            if (info is IWritableOrmDataStructure)
-            {
-                codeBuilder.InsertCode(
-                    String.Format(ImplementationCodeSnippet, info.Module.Name, info.Name),
-                    DataStructureCodeGenerator.AdditionalOperationsTag.Evaluate(info));
-            }
+            codeBuilder.InsertCode(
+                String.Format(ImplementationCodeSnippet, info.DataStructure.Module.Name, info.DataStructure.Name),
+                DataStructureCodeGenerator.AdditionalOperationsTag.Evaluate(info.DataStructure));
         }
 
-        private static bool _isInitialCallMade;
-
-        public static void GenerateInitialCode(ICodeBuilder codeBuilder)
-        {
-            if (_isInitialCallMade)
-                return;
-            _isInitialCallMade = true;
-
-            codeBuilder.InsertCode(@"
-
-        public class InsertDataResult
-        {
-            public Guid ID;
-        }", InitialCodeGenerator.RhetosRestClassesTag);
-
-            codeBuilder.InsertCode(@"
-
-        public ProcessingResult InsertData<T>(T entity)
-        {
-            var commandInfo = new SaveEntityCommandInfo
-                                  {
-                                      Entity = typeof(T).FullName,
-                                      DataToInsert = new[] { (IEntity)entity }
-                                  };
-
-            var result = _processingEngine.Execute(new[]{commandInfo});
-            CheckForErrors(result);
-
-            return result;
-        }
-
-        public ProcessingResult UpdateData<T>(T entity)
-        {
-            var commandInfo = new SaveEntityCommandInfo
-            {
-                Entity = typeof(T).FullName,
-                DataToUpdate = new[] { (IEntity)entity }
-            };
-
-            var result = _processingEngine.Execute(new[]{commandInfo});
-            CheckForErrors(result);
-
-            return result;
-        }
-
-        public ProcessingResult DeleteData<T>(T entity)
-        {
-            var commandInfo = new SaveEntityCommandInfo
-            {
-                Entity = typeof(T).FullName,
-                DataToDelete = new[] { (IEntity)entity }
-            };
-
-            var result = _processingEngine.Execute(new[]{commandInfo});
-            CheckForErrors(result);
-
-            return result;
-        }
-
-", InitialCodeGenerator.ServiceLoaderMembersTag);
-
-        }
     }
 }

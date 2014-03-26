@@ -28,7 +28,7 @@ using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.RestGenerator;
 
-namespace Rhetos.RestGenerator.DefaultConcepts
+namespace Rhetos.RestGenerator.Plugins
 {
     [Export(typeof(IRestGeneratorPlugin))]
     [ExportMetadata(MefProvider.Implements, typeof(FilterByInfo))]
