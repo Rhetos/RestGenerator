@@ -19,6 +19,7 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Rhetos.Dom;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Logging;
 using Rhetos.Processing;
@@ -40,7 +41,7 @@ namespace Rhetos.RestGenerator.Utilities
         private ILogger _logger;
         private ILogger _commandsLogger;
         private ILogger _performanceLogger;
-        private Stopwatch _stopwatch;
+        private IDomainObjectModel _domainObjectModel;
 
         private static void CheckForErrors(ProcessingResult result)
         {
@@ -52,77 +53,132 @@ namespace Rhetos.RestGenerator.Utilities
         }
 
         public ServiceUtility(
-            Rhetos.Processing.IProcessingEngine processingEngine,
-            Rhetos.Logging.ILogProvider logProvider) 
+            IProcessingEngine processingEngine,
+            ILogProvider logProvider,
+            IDomainObjectModel domainObjectModel)
         {
             _processingEngine = processingEngine;
             _logger = logProvider.GetLogger("RestService");
             _commandsLogger = logProvider.GetLogger("RestService Commands");
             _performanceLogger = logProvider.GetLogger("Performance");
-            _stopwatch = System.Diagnostics.Stopwatch.StartNew();
             _logger.Trace("Rest Service loader initialized.");
+            _domainObjectModel = domainObjectModel;
         }
 
-        public QueryResult<T> GetData<T>(object filter, Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter=null, int page=0, int psize=0, string sort="")
+        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> filterTypesByName, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
         {
-            _performanceLogger.Write(_stopwatch, "RestService: GetData("+typeof (T).FullName+") Started.");
-            _commandsLogger.Trace("GetData(" + typeof (T).FullName + ");");
-            var commandInfo = new QueryDataSourceCommandInfo
-                                  {
-                                      DataSource = typeof (T).FullName,
-                                      Filter = filter,
-                                      GenericFilter = genericFilter,
-                                      PageNumber = page,
-                                      RecordsPerPage = psize
-                                  };
-
-            if (!String.IsNullOrWhiteSpace(sort))
+            // Legacy interface:
+            if (page != 0 || psize != 0)
             {
-                var sortParameters = sort.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                commandInfo.OrderByProperty = sortParameters[0];
-                commandInfo.OrderDescending = sortParameters.Count() >= 2 && sortParameters[1].ToLower().Equals("desc");
+                if (top != 0 || skip != 0)
+                    throw new ArgumentException("Invalid paging parameter: Use either 'top' and 'skip', or 'page' and 'psize'.");
+
+                top = psize;
+                skip = page > 0 ? psize * (page - 1) : 0;
             }
 
-            var result = _processingEngine.Execute(new[]{commandInfo});
-            CheckForErrors(result);
-
-            var resultData = (QueryDataSourceCommandResult)(((Rhetos.XmlSerialization.XmlBasicData<QueryDataSourceCommandResult>)(result.CommandResults.Single().Data)).Value);
-
-            commandInfo.Filter = null;
-            commandInfo.GenericFilter = null;
-
-            _performanceLogger.Write(_stopwatch, "RestService: GetData("+typeof (T).FullName+") Executed.");
-            return new QueryResult<T>
+            var readCommandInfo = new ReadCommandInfo
             {
-                Records = resultData.Records.Select(o => (T)o).ToList(),
-                TotalRecords = resultData.TotalRecords,
-                CommandArguments = commandInfo
+                Filters = ParseFilterParameters(filter, fparam, genericfilter, filterTypesByName),
+                Top = top,
+                Skip = skip,
+                ReadRecords = readRecords,
+                ReadTotalCount = readTotalCount,
+                OrderByProperties = ParseSortParameter(sort)
+            };
+
+            return GetData<T>(readCommandInfo, filterTypesByName);
+        }
+
+        private RecordsAndTotalCountResult<T> GetData<T>(ReadCommandInfo readCommandInfo, IDictionary<string, Type[]> filterTypesByName)
+        {
+            readCommandInfo.DataSource = typeof(T).FullName;
+
+            var readCommandResult = ExecuteReadCommand(readCommandInfo, filterTypesByName);
+
+            return new RecordsAndTotalCountResult<T>
+            {
+                Records = readCommandResult.Records != null ? readCommandResult.Records.Cast<T>().ToArray() : null,
+                TotalCount = readCommandResult.TotalCount != null ? readCommandResult.TotalCount.Value : 0
             };
         }
 
-        public static void GetFilterParameters(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> filterTypesByName, out Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilterInstance, out object filterInstance) 
+        public T GetDataById<T>(string id)
         {
-            if (!string.IsNullOrEmpty(genericfilter))
-            {
-                genericFilterInstance = JsonConvert.DeserializeObject<Rhetos.Dom.DefaultConcepts.FilterCriteria[]>(genericfilter);
+            var filterInstance = new [] { Guid.Parse(id) };
 
-                foreach (var filterCriteria in genericFilterInstance)
+            return (T)ExecuteReadCommand(new ReadCommandInfo
+                {
+                    DataSource = typeof(T).FullName,
+                    Filters = new[] { new FilterCriteria { Filter = filterInstance.GetType().AssemblyQualifiedName, Value = filterInstance } },
+                    ReadRecords = true
+                }, null)
+                .Records.FirstOrDefault();
+        }
+
+        private ReadCommandResult ExecuteReadCommand(ReadCommandInfo commandInfo, IDictionary<string, Type[]> filterTypesByName)
+        {
+            var sw = Stopwatch.StartNew();
+
+            if (commandInfo.Filters != null)
+                foreach (var filterCriteria in commandInfo.Filters)
                     if (!string.IsNullOrEmpty(filterCriteria.Filter) && filterCriteria.Value is JObject)
                     {
                         Type filterType = GetFilterType(filterCriteria.Filter, filterTypesByName);
                         filterCriteria.Value = ((JObject)filterCriteria.Value).ToObject(filterType);
                     }
 
-                if (genericFilterInstance == null)
-                        throw new Rhetos.UserException("Invalid format of the generic filter: '" + genericfilter + "'.");
+            var result = _processingEngine.Execute(new[] { commandInfo });
+            CheckForErrors(result);
+            var resultData = (ReadCommandResult)(((Rhetos.XmlSerialization.XmlBasicData<ReadCommandResult>)(result.CommandResults.Single().Data)).Value);
+
+            _performanceLogger.Write(sw, "RestService: ExecuteReadCommand(" + commandInfo.DataSource + ") Executed.");
+            return resultData;
+        }
+
+        private OrderByProperty[] ParseSortParameter(string sort)
+        {
+            var result = new List<OrderByProperty>();
+
+            if (!String.IsNullOrWhiteSpace(sort))
+            {
+                var properties = sort.Split(',').Select(sp => sp.Trim()).Where(sp => !string.IsNullOrEmpty(sp));
+                foreach (string property in properties)
+                {
+                    var sortPropertyInfo = property.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (sortPropertyInfo.Length > 2)
+                        throw new ArgumentException("Invalid 'sort' parameter format (" + sort + ").");
+
+                    result.Add(new OrderByProperty
+                    {
+                        Property = sortPropertyInfo[0],
+                        Descending = sortPropertyInfo.Count() >= 2 && sortPropertyInfo[1].ToLower().Equals("desc")
+                    });
+                }
             }
-            else
-                genericFilterInstance = null;
+
+            return result.ToArray();
+        }
+
+        private FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> filterTypesByName)
+        {
+            var parsedFilters = new List<FilterCriteria>();
+
+            if (!string.IsNullOrEmpty(genericfilter))
+            {
+                var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(genericfilter);
+
+                if (parsedGenericFilter == null)
+                    throw new Rhetos.UserException("Invalid format of the generic filter: '" + genericfilter + "'.");
+
+                parsedFilters.AddRange(parsedGenericFilter);
+            }
            
             if (!string.IsNullOrEmpty(filter))
             {
                 Type filterType = GetFilterType(filter, filterTypesByName);
 
+                object filterInstance;
                 if (!string.IsNullOrEmpty(fparam))
                 {
                     filterInstance = JsonConvert.DeserializeObject(fparam, filterType);
@@ -131,12 +187,14 @@ namespace Rhetos.RestGenerator.Utilities
                 }
                 else
                     filterInstance = Activator.CreateInstance(filterType);
+
+                parsedFilters.Add(new FilterCriteria { Filter = filterType.AssemblyQualifiedName, Value = filterInstance });
             }
-            else
-                filterInstance = null;
+
+            return parsedFilters.ToArray();
         }
 
-        private static Type GetFilterType(string filterName, IDictionary<string, Type[]> filterTypesByName)
+        private Type GetFilterType(string filterName, IDictionary<string, Type[]> filterTypesByName)
         {
             Type filterType = null;
 
@@ -147,8 +205,8 @@ namespace Rhetos.RestGenerator.Utilities
             if (matchingTypes != null && matchingTypes.Count() == 1)
                 filterType = matchingTypes[0];
 
-            if (filterType == null && Rhetos.Utilities.XmlUtility.Dom != null)
-                filterType = Rhetos.Utilities.XmlUtility.Dom.GetType(filterName);
+            if (filterType == null)
+                filterType = _domainObjectModel.Assembly.GetType(filterName);
 
             if (filterType == null)
                 filterType = Type.GetType(filterName);

@@ -24,8 +24,9 @@ using System.Text;
 
 namespace Rhetos.RestGenerator.Utilities
 {
-    public class CountResult
+    public class RecordsAndTotalCountResult<T>
     {
-        public int TotalRecords { get; set; }
+        public T[] Records { get; set; }
+        public int TotalCount { get; set; }
     }
 }

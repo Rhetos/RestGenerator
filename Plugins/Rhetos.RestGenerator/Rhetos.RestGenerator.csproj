@@ -55,6 +55,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Packages\Rhetos\Rhetos.Dom.DefaultConcepts.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="Rhetos.Dom.Interfaces, Version=0.9.14.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Packages\Rhetos\Rhetos.Dom.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Rhetos.Dsl.DefaultConcepts, Version=0.9.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Packages\Rhetos\Rhetos.Dsl.DefaultConcepts.dll</HintPath>
@@ -134,11 +138,11 @@
     <Compile Include="InitialCodeGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\CountResult.cs" />
-    <Compile Include="Utilities\GetResult.cs" />
+    <Compile Include="Utilities\RecordsAndTotalCountResult.cs" />
+    <Compile Include="Utilities\TotalCountResult.cs" />
     <Compile Include="Utilities\InsertDataResult.cs" />
     <Compile Include="Utilities\MessagesResult.cs" />
-    <Compile Include="Utilities\QueryResult.cs" />
+    <Compile Include="Utilities\RecordsResult.cs" />
     <Compile Include="Utilities\ServiceUtility.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -24,8 +24,8 @@ using System.Text;
 
 namespace Rhetos.RestGenerator.Utilities
 {
-    public class GetResult<T>
+    public class RecordsResult<T>
     {
-        public IList<T> Records { get; set; }
+        public T[] Records { get; set; }
     }
 }

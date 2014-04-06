@@ -55,18 +55,18 @@ namespace Rhetos.RestGenerator.Plugins
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
     public class RestService{0}{1}
     {{
-        private ServiceUtility _serviceLoader;
+        private ServiceUtility _serviceUtility;
 
-        public RestService{0}{1}(ServiceUtility serviceLoader) 
+        public RestService{0}{1}(ServiceUtility serviceUtility) 
         {{
-            _serviceLoader = serviceLoader;
+            _serviceUtility = serviceUtility;
         }}
 
         [OperationContract]
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public void Execute{0}{1}({0}.{1} action)
         {{
-            _serviceLoader.Execute<{0}.{1}>(action);
+            _serviceUtility.Execute<{0}.{1}>(action);
         }}
     }}
 

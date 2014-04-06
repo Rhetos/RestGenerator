@@ -26,6 +26,7 @@ using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
 using Rhetos.RestGenerator;
+using Rhetos.Utilities;
 
 namespace Rhetos.RestGenerator.Plugins
 {
@@ -57,11 +58,11 @@ namespace Rhetos.RestGenerator.Plugins
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
     public class RestService{0}{1}
     {{
-        private ServiceUtility _serviceLoader;
+        private ServiceUtility _serviceUtility;
 
-        public RestService{0}{1}(ServiceUtility serviceLoader)
+        public RestService{0}{1}(ServiceUtility serviceUtility)
         {{
-            _serviceLoader = serviceLoader;
+            _serviceUtility = serviceUtility;
         }}
     
         private static readonly IDictionary<string, Type[]> {0}{1}FilterTypes = new List<Tuple<string, Type>>
@@ -72,39 +73,41 @@ namespace Rhetos.RestGenerator.Plugins
             .ToDictionary(g => g.Key, g => g.Select(typeName => typeName.Item2).Distinct().ToArray());
 
         [OperationContract]
-        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public GetResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, int page, int psize, string sort)
+        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, int top, int skip, int page, int psize, string sort)
         {{
-            object filterObject;
-            Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
-            ServiceUtility.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
-            var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
-            return new GetResult<{0}.{1}> {{ Records = queryResult.Records }};
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, top, skip, page, psize, sort,
+                readRecords: true, readTotalCount: false);
+            return new RecordsResult<{0}.{1}> {{ Records = data.Records }};
         }}
 
         [OperationContract]
-        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public CountResult Count(string filter, string fparam, string genericfilter, int page, int psize, string sort)
+        [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string sort)
         {{
-            object filterObject;
-            Rhetos.Dom.DefaultConcepts.FilterCriteria[] genericFilter;
-            ServiceUtility.GetFilterParameters(filter, fparam, genericfilter, {0}{1}FilterTypes, out genericFilter, out filterObject);
-            var queryResult = _serviceLoader.GetData<{0}.{1}>(filterObject, genericFilter, page, psize, sort);
-            return new CountResult {{ TotalRecords = queryResult.TotalRecords }};
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
+                readRecords: false, readTotalCount: true);
+            return new TotalCountResult {{ TotalCount = data.TotalCount }};
+        }}
+
+        [OperationContract]
+        [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, int top, int skip, int page, int psize, string sort)
+        {{
+            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, top, skip, page, psize, sort,
+                readRecords: true, readTotalCount: true);
         }}
 
         [OperationContract]
         [WebGet(UriTemplate = ""/{{id}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public {0}.{1} GetById(string id)
         {{
-            var filter = new [] {{ Guid.Parse(id) }};
-
-            var result = _serviceLoader.GetData<{0}.{1}>(filter).Records.FirstOrDefault();
+            var result = _serviceUtility.GetDataById<{0}.{1}>(id);
             if (result == null)
                 throw new WebFaultException<string>(""There is no resource of this type with a given ID."", HttpStatusCode.NotFound);
-
             return result;
         }}
+
         " + AdditionalOperationsTag.Evaluate(info) + @"
     }}
 
@@ -133,6 +136,8 @@ namespace Rhetos.RestGenerator.Plugins
                 codeBuilder.InsertCode(ServiceRegistrationCodeSnippet(info), InitialCodeGenerator.ServiceRegistrationTag);
                 codeBuilder.InsertCode(ServiceInitializationCodeSnippet(info), InitialCodeGenerator.ServiceInitializationTag);
                 codeBuilder.InsertCode(ServiceDefinitionCodeSnippet(info), InitialCodeGenerator.RhetosRestClassesTag);
+                codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.DefaultCommands.ReadCommandResult));
+                codeBuilder.AddReferencesFromDependency(typeof(Newtonsoft.Json.Linq.JToken));
 
                 if (info is IWritableOrmDataStructure) 
                     WritableOrmDataStructureCodeGenerator.GenerateCode(conceptInfo, codeBuilder);

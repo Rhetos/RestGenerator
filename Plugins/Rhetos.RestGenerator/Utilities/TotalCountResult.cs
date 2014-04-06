@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Rhetos.Processing.DefaultCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +24,8 @@ using System.Text;
 
 namespace Rhetos.RestGenerator.Utilities
 {
-    public class QueryResult<T>
+    public class TotalCountResult
     {
-        public IList<T> Records { get; set; }
-        public int TotalRecords { get; set; }
-        public QueryDataSourceCommandInfo CommandArguments { get; set; }
+        public int TotalCount { get; set; }
     }
 }

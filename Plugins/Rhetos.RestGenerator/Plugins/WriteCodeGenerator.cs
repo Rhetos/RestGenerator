@@ -39,7 +39,7 @@ namespace Rhetos.RestGenerator.Plugins
             if (Guid.Empty == entity.ID)
                 entity.ID = Guid.NewGuid();
 
-            var result = _serviceLoader.InsertData(entity);
+            var result = _serviceUtility.InsertData(entity);
             return new InsertDataResult {{ ID = entity.ID }};
         }}
 
@@ -53,7 +53,7 @@ namespace Rhetos.RestGenerator.Plugins
             if (guid != entity.ID)
                 throw new WebFaultException<string>(""Given entity ID is not equal to resource ID from URI."", HttpStatusCode.BadRequest);
 
-            _serviceLoader.UpdateData(entity);
+            _serviceUtility.UpdateData(entity);
         }}
 
         [OperationContract]
@@ -62,7 +62,7 @@ namespace Rhetos.RestGenerator.Plugins
         {{
             var entity = new {0}.{1} {{ ID = Guid.Parse(id) }};
 
-            _serviceLoader.DeleteData(entity);
+            _serviceUtility.DeleteData(entity);
         }}
 
 ";

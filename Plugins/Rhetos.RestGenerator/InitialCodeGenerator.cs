@@ -41,11 +41,7 @@ namespace Rhetos.RestGenerator
 @"
 using Autofac;
 using Module = Autofac.Module;
-using Rhetos.Logging;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Processing;
-using Rhetos.Processing.DefaultCommands;
-using Rhetos.XmlSerialization;
 using Rhetos.RestGenerator.Utilities;
 using System;
 using System.Collections.Generic;
@@ -152,7 +148,6 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Route));
             
             // Rhetos
-            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.DefaultCommands.QueryDataSourceCommandResult));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.IService));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Dom.DefaultConcepts.IEntity));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Logging.ILogger));
