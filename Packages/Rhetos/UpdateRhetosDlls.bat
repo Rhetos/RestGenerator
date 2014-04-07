@@ -38,7 +38,7 @@ XCOPY /Y/R %1 . || EXIT /B 1
 @EXIT /B 0
 
 :Done
-PowerShell.exe -Command "dir *.dll,*.exe | %%{gi $_.FullName} | select -Property Name, Length, @{Name=\"LastWriteTime\"; Expression={$_.LastWriteTime.ToString(\"yyyy-MM-dd HH:mm:ss\")}}, @{Name=\"FileVersion\"; Expression={$_.VersionInfo.FileVersion}} | fl | Out-File FileVersions.txt -Width 1000"
+PowerShell.exe -Command "dir *.dll,*.exe | %%{gi $_.FullName} | select -Property Name, Length, @{Name=\"LastWriteTime\"; Expression={$_.LastWriteTime.ToString(\"yyyy-MM-dd HH:mm:ss\")}}, @{Name=\"FileVersion\"; Expression={$_.VersionInfo.FileVersion}} | fl | Out-File FileVersions.txt -Width 1000 -Encoding UTF8"
 POPD
 
 @REM ================================================
