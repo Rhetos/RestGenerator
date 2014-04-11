@@ -32,8 +32,8 @@ Reading data:
 Writing data:
 
 * Inserting a record: POST at the entity's service base URI.
-* Updating a record: PUT `{{id}}`
-* Deleting a record: DELETE `{{id}}`
+* Updating a record: PUT `/{{id}}`
+* Deleting a record: DELETE `/{{id}}`
 
 Actions:
 
