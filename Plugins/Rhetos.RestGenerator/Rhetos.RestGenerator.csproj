@@ -138,6 +138,7 @@
     <Compile Include="InitialCodeGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\CountResult.cs" />
     <Compile Include="Utilities\RecordsAndTotalCountResult.cs" />
     <Compile Include="Utilities\TotalCountResult.cs" />
     <Compile Include="Utilities\InsertDataResult.cs" />

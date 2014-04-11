@@ -72,6 +72,7 @@ namespace Rhetos.RestGenerator.Plugins
             .GroupBy(typeName => typeName.Item1)
             .ToDictionary(g => g.Key, g => g.Select(typeName => typeName.Item2).Distinct().ToArray());
 
+        // [Obsolete] parameters: filter, fparam, page, psize (use top and skip).
         [OperationContract]
         [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, int top, int skip, int page, int psize, string sort)
@@ -81,6 +82,17 @@ namespace Rhetos.RestGenerator.Plugins
             return new RecordsResult<{0}.{1}> {{ Records = data.Records }};
         }}
 
+        [Obsolete]
+        [OperationContract]
+        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public CountResult GetCount(string filter, string fparam, string genericfilter, string sort)
+        {{
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
+                readRecords: false, readTotalCount: true);
+            return new CountResult {{ TotalRecords = data.TotalCount }};
+        }}
+
+        // [Obsolete] parameters: filter, fparam.
         [OperationContract]
         [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string sort)
@@ -90,6 +102,7 @@ namespace Rhetos.RestGenerator.Plugins
             return new TotalCountResult {{ TotalCount = data.TotalCount }};
         }}
 
+        // [Obsolete] parameters: filter, fparam, page, psize (use top and skip).
         [OperationContract]
         [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, int top, int skip, int page, int psize, string sort)

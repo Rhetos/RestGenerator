@@ -167,13 +167,11 @@ namespace Rhetos.RestGenerator.Utilities
             if (!string.IsNullOrEmpty(genericfilter))
             {
                 var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(genericfilter);
-
                 if (parsedGenericFilter == null)
                     throw new Rhetos.UserException("Invalid format of the generic filter: '" + genericfilter + "'.");
-
                 parsedFilters.AddRange(parsedGenericFilter);
             }
-           
+
             if (!string.IsNullOrEmpty(filter))
             {
                 Type filterType = GetFilterType(filter, filterTypesByName);
