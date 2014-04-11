@@ -47,7 +47,7 @@ namespace Rhetos.RestGenerator.Utilities
         {
             if (!result.Success)
                 throw new WebFaultException<MessagesResult>(
-                        new MessagesResult { SystemMessage = result.SystemMessage, UserMessage = result.UserMessage }, 
+                        new MessagesResult { SystemMessage = result.SystemMessage, UserMessage = result.UserMessage },
                         string.IsNullOrEmpty(result.UserMessage) ? HttpStatusCode.InternalServerError : HttpStatusCode.BadRequest
                 );
         }
@@ -65,7 +65,7 @@ namespace Rhetos.RestGenerator.Utilities
             _domainObjectModel = domainObjectModel;
         }
 
-        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> filterTypesByName, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
+        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, string filters, IDictionary<string, Type[]> filterTypesByName, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
         {
             // Legacy interface:
             if (page != 0 || psize != 0)
@@ -79,7 +79,7 @@ namespace Rhetos.RestGenerator.Utilities
 
             var readCommandInfo = new ReadCommandInfo
             {
-                Filters = ParseFilterParameters(filter, fparam, genericfilter, filterTypesByName),
+                Filters = ParseFilterParameters(filter, fparam, genericfilter, filters, filterTypesByName),
                 Top = top,
                 Skip = skip,
                 ReadRecords = readRecords,
@@ -105,14 +105,14 @@ namespace Rhetos.RestGenerator.Utilities
 
         public T GetDataById<T>(string id)
         {
-            var filterInstance = new [] { Guid.Parse(id) };
+            var filterInstance = new[] { Guid.Parse(id) };
 
             return (T)ExecuteReadCommand(new ReadCommandInfo
-                {
-                    DataSource = typeof(T).FullName,
-                    Filters = new[] { new FilterCriteria { Filter = filterInstance.GetType().AssemblyQualifiedName, Value = filterInstance } },
-                    ReadRecords = true
-                }, null)
+            {
+                DataSource = typeof(T).FullName,
+                Filters = new[] { new FilterCriteria { Filter = filterInstance.GetType().AssemblyQualifiedName, Value = filterInstance } },
+                ReadRecords = true
+            }, null)
                 .Records.FirstOrDefault();
         }
 
@@ -160,9 +160,17 @@ namespace Rhetos.RestGenerator.Utilities
             return result.ToArray();
         }
 
-        private FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, IDictionary<string, Type[]> filterTypesByName)
+        private FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, string filters, IDictionary<string, Type[]> filterTypesByName)
         {
             var parsedFilters = new List<FilterCriteria>();
+
+            if (!string.IsNullOrEmpty(filters))
+            {
+                var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(filters);
+                if (parsedGenericFilter == null)
+                    throw new Rhetos.UserException("Invalid format of the generic filter: '" + filters + "'.");
+                parsedFilters.AddRange(parsedGenericFilter);
+            }
 
             if (!string.IsNullOrEmpty(genericfilter))
             {

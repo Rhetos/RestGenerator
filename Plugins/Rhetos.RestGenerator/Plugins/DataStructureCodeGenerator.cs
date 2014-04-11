@@ -72,42 +72,42 @@ namespace Rhetos.RestGenerator.Plugins
             .GroupBy(typeName => typeName.Item1)
             .ToDictionary(g => g.Key, g => g.Select(typeName => typeName.Item2).Distinct().ToArray());
 
-        // [Obsolete] parameters: filter, fparam, page, psize (use top and skip).
+        // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]
-        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, int top, int skip, int page, int psize, string sort)
+        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, top, skip, page, psize, sort,
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: false);
             return new RecordsResult<{0}.{1}> {{ Records = data.Records }};
         }}
 
         [Obsolete]
         [OperationContract]
-        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public CountResult GetCount(string filter, string fparam, string genericfilter, string sort)
+        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public CountResult GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new CountResult {{ TotalRecords = data.TotalCount }};
         }}
 
-        // [Obsolete] parameters: filter, fparam.
+        // [Obsolete] parameters: filter, fparam, genericfilter (use filters).
         [OperationContract]
-        [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string sort)
+        [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new TotalCountResult {{ TotalCount = data.TotalCount }};
         }}
 
-        // [Obsolete] parameters: filter, fparam, page, psize (use top and skip).
+        // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]
-        [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, int top, int skip, int page, int psize, string sort)
+        [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, {0}{1}FilterTypes, top, skip, page, psize, sort,
+            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: true);
         }}
 
@@ -152,7 +152,7 @@ namespace Rhetos.RestGenerator.Plugins
                 codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.DefaultCommands.ReadCommandResult));
                 codeBuilder.AddReferencesFromDependency(typeof(Newtonsoft.Json.Linq.JToken));
 
-                if (info is IWritableOrmDataStructure) 
+                if (info is IWritableOrmDataStructure)
                     WritableOrmDataStructureCodeGenerator.GenerateCode(conceptInfo, codeBuilder);
             }
         }
