@@ -23,7 +23,7 @@ Following are URI templates for the web methods.
 Reading data:
 
 * Reading records: `/?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
-	* For filters, see *Generic filter* paragraph below.
+	* For filters, see *Filters* paragraph below.
 	* Example of sorting by multiple properties: `sort=CreationDate desc,Name,ID`.
 * Reading total records count for paging: `/TotalCount?filters={{filters}}&sort={{sort}}`
 * Reading records and total count: `/RecordsAndTotalCount?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
