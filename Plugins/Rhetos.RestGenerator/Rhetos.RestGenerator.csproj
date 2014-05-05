@@ -126,6 +126,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IRestGeneratorPlugin.cs" />
     <Compile Include="Plugins\ActionCodeGenerator.cs" />
     <Compile Include="Plugins\DataStructureCodeGenerator.cs" />
@@ -147,11 +148,11 @@
     <Compile Include="Utilities\ServiceUtility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>

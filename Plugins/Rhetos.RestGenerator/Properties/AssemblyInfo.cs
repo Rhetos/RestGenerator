@@ -24,11 +24,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Rhetos.ODataGenerator")]
+[assembly: AssemblyTitle("Rhetos.RestGenerator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Omega software")]
-[assembly: AssemblyProduct("Rhetos.ODataGenerator")]
+[assembly: AssemblyProduct("Rhetos.RestGenerator")]
 [assembly: AssemblyCopyright("Copyright (C) Omega software 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8889362b-e66f-4182-8ce3-1111331945b0")]
+[assembly: Guid("c574e0c0-e7ff-4f5b-b719-332abe0fcebf")]
 
 // Version information for an assembly consists of the following four values:
 //
