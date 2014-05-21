@@ -1,1 +1,1 @@
-CALL  ..\..\Rhetos\ChangeRhetosPackageVersion.bat . 1.5.1.1 || EXIT /B 1
+CALL  ..\..\Rhetos\ChangeRhetosPackageVersion.bat . 1.6.0.1 || EXIT /B 1
