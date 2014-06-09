@@ -7,9 +7,9 @@ It automatically generates **RESTful JSON web service** for all entities, action
 See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
 Features
-========
+--------
 
-####Web service methods
+###Web service methods
 
 For each data structure, a service is available at `<rhetos server url>/Rest/<module name>/<entity name>`.
 
@@ -20,7 +20,7 @@ Example - a service for entity Claim in module Common, on default local server i
 
 Following are URI templates for the web methods.
 
-Reading data:
+**Reading data:**
 
 * Reading records: `/?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
 	* For filters, see *Filters* paragraph below.
@@ -29,17 +29,23 @@ Reading data:
 * Reading records and total count: `/RecordsAndTotalCount?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
 * Reading a single record: `/{{id}}`
 
-Writing data:
+**Writing data:**
 
 * Inserting a record: POST at the entity's service base URI.
 * Updating a record: PUT `/{{id}}`
 * Deleting a record: DELETE `/{{id}}`
 
-Actions:
+**Actions:**
 
 * Executing an action: POST at the action's service base URI.
 
-####Filters
+**Reports:**
+
+* Downloading a report: `/?parameter={{parameter}}&convertFormat={{convertFormat}}`
+	* Query parameters `parameter` and `convertFormat` are optional.
+	* Example format `http://localhost/Rhetos/Rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
+
+###Filters
 
 Filters are given as a JSON-serialized array containing any number of filters of the following types:
 
@@ -53,7 +59,7 @@ Filters are given as a JSON-serialized array containing any number of filters of
 
 When combining multiple filters, the intersection of the filters is returned (AND).
 
-####Obsolete features
+###Obsolete features
 
 These features are available for backward compatibility. They will be removed in future versions. 
 
@@ -63,14 +69,14 @@ These features are available for backward compatibility. They will be removed in
 * Reading method query parameter `genericfilter`. Renamed to `filters`.
 
 Deployment
-==========
+----------
 
 ### Prerequisites
 
 * *CommonConcepts* package must be deployed along with *RestGenerator*.
 
 Building binaries from source
-=============================
+-----------------------------
 
 ### Prerequisites
 

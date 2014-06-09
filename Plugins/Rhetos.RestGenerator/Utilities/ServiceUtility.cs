@@ -271,5 +271,47 @@ namespace Rhetos.RestGenerator.Utilities
 
             return result;
         }
+
+        public DownloadReportResult DownloadReport<T>(string parameter, string convertFormat)
+        {
+            object parameterInstance;
+            if (!string.IsNullOrEmpty(parameter))
+            {
+                parameterInstance = JsonConvert.DeserializeObject(parameter, typeof(T));
+                if (parameterInstance == null)
+                    throw new Rhetos.UserException("Invalid parameter format for report '" + typeof(T).FullName + "', data: '" + parameter + "'.");
+            }
+            else
+                parameterInstance = Activator.CreateInstance(typeof(T));
+
+            var commandInfo = new DownloadReportCommandInfo
+            {
+                Report = parameterInstance,
+                ConvertFormat = convertFormat
+            };
+
+            ProcessingResult result;
+            try
+            {
+                result = _processingEngine.Execute(new[] { commandInfo });
+            }
+            catch (Autofac.Core.Registration.ComponentNotRegisteredException ex)
+            {
+                if (ex.Message.Contains(typeof(IReportRepository).FullName))
+                    throw new UserException("Report " + typeof(T).FullName + " does not provide file downloading.", ex);
+                else
+                    throw;
+            }
+
+            CheckForErrors(result);
+
+            var reportCommandResult = (DownloadReportCommandResult)result.CommandResults.Single().Data;
+
+            return new DownloadReportResult
+                {
+                    ReportFile = reportCommandResult.ReportFile,
+                    SuggestedFileName = reportCommandResult.SuggestedFileName
+                };
+        }
     }
 }
