@@ -218,7 +218,7 @@ namespace Rhetos.RestGenerator.Utilities
                 filterType = Type.GetType(filterName);
 
             if (filterType == null)
-                throw new Rhetos.UserException("Filter type '" + filterName + "' is not recognized.");
+                throw new Rhetos.UserException("Filter type '" + filterName + "' is not available for this data structure.");
 
             return filterType;
         }

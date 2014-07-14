@@ -65,7 +65,7 @@ namespace Rhetos.RestGenerator.Plugins
             _serviceUtility = serviceUtility;
         }}
     
-        private static readonly IDictionary<string, Type[]> {0}{1}FilterTypes = new List<Tuple<string, Type>>
+        public static readonly IDictionary<string, Type[]> FilterTypes = new List<Tuple<string, Type>>
             {{
                 " + FilterTypesTag.Evaluate(info) + @"
             }}
@@ -77,7 +77,7 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, top, skip, page, psize, sort,
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: false);
             return new RecordsResult<{0}.{1}> {{ Records = data.Records }};
         }}
@@ -87,7 +87,7 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public CountResult GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new CountResult {{ TotalRecords = data.TotalCount }};
         }}
@@ -97,7 +97,7 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new TotalCountResult {{ TotalCount = data.TotalCount }};
         }}
@@ -107,7 +107,7 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, {0}{1}FilterTypes, top, skip, page, psize, sort,
+            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: true);
         }}
 
