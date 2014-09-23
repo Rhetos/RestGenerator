@@ -168,7 +168,7 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(filters);
                 if (parsedGenericFilter == null)
-                    throw new Rhetos.UserException("Invalid format of the generic filter: '" + filters + "'.");
+                    throw new Rhetos.ClientException("Invalid format of the generic filter: '" + filters + "'.");
                 parsedFilters.AddRange(parsedGenericFilter);
             }
 
@@ -176,7 +176,7 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(genericfilter);
                 if (parsedGenericFilter == null)
-                    throw new Rhetos.UserException("Invalid format of the generic filter: '" + genericfilter + "'.");
+                    throw new Rhetos.ClientException("Invalid format of the generic filter: '" + genericfilter + "'.");
                 parsedFilters.AddRange(parsedGenericFilter);
             }
 
@@ -189,7 +189,7 @@ namespace Rhetos.RestGenerator.Utilities
                 {
                     filterInstance = JsonConvert.DeserializeObject(fparam, filterType);
                     if (filterInstance == null)
-                        throw new Rhetos.UserException("Invalid filter parameter format for filter '" + filter + "', data: '" + fparam + "'.");
+                        throw new Rhetos.ClientException("Invalid filter parameter format for filter '" + filter + "', data: '" + fparam + "'.");
                 }
                 else
                     filterInstance = Activator.CreateInstance(filterType);
@@ -207,7 +207,7 @@ namespace Rhetos.RestGenerator.Utilities
             Type[] matchingTypes = null;
             filterTypesByName.TryGetValue(filterName, out matchingTypes);
             if (matchingTypes != null && matchingTypes.Count() > 1)
-                throw new Rhetos.UserException("Filter type '" + filterName + "' is ambiguous (" + matchingTypes[0].FullName + ", " + matchingTypes[1].FullName + ").");
+                throw new Rhetos.ClientException("Filter type '" + filterName + "' is ambiguous (" + matchingTypes[0].FullName + ", " + matchingTypes[1].FullName + ").");
             if (matchingTypes != null && matchingTypes.Count() == 1)
                 filterType = matchingTypes[0];
 
@@ -218,7 +218,7 @@ namespace Rhetos.RestGenerator.Utilities
                 filterType = Type.GetType(filterName);
 
             if (filterType == null)
-                throw new Rhetos.UserException("Filter type '" + filterName + "' is not available for this data structure.");
+                throw new Rhetos.ClientException("Filter type '" + filterName + "' is not available for this data structure.");
 
             return filterType;
         }
@@ -279,7 +279,7 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 parameterInstance = JsonConvert.DeserializeObject(parameter, typeof(T));
                 if (parameterInstance == null)
-                    throw new Rhetos.UserException("Invalid parameter format for report '" + typeof(T).FullName + "', data: '" + parameter + "'.");
+                    throw new Rhetos.ClientException("Invalid parameter format for report '" + typeof(T).FullName + "', data: '" + parameter + "'.");
             }
             else
                 parameterInstance = Activator.CreateInstance(typeof(T));
@@ -298,7 +298,7 @@ namespace Rhetos.RestGenerator.Utilities
             catch (Autofac.Core.Registration.ComponentNotRegisteredException ex)
             {
                 if (ex.Message.Contains(typeof(IReportRepository).FullName))
-                    throw new UserException("Report " + typeof(T).FullName + " does not provide file downloading.", ex);
+                    throw new ClientException("Report " + typeof(T).FullName + " does not provide file downloading.", ex);
                 else
                     throw;
             }
