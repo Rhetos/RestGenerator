@@ -79,6 +79,7 @@ namespace Rhetos.RestGenerator.Utilities
 
             var readCommandInfo = new ReadCommandInfo
             {
+                DataSource = typeof(T).FullName,
                 Filters = ParseFilterParameters(filter, fparam, genericfilter, filters, filterTypesByName),
                 Top = top,
                 Skip = skip,
@@ -87,14 +88,7 @@ namespace Rhetos.RestGenerator.Utilities
                 OrderByProperties = ParseSortParameter(sort)
             };
 
-            return GetData<T>(readCommandInfo, filterTypesByName);
-        }
-
-        private RecordsAndTotalCountResult<T> GetData<T>(ReadCommandInfo readCommandInfo, IDictionary<string, Type[]> filterTypesByName)
-        {
-            readCommandInfo.DataSource = typeof(T).FullName;
-
-            var readCommandResult = ExecuteReadCommand(readCommandInfo, filterTypesByName);
+            var readCommandResult = ExecuteReadCommand(readCommandInfo);
 
             return new RecordsAndTotalCountResult<T>
             {
@@ -112,21 +106,13 @@ namespace Rhetos.RestGenerator.Utilities
                 DataSource = typeof(T).FullName,
                 Filters = new[] { new FilterCriteria { Filter = filterInstance.GetType().AssemblyQualifiedName, Value = filterInstance } },
                 ReadRecords = true
-            }, null)
+            })
                 .Records.FirstOrDefault();
         }
 
-        private ReadCommandResult ExecuteReadCommand(ReadCommandInfo commandInfo, IDictionary<string, Type[]> filterTypesByName)
+        private ReadCommandResult ExecuteReadCommand(ReadCommandInfo commandInfo)
         {
             var sw = Stopwatch.StartNew();
-
-            if (commandInfo.Filters != null)
-                foreach (var filterCriteria in commandInfo.Filters)
-                    if (!string.IsNullOrEmpty(filterCriteria.Filter) && filterCriteria.Value is JObject)
-                    {
-                        Type filterType = GetFilterType(filterCriteria.Filter, filterTypesByName);
-                        filterCriteria.Value = ((JObject)filterCriteria.Value).ToObject(filterType);
-                    }
 
             var result = _processingEngine.Execute(new[] { commandInfo });
             CheckForErrors(result);
@@ -196,6 +182,14 @@ namespace Rhetos.RestGenerator.Utilities
 
                 parsedFilters.Add(new FilterCriteria { Filter = filterType.AssemblyQualifiedName, Value = filterInstance });
             }
+
+            foreach (var filterCriteria in parsedFilters)
+                if (!string.IsNullOrEmpty(filterCriteria.Filter) && filterCriteria.Value is JToken)
+                {
+                    Type filterType = GetFilterType(filterCriteria.Filter, filterTypesByName);
+                    filterCriteria.Filter = filterType.AssemblyQualifiedName;
+                    filterCriteria.Value = ((JToken)filterCriteria.Value).ToObject(filterType);
+                }
 
             return parsedFilters.ToArray();
         }

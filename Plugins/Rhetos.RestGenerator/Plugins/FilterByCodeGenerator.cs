@@ -44,7 +44,7 @@ namespace Rhetos.RestGenerator.Plugins
 @"Tuple.Create(""{0}"", typeof({0})),
                 ", fullTypeName);
 
-            var shortName = TryExtractShortName(fullTypeName);
+            var shortName = TryExtractShortName(fullTypeName, info);
             if (shortName != null)
                 result += String.Format(
 @"Tuple.Create(""{0}"", typeof({1})),
@@ -53,17 +53,23 @@ namespace Rhetos.RestGenerator.Plugins
             return result;
         }
 
-        private static string TryExtractShortName(string typeName)
+        private static readonly string[] _defaultNamespaces = new string[]
         {
-            if (typeName.Contains('.'))
-            {
-                var shortName = typeName.Split('.').Last();
-                if (System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(shortName))
-                    return shortName;
-            }
+            "Common.",
+            "System.Collections.Generic.",
+            "System.",
+            "Rhetos.Dom.DefaultConcepts.",
+        };
+
+        private static string TryExtractShortName(string typeName, FilterByInfo filter)
+        {
+            var removablePrefixes = _defaultNamespaces.Concat(new[] { filter.Source.Module.Name + "." });
+            var removablePrefix = removablePrefixes.FirstOrDefault(prefix => typeName.StartsWith(prefix));
+            if (removablePrefix != null)
+                return typeName.Substring(removablePrefix.Length);
             return null;
         }
-   
+
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             var info = (FilterByInfo)conceptInfo;
