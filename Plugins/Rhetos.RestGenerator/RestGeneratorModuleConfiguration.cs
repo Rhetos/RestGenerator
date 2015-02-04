@@ -32,7 +32,7 @@ namespace Rhetos.RestGenerator
     {
         protected override void Load(ContainerBuilder builder)
         {
-            Rhetos.Extensibility.PluginsUtility.RegisterPlugins<IRestGeneratorPlugin>(builder);
+            Rhetos.Extensibility.Plugins.FindAndRegisterPlugins<IRestGeneratorPlugin>(builder);
 
             base.Load(builder);
         }

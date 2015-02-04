@@ -14,7 +14,7 @@ CALL "%VSTOOLS%\..\..\VC\vcvarsall.bat" x86 || GOTO Error0
 
 CALL "%~dp0Packages\Rhetos\UpdateRhetosDlls.bat" /nopause || GOTO Error0
 IF EXIST Build.log DEL Build.log || GOTO Error0
-DevEnv.com "%~dp0Rhetos.RestGenerator.sln" /build %Config% /out Build.log || TYPE Build.log && GOTO Error0
+DevEnv.com "%~dp0Rhetos.RestGenerator.sln" /rebuild %Config% /out Build.log || TYPE Build.log && GOTO Error0
 
 @REM ================================================
 
