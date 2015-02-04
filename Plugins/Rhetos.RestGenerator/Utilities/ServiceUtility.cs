@@ -97,9 +97,13 @@ namespace Rhetos.RestGenerator.Utilities
             };
         }
 
-        public T GetDataById<T>(string id)
+        public T GetDataById<T>(string idString)
         {
-            var filterInstance = new[] { Guid.Parse(id) };
+            Guid id;
+            if (!Guid.TryParse(idString, out id))
+                throw new ClientException("Invalid format of GUID parametar 'ID'.");
+
+            var filterInstance = new[] { id };
 
             return (T)ExecuteReadCommand(new ReadCommandInfo
             {

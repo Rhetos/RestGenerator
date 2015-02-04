@@ -47,7 +47,9 @@ namespace Rhetos.RestGenerator.Plugins
         [WebInvoke(Method = ""PUT"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public void Update{0}{1}(string id, {0}.{1} entity)
         {{
-            Guid guid = Guid.Parse(id);
+            Guid guid;
+            if (!Guid.TryParse(id, out guid))
+                throw new Rhetos.ClientException(""Invalid format of GUID parametar 'ID'."");
             if (Guid.Empty == entity.ID)
                 entity.ID = guid;
             if (guid != entity.ID)
@@ -60,7 +62,10 @@ namespace Rhetos.RestGenerator.Plugins
         [WebInvoke(Method = ""DELETE"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public void Delete{0}{1}(string id)
         {{
-            var entity = new {0}.{1} {{ ID = Guid.Parse(id) }};
+            Guid guid;
+            if (!Guid.TryParse(id, out guid))
+                throw new Rhetos.ClientException(""Invalid format of GUID parametar 'ID'."");
+            var entity = new {0}.{1} {{ ID = guid }};
 
             _serviceUtility.DeleteData(entity);
         }}
