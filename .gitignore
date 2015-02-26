@@ -110,6 +110,10 @@ Backup*/
 UpgradeLog*.XML
 *.bak
 
-# Rhetos build results
-**/ForDeployment/
-*.zip
+# NuGet
+packages
+Packages
+.nuget/NuGet.exe
+
+# Rhetos
+RhetosSourcePath.txt
