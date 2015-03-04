@@ -49,12 +49,17 @@ Following are URI templates for the web methods.
 
 Filters are given as a JSON-serialized array containing any number of filters of the following types:
 
-1. Property filter
+1. **Property filter**
 	* Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
-	* Available operations: `Equal`, `NotEqual`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`, `StartsWith` (string only), `Contains` (string only) and `DateIn` (Date or DateTime property only, valid formats *yyyy-mm-dd*, *yyyy-mm* or *yyyy*).
-2. Predefined filter without a parameter
+	* Available operations:
+        * `Equal`, `NotEqual`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`,
+        * `StartsWith`, `Contains` -- String only,
+        * `DateIn` -- Date or DateTime property only, provided value must be string.
+          Returns whether the property's value is within a given day, month or year.
+          Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
+2. **Predefined filter** without a parameter
 	* Example: select active records (filter name: "Common.Active"): `[{"Filter":"Common.Active"}]`
-3. Predefined filter with a parameter
+3. **Predefined filter** with a parameter
 	* Example: select records that contain pattern "abc" (filter name: "Common.SmartSearch" with parameter property "Pattern"): `[{"Filter":"Common.SmartSearch","Value":{"Pattern":"abc"}}]`
 
 When combining multiple filters, the intersection of the filters is returned (AND).
@@ -65,7 +70,7 @@ These features are available for backward compatibility. They will be removed in
 
 * `/Count` WEB API method. Use `/TotalCount` method instead.
 * Reading method query parameters `page` and `psize`. Use `top` and `skip`.
-* Reading method query parameters `filter` and `fparam`. Use `filters` instead.
+* Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Predefined filter with a parameter").
 * Reading method query parameter `genericfilter`. Renamed to `filters`.
 
 Deployment
