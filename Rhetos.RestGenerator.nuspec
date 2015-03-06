@@ -19,6 +19,6 @@
     <file src="Readme.md" target="" />
     <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.dll" target="Plugins" />
     <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.pdb" target="Plugins" />
-    <file src="Packages\Newtonsoft.Json.6.0.1\lib\net40\Newtonsoft.Json.dll" target="Plugins" />
+    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Newtonsoft.Json.dll" target="Plugins" />
   </files>
 </package>
