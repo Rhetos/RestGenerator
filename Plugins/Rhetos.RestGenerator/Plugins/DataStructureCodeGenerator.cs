@@ -38,6 +38,10 @@ namespace Rhetos.RestGenerator.Plugins
 
         public static readonly CsTag<DataStructureInfo> AdditionalOperationsTag = "AdditionalOperations";
 
+        public static readonly CsTag<DataStructureInfo> AdditionalPropertyInitialization = "AdditionalPropertyInitialization";
+        public static readonly CsTag<DataStructureInfo> AdditionalPropertyConstructorParameter = "AdditionalPropertyConstructorParameter";
+        public static readonly CsTag<DataStructureInfo> AdditionalPropertyConstructorSetProperties = "AdditionalPropertyConstructorSetProperties";
+
         private static string ServiceRegistrationCodeSnippet(DataStructureInfo info)
         {
             return string.Format(@"builder.RegisterType<RestService{0}{1}>().InstancePerLifetimeScope();
@@ -59,10 +63,12 @@ namespace Rhetos.RestGenerator.Plugins
     public class RestService{0}{1}
     {{
         private ServiceUtility _serviceUtility;
+        {2}
 
-        public RestService{0}{1}(ServiceUtility serviceUtility)
+        public RestService{0}{1}(ServiceUtility serviceUtility{3})
         {{
             _serviceUtility = serviceUtility;
+            {4}
         }}
     
         public static readonly IDictionary<string, Type[]> FilterTypes = new List<Tuple<string, Type>>
@@ -123,10 +129,13 @@ namespace Rhetos.RestGenerator.Plugins
 
         " + AdditionalOperationsTag.Evaluate(info) + @"
     }}
-
     ",
             info.Module.Name,
-            info.Name);
+            info.Name,
+            AdditionalPropertyInitialization.Evaluate(info),
+            AdditionalPropertyConstructorParameter.Evaluate(info),
+            AdditionalPropertyConstructorSetProperties.Evaluate(info)
+            );
         }
 
         public static bool IsTypeSupported(DataStructureInfo conceptInfo)
