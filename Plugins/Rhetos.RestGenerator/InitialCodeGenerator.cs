@@ -156,7 +156,6 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Utilities.XmlUtility));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.XmlSerialization.XmlData));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Web.JsonErrorServiceBehavior));
-            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.IProcessingEngine));
 
             // RestGenerator
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceUtility));
