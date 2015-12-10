@@ -62,15 +62,19 @@ Filters are given as a JSON-serialized array containing any number of filters of
 
 When combining multiple filters, the intersection of the filters is returned (AND).
 
-### Obsolete features
+### Obsolete and partially supported features
 
-These features are available for backward compatibility. They will be removed in future versions.
+These features are available for backward compatibility, they will be removed in future versions:
 
 * `/Count` WEB API method. Use `/TotalCount` method instead.
 * Reading method query parameters `page` and `psize`. Use `top` and `skip`.
 * Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Predefined filter with a parameter").
 * Reading method query parameter `genericfilter`. Renamed to `filters`.
 * Property filter operations `Equal` and `NotEqual`. Use `Equals` and `NotEquals` instead.
+
+Partially supported features:
+
+ * `DateNotIn`, `EndsWith` and `NotContains` operations are supported only for *Rhetos v1.0* or later.
 
 ## Deployment
 
