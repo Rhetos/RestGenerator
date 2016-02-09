@@ -100,11 +100,6 @@ Sample folder structure:
 
 ### Build
 
-1. Build this package by executing `Build.bat`. The script will pause in case of an error.
-    - The script automatically copies all needed dll files from Rhetos folder and builds the Rhetos.RestGenerator.sln using Visual Studio (command-line).
+Build this package by executing `Build.bat`. The script will pause in case of an error.
 
-### Create installation package
-
-1. Set the new version number in `ChangeVersion.bat` and execute it.
-2. Execute `Build.bat`.
-3. Execute `CreatePackage.bat`. It creates installation package (.zip) in parent directory of RestGenerator.
+The script will create the installation package in parent directory.

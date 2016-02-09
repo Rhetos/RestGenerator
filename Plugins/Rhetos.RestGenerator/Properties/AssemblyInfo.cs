@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Omega software")]
 [assembly: AssemblyProduct("Rhetos.RestGenerator")]
-[assembly: AssemblyCopyright("Copyright (C) Omega software 2015")]
+[assembly: AssemblyCopyright("Copyright (C) Omega software 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -53,4 +53,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.12.0")]
 [assembly: AssemblyFileVersion("1.12.0")]
-[assembly: AssemblyInformationalVersion("1.12.0-alpha001")]
+[assembly: AssemblyInformationalVersion("1.12.0-dev")]
