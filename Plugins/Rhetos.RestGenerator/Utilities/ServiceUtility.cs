@@ -46,10 +46,12 @@ namespace Rhetos.RestGenerator.Utilities
         private static void CheckForErrors(ProcessingResult result)
         {
             if (!result.Success)
-                throw new WebFaultException<MessagesResult>(
-                        new MessagesResult { SystemMessage = result.SystemMessage, UserMessage = result.UserMessage },
-                        string.IsNullOrEmpty(result.UserMessage) ? HttpStatusCode.InternalServerError : HttpStatusCode.BadRequest
-                );
+            {
+                // TODO: Remove this method after simplifying ProcessingEngine error handling to always throw exceptions on error.
+                if (result.UserMessage != null)
+                    throw new UserException(result.UserMessage, result.SystemMessage); // JsonErrorHandler will return HttpStatusCode.BadRequest.
+                throw new FrameworkException(result.SystemMessage); // JsonErrorHandler will return HttpStatusCode.InternalServerError.
+            }
         }
 
         public ServiceUtility(
@@ -71,7 +73,7 @@ namespace Rhetos.RestGenerator.Utilities
             if (page != 0 || psize != 0)
             {
                 if (top != 0 || skip != 0)
-                    throw new ArgumentException("Invalid paging parameter: Use either 'top' and 'skip', or 'page' and 'psize'.");
+                    throw new ClientException("Invalid paging parameter: Use either 'top' and 'skip', or 'page' and 'psize'.");
 
                 top = psize;
                 skip = page > 0 ? psize * (page - 1) : 0;
@@ -101,7 +103,7 @@ namespace Rhetos.RestGenerator.Utilities
         {
             Guid id;
             if (!Guid.TryParse(idString, out id))
-                throw new ClientException("Invalid format of GUID parametar 'ID'.");
+                throw new LegacyClientException("Invalid format of GUID parametar 'ID'.");
 
             var filterInstance = new[] { id };
 
@@ -137,7 +139,7 @@ namespace Rhetos.RestGenerator.Utilities
                 {
                     var sortPropertyInfo = property.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (sortPropertyInfo.Length > 2)
-                        throw new ArgumentException("Invalid 'sort' parameter format (" + sort + ").");
+                        throw new ClientException("Invalid 'sort' parameter format (" + sort + ").");
 
                     result.Add(new OrderByProperty
                     {
@@ -158,7 +160,7 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(filters);
                 if (parsedGenericFilter == null)
-                    throw new Rhetos.ClientException("Invalid format of the generic filter: '" + filters + "'.");
+                    throw new LegacyClientException("Invalid format of the generic filter: '" + filters + "'.");
                 parsedFilters.AddRange(parsedGenericFilter);
             }
 
@@ -166,7 +168,7 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(genericfilter);
                 if (parsedGenericFilter == null)
-                    throw new Rhetos.ClientException("Invalid format of the generic filter: '" + genericfilter + "'.");
+                    throw new LegacyClientException("Invalid format of the generic filter: '" + genericfilter + "'.");
                 parsedFilters.AddRange(parsedGenericFilter);
             }
 
@@ -179,7 +181,7 @@ namespace Rhetos.RestGenerator.Utilities
                 {
                     filterInstance = JsonConvert.DeserializeObject(fparam, filterType);
                     if (filterInstance == null)
-                        throw new Rhetos.ClientException("Invalid filter parameter format for filter '" + filter + "', data: '" + fparam + "'.");
+                        throw new LegacyClientException("Invalid filter parameter format for filter '" + filter + "', data: '" + fparam + "'.");
                 }
                 else
                     filterInstance = Activator.CreateInstance(filterType);
@@ -205,7 +207,7 @@ namespace Rhetos.RestGenerator.Utilities
             Type[] matchingTypes = null;
             filterTypesByName.TryGetValue(filterName, out matchingTypes);
             if (matchingTypes != null && matchingTypes.Count() > 1)
-                throw new Rhetos.ClientException("Filter type '" + filterName + "' is ambiguous (" + matchingTypes[0].FullName + ", " + matchingTypes[1].FullName + ").");
+                throw new LegacyClientException("Filter type '" + filterName + "' is ambiguous (" + matchingTypes[0].FullName + ", " + matchingTypes[1].FullName + ").");
             if (matchingTypes != null && matchingTypes.Count() == 1)
                 filterType = matchingTypes[0];
 
@@ -216,7 +218,7 @@ namespace Rhetos.RestGenerator.Utilities
                 filterType = Type.GetType(filterName);
 
             if (filterType == null)
-                throw new Rhetos.ClientException("Filter type '" + filterName + "' is not available for this data structure.");
+                throw new LegacyClientException("Filter type '" + filterName + "' is not available for this data structure.");
 
             return filterType;
         }
@@ -277,7 +279,7 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 parameterInstance = JsonConvert.DeserializeObject(parameter, typeof(T));
                 if (parameterInstance == null)
-                    throw new Rhetos.ClientException("Invalid parameter format for report '" + typeof(T).FullName + "', data: '" + parameter + "'.");
+                    throw new LegacyClientException("Invalid parameter format for report '" + typeof(T).FullName + "', data: '" + parameter + "'.");
             }
             else
                 parameterInstance = Activator.CreateInstance(typeof(T));
@@ -296,7 +298,7 @@ namespace Rhetos.RestGenerator.Utilities
             catch (Autofac.Core.Registration.ComponentNotRegisteredException ex)
             {
                 if (ex.Message.Contains(typeof(IReportRepository).FullName))
-                    throw new ClientException("Report " + typeof(T).FullName + " does not provide file downloading.", ex);
+                    throw new LegacyClientException("Report " + typeof(T).FullName + " does not provide file downloading.", ex);
                 else
                     throw;
             }

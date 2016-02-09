@@ -146,7 +146,6 @@
     <Compile Include="Utilities\RecordsAndTotalCountResult.cs" />
     <Compile Include="Utilities\TotalCountResult.cs" />
     <Compile Include="Utilities\InsertDataResult.cs" />
-    <Compile Include="Utilities\MessagesResult.cs" />
     <Compile Include="Utilities\RecordsResult.cs" />
     <Compile Include="Utilities\ServiceUtility.cs" />
   </ItemGroup>
