@@ -15,7 +15,6 @@ GOTO Error0
 :SkipVcvarsall
 
 PUSHD "%~dp0" || GOTO Error0
-CALL Packages\Rhetos\UpdateRhetosDlls.bat /nopause || GOTO Error1
 CALL ChangeVersions.bat || GOTO Error1
 IF EXIST Build.log DEL Build.log || GOTO Error1
 DevEnv.com Rhetos.RestGenerator.sln /rebuild %Config% /out Build.log || TYPE Build.log && GOTO Error1
