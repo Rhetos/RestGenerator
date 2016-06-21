@@ -10,15 +10,14 @@
     <description>RestGenerator is a DSL package (a plugin module) for Rhetos development platform.
       It automatically generates RESTful JSON web service for all entities, actions and other data structures that are defined in a Rhetos application.</description>
     <copyright>Copyright Omega software 2015</copyright>
-    <tags>Rhetos</tags>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="Rhetos, Version=1.0.0-alpha160209" />
-    </frameworkAssemblies>
+    <tags>Rhetos plugin</tags>
+    <dependencies>
+      <dependency id="Rhetos" version="1.0.0-alpha160614" />
+    </dependencies>
   </metadata>
   <files>
     <file src="Readme.md" target="" />
-    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.dll" target="Plugins" />
-    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.pdb" target="Plugins" />
-    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Newtonsoft.Json.dll" target="Plugins" />
+    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.dll" target="lib\net451" />
+    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.pdb" target="lib\net451" />
   </files>
 </package>
