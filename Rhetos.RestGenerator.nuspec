@@ -13,6 +13,7 @@
     <tags>Rhetos plugin</tags>
     <dependencies>
       <dependency id="Rhetos" version="1.0.0-alpha160614" />
+      <dependency id="Rhetos.CommonConcepts" version="1.0.0-alpha160614" />
     </dependencies>
   </metadata>
   <files>
