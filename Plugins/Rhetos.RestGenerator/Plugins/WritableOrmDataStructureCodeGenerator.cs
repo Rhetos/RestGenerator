@@ -35,8 +35,14 @@ namespace Rhetos.RestGenerator.Plugins
         private const string ImplementationCodeSnippet = @"
         [OperationContract]
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public InsertDataResult Insert{0}{1}({0}.{1} entity)
-        {{
+        public InsertDataResult Insert{0}{1}(System.IO.Stream reqStream)
+        {{            
+            {0}.{1} entity = null;
+            using (StreamReader streamReader = new StreamReader(reqStream))
+            {{
+                entity = Newtonsoft.Json.JsonConvert.DeserializeObject<{0}.{1}>(streamReader.ReadToEnd());
+            }}
+
             if (Guid.Empty == entity.ID)
                 entity.ID = Guid.NewGuid();
 
@@ -45,16 +51,16 @@ namespace Rhetos.RestGenerator.Plugins
         }}
 
         [OperationContract]
-        [WebInvoke(Method = ""PUT"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public void Update{0}{1}(string id, {0}.{1} entity)
+        [WebInvoke(Method = ""PUT"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public void Update{0}{1}(System.IO.Stream reqStream)
         {{
-            Guid guid;
-            if (!Guid.TryParse(id, out guid))
-                throw new Rhetos.LegacyClientException(""Invalid format of GUID parametar 'ID'."");
+            {0}.{1} entity = null;
+            using (StreamReader streamReader = new StreamReader(reqStream))
+            {{
+                entity = Newtonsoft.Json.JsonConvert.DeserializeObject<{0}.{1}>(streamReader.ReadToEnd());
+            }}
             if (Guid.Empty == entity.ID)
-                entity.ID = guid;
-            if (guid != entity.ID)
-                throw new Rhetos.LegacyClientException(""Given entity ID is not equal to resource ID from URI."");
+                throw new Rhetos.LegacyClientException(""Given entity must have valid ID."");
 
             _serviceUtility.UpdateData(entity);
         }}

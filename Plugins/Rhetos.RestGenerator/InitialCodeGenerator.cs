@@ -28,6 +28,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Web.Routing;
 using System.ServiceModel.Description;
+using Newtonsoft.Json;
 
 namespace Rhetos.RestGenerator
 {
@@ -57,6 +58,7 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Web.Routing;
+using Newtonsoft.Json;
 
 namespace Rhetos.Rest
 {
@@ -133,7 +135,8 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(System.Configuration.ConfigurationElement));
             codeBuilder.AddReferencesFromDependency(typeof(System.Diagnostics.Stopwatch));
             codeBuilder.AddReferencesFromDependency(typeof(XmlReader));
-            
+            codeBuilder.AddReferencesFromDependency(typeof(JsonConvert));
+
             // Registration
             codeBuilder.AddReferencesFromDependency(typeof(System.ComponentModel.Composition.ExportAttribute));
             codeBuilder.AddReferencesFromDependency(typeof(Autofac.Integration.Wcf.AutofacServiceHostFactory));

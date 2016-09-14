@@ -80,51 +80,62 @@ namespace Rhetos.RestGenerator.Plugins
 
         // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]
-        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
+        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json)]
+        public void Get(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
+            Console.WriteLine("""" );
+            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: true, readTotalCount: false);
-            return new RecordsResult<{0}.{1}> {{ Records = data.Records }};
+            var responseBody = Newtonsoft.Json.JsonConvert.SerializeObject(new RecordsResult<{0}.{1}> {{ Records = data.Records }});
+            HttpContext.Current.Response.ContentType = ""application/json; charset=utf-8"";
+            HttpContext.Current.Response.Write(responseBody);
         }}
 
         [Obsolete]
         [OperationContract]
-        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public CountResult GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
+        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json)]
+        public void GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
             var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
-            return new CountResult {{ TotalRecords = data.TotalCount }};
+            var responseBody = Newtonsoft.Json.JsonConvert.SerializeObject(new CountResult {{ TotalRecords = data.TotalCount }});
+            HttpContext.Current.Response.ContentType = ""application/json; charset=utf-8"";
+            HttpContext.Current.Response.Write(responseBody);
         }}
 
         // [Obsolete] parameters: filter, fparam, genericfilter (use filters).
         [OperationContract]
-        [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
+        [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json)]
+        public void GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
             var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
-            return new TotalCountResult {{ TotalCount = data.TotalCount }};
+            var responseBody = Newtonsoft.Json.JsonConvert.SerializeObject(new TotalCountResult {{ TotalCount = data.TotalCount }});
+            HttpContext.Current.Response.ContentType = ""application/json; charset=utf-8"";
+            HttpContext.Current.Response.Write(responseBody);
         }}
 
         // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]
-        [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
+        [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json)]
+        public void GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
-                readRecords: true, readTotalCount: true);
+            var responseBody = Newtonsoft.Json.JsonConvert.SerializeObject( _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, 
+                    filters, FilterTypes, top, skip, page, psize, sort, readRecords: true, readTotalCount: true));
+            HttpContext.Current.Response.ContentType = ""application/json; charset=utf-8"";
+            HttpContext.Current.Response.Write(responseBody);
         }}
 
         [OperationContract]
-        [WebGet(UriTemplate = ""/{{id}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public {0}.{1} GetById(string id)
+        [WebGet(UriTemplate = ""/{{id}}"", RequestFormat = WebMessageFormat.Json)]
+        public void GetById(string id)
         {{
             var result = _serviceUtility.GetDataById<{0}.{1}>(id);
             if (result == null)
                 throw new Rhetos.LegacyClientException(""There is no resource of this type with a given ID."") {{ HttpStatusCode = HttpStatusCode.NotFound }};
-            return result;
+            var responseBody = Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            HttpContext.Current.Response.ContentType = ""application/json; charset=utf-8"";
+            HttpContext.Current.Response.Write(responseBody);
         }}
 
         " + AdditionalOperationsTag.Evaluate(info) + @"
