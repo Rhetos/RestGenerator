@@ -16,9 +16,11 @@ GOTO Error0
 
 PUSHD "%~dp0" || GOTO Error0
 CALL ChangeVersions.bat || GOTO Error1
-IF EXIST Build.log DEL Build.log || GOTO Error1
-DevEnv.com Rhetos.RestGenerator.sln /rebuild %Config% /out Build.log || TYPE Build.log && GOTO Error1
-CALL CreatePackage.bat || GOTO Error1
+IF EXIST msbuild.log DEL msbuild.log || GOTO Error1
+WHERE /Q NuGet.exe || ECHO ERROR: Please download the NuGet.exe command line tool. && GOTO Error1
+NuGet.exe restore Rhetos.RestGenerator.sln -NonInteractive || GOTO Error1
+MSBuild.exe Rhetos.RestGenerator.sln /target:rebuild /p:Configuration=%Config% /verbosity:minimal /fileLogger || GOTO Error1
+NuGet.exe pack -o .. || GOTO Error1
 CALL ChangeVersions.bat /RESTORE || GOTO Error1
 POPD
 
