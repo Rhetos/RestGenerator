@@ -156,21 +156,8 @@ namespace Rhetos.RestGenerator.Utilities
         {
             var parsedFilters = new List<FilterCriteria>();
 
-            if (!string.IsNullOrEmpty(filters))
-            {
-                var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(filters);
-                if (parsedGenericFilter == null)
-                    throw new LegacyClientException("Invalid format of the generic filter: '" + filters + "'.");
-                parsedFilters.AddRange(parsedGenericFilter);
-            }
-
-            if (!string.IsNullOrEmpty(genericfilter))
-            {
-                var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(genericfilter);
-                if (parsedGenericFilter == null)
-                    throw new LegacyClientException("Invalid format of the generic filter: '" + genericfilter + "'.");
-                parsedFilters.AddRange(parsedGenericFilter);
-            }
+            ParseGenericFilters(filters, parsedFilters);
+            ParseGenericFilters(genericfilter, parsedFilters);
 
             if (!string.IsNullOrEmpty(filter))
             {
@@ -198,6 +185,57 @@ namespace Rhetos.RestGenerator.Utilities
                 }
 
             return parsedFilters.ToArray();
+        }
+
+        private static void ParseGenericFilters(string filters, List<FilterCriteria> parsedFilters)
+        {
+            if (!string.IsNullOrEmpty(filters))
+            {
+                var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(filters);
+                if (parsedGenericFilter == null)
+                    throw new LegacyClientException("Invalid format of the generic filter: '" + filters + "'.");
+
+                foreach (var genericFilter in parsedGenericFilter)
+                    DetectJsonListType(genericFilter);
+
+                parsedFilters.AddRange(parsedGenericFilter);
+            }
+        }
+
+        private static void DetectJsonListType(FilterCriteria genericFilter)
+        {
+            if (genericFilter.Value is JArray)
+            {
+                var jArray = (JArray)genericFilter.Value;
+                if (jArray.Count > 0)
+                {
+                    var elementType = jArray.First().Type;
+                    if (jArray.All(item => item.Type == elementType))
+                    {
+                        switch (elementType)
+                        {
+                            case JTokenType.String:
+                                genericFilter.Value = jArray.ToObject<string[]>();
+                                break;
+                            case JTokenType.Integer:
+                                genericFilter.Value = jArray.ToObject<int[]>();
+                                break;
+                            case JTokenType.Guid:
+                                genericFilter.Value = jArray.ToObject<Guid[]>();
+                                break;
+                            case JTokenType.Boolean:
+                                genericFilter.Value = jArray.ToObject<bool[]>();
+                                break;
+                            case JTokenType.Date:
+                                genericFilter.Value = jArray.ToObject<DateTime[]>();
+                                break;
+                            case JTokenType.Float:
+                                genericFilter.Value = jArray.ToObject<decimal[]>();
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         private Type GetFilterType(string filterName, IDictionary<string, Type[]> filterTypesByName)

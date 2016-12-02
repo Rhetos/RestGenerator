@@ -50,8 +50,9 @@ Filters are given as a JSON-serialized array containing any number of filters of
 1. **Property filter**
     - Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
     - Available operations:
-    - `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`,
-    - `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only,
+    - `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
+    - `In`, `NotIn` -- Parameter Value is a JSON array.
+    - `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
     - `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
         Returns whether the property's value is within a given day, month or year.
         Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
