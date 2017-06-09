@@ -123,7 +123,7 @@ namespace Rhetos.RestGenerator.Plugins
         {{
             var result = _serviceUtility.GetDataById<{0}.{1}>(id);
             if (result == null)
-                throw new Rhetos.LegacyClientException(""There is no resource of this type with a given ID."") {{ HttpStatusCode = HttpStatusCode.NotFound }};
+                throw new Rhetos.LegacyClientException(""There is no resource of this type with a given ID."") {{ HttpStatusCode = HttpStatusCode.NotFound, Severe = false }};
             return result;
         }}
 
