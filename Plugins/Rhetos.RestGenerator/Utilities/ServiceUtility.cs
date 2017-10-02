@@ -250,7 +250,7 @@ namespace Rhetos.RestGenerator.Utilities
                 filterType = matchingTypes[0];
 
             if (filterType == null)
-                filterType = _domainObjectModel.Assembly.GetType(filterName);
+                filterType = _domainObjectModel.GetType(filterName);
 
             if (filterType == null)
                 filterType = Type.GetType(filterName);

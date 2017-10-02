@@ -28,6 +28,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Web.Routing;
 using System.ServiceModel.Description;
+using Rhetos.Utilities;
 
 namespace Rhetos.RestGenerator
 {
@@ -160,10 +161,9 @@ namespace Rhetos.Rest
             // RestGenerator
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceUtility));
 
-            codeBuilder.AddReference(Path.Combine(_rootPath, "ServerDom.dll"));
+            foreach (var file in Directory.GetFiles(_rootPath, "ServerDom*.dll", SearchOption.AllDirectories))
+                codeBuilder.AddReference(file);
             codeBuilder.AddReference(Path.Combine(_rootPath, "Autofac.dll"));
         }
-
     }
-
 }

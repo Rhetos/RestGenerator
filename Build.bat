@@ -1,5 +1,8 @@
 @REM HINT: SET SECOND ARGUMENT TO /NOPAUSE WHEN AUTOMATING THE BUILD.
 
+@SET Config=%1%
+@IF [%1] == [] SET Config=Debug
+
 IF NOT DEFINED VisualStudioVersion CALL "%VS140COMNTOOLS%VsDevCmd.bat" || ECHO ERROR: Cannot find Visual Studio 2015, missing VS140COMNTOOLS variable. && GOTO Error0
 @ECHO ON
 
@@ -10,7 +13,7 @@ IF EXIST msbuild.log DEL msbuild.log || GOTO Error1
 WHERE /Q NuGet.exe || ECHO ERROR: Please download the NuGet.exe command line tool. && GOTO Error1
 
 NuGet.exe restore Rhetos.RestGenerator.sln -NonInteractive || GOTO Error1
-MSBuild.exe Rhetos.RestGenerator.sln /target:rebuild /p:Configuration=%Config% /verbosity:minimal /fileLogger || GOTO Error1
+MSBuild.exe Rhetos.RestGenerator.sln /target:rebuild /p:Configuration=Debug /verbosity:minimal /fileLogger || GOTO Error1
 NuGet.exe pack -o .. || GOTO Error1
 
 CALL ChangeVersions.bat /RESTORE || GOTO Error1

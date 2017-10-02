@@ -73,137 +73,107 @@
       <HintPath>..\..\packages\NuGet.Core.2.8.3\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Rhetos, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Compiler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Compiler.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Compiler.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Compiler.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Compiler, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Compiler.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Configuration.Autofac, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Configuration.Autofac.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Compiler.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Compiler.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.DatabaseGenerator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.DatabaseGenerator.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Configuration.Autofac, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Configuration.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.DatabaseGenerator.DefaultConcepts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.CommonConcepts.1.0.1\lib\net451\Rhetos.DatabaseGenerator.DefaultConcepts.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.DatabaseGenerator, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.DatabaseGenerator.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.DatabaseGenerator.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.DatabaseGenerator.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.DatabaseGenerator.DefaultConcepts, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.CommonConcepts.2.0.0\lib\net451\Rhetos.DatabaseGenerator.DefaultConcepts.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Deployment, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Deployment.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.DatabaseGenerator.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.DatabaseGenerator.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Deployment.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Deployment.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Deployment, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Deployment.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Dom.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Deployment.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Deployment.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dom.DefaultConcepts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.CommonConcepts.1.0.1\lib\net451\Rhetos.Dom.DefaultConcepts.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dom, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Dom.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dom.DefaultConcepts.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.CommonConcepts.1.0.1\lib\net451\Rhetos.Dom.DefaultConcepts.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dom.DefaultConcepts, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.CommonConcepts.2.0.0\lib\net451\Rhetos.Dom.DefaultConcepts.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dom.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Dom.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dom.DefaultConcepts.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.CommonConcepts.2.0.0\lib\net451\Rhetos.Dom.DefaultConcepts.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dsl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Dsl.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dom.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Dom.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dsl.DefaultConcepts, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.CommonConcepts.1.0.1\lib\net451\Rhetos.Dsl.DefaultConcepts.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dsl, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Dsl.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Dsl.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Dsl.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dsl.DefaultConcepts, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.CommonConcepts.2.0.0\lib\net451\Rhetos.Dsl.DefaultConcepts.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Extensibility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Extensibility.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Dsl.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Dsl.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Extensibility.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Extensibility.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Extensibility, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Extensibility.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Extensibility.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Extensibility.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Logging.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Logging.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Logging.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Logging, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhetos.Logging.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Logging.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Rhetos.Persistence, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Persistence.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Persistence.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Persistence.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Persistence.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Persistence.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Persistence.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Processing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Processing.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Processing, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Processing.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Processing.DefaultCommands, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.CommonConcepts.1.0.1\lib\net451\Rhetos.Processing.DefaultCommands.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Processing.DefaultCommands, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.CommonConcepts.2.0.0\lib\net451\Rhetos.Processing.DefaultCommands.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Processing.DefaultCommands.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.CommonConcepts.1.0.1\lib\net451\Rhetos.Processing.DefaultCommands.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Processing.DefaultCommands.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.CommonConcepts.2.0.0\lib\net451\Rhetos.Processing.DefaultCommands.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Processing.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Processing.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Processing.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Processing.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Security, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Security.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Security, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Security.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Security.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Security.Interfaces.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Security.Interfaces, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Security.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.TestCommon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.TestCommon.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.TestCommon, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.TestCommon.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Utilities.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Utilities, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.Web.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.Web, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Rhetos.XmlSerialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Rhetos.1.0.0\lib\net451\Rhetos.XmlSerialization.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Rhetos.XmlSerialization, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Rhetos.2.0.0\lib\net451\Rhetos.XmlSerialization.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
