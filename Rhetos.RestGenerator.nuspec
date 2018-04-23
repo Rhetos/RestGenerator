@@ -7,7 +7,7 @@
     <owners>Omega software</owners>
     <licenseUrl>http://opensource.org/licenses/AGPL-3.0</licenseUrl>
     <projectUrl>https://github.com/rhetos/rhetos</projectUrl>
-    <description>RestGenerator is a DSL package (a plugin module) for Rhetos development platform.
+    <description>RestGenerator is a plugin package for Rhetos development platform.
       It automatically generates RESTful JSON web service for all entities, actions and other data structures that are defined in a Rhetos application.</description>
     <copyright>Copyright Omega software 2015</copyright>
     <tags>Rhetos plugin</tags>
