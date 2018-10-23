@@ -21,13 +21,9 @@ using Rhetos.Compiler;
 using Rhetos.Extensibility;
 using Rhetos.Logging;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ICodeGenerator = Rhetos.Compiler.ICodeGenerator;
 
 namespace Rhetos.RestGenerator
@@ -66,15 +62,7 @@ namespace Rhetos.RestGenerator
             IAssemblySource assemblySource = _codeGenerator.ExecutePlugins(_plugins, "/*", "*/", new InitialCodeGenerator());
             _logger.Trace("References: " + string.Join(", ", assemblySource.RegisteredReferences));
             _sourceLogger.Trace(assemblySource.GeneratedCode);
-            CompilerParameters parameters = new CompilerParameters
-            {
-                GenerateExecutable = false,
-                GenerateInMemory = false,
-                OutputAssembly = GetAssemblyPath(),
-                IncludeDebugInformation = true,
-                CompilerOptions = ""
-            };
-            _assemblyGenerator.Generate(assemblySource, parameters);
+            _assemblyGenerator.Generate(assemblySource, GetAssemblyPath());
         }
 
         public IEnumerable<string> Dependencies
