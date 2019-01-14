@@ -38,10 +38,8 @@ namespace Rhetos.RestGenerator.Utilities
     public class ServiceUtility
     {
         private IProcessingEngine _processingEngine;
-        private ILogger _logger;
-        private ILogger _commandsLogger;
+        private QueryParameters _queryParameters;
         private ILogger _performanceLogger;
-        private IDomainObjectModel _domainObjectModel;
 
         private static void CheckForErrors(ProcessingResult result)
         {
@@ -56,18 +54,15 @@ namespace Rhetos.RestGenerator.Utilities
 
         public ServiceUtility(
             IProcessingEngine processingEngine,
-            ILogProvider logProvider,
-            IDomainObjectModel domainObjectModel)
+            QueryParameters queryParameters,
+            ILogProvider logProvider)
         {
             _processingEngine = processingEngine;
-            _logger = logProvider.GetLogger("RestService");
-            _commandsLogger = logProvider.GetLogger("RestService Commands");
+            _queryParameters = queryParameters;
             _performanceLogger = logProvider.GetLogger("Performance");
-            _logger.Trace("Rest Service loader initialized.");
-            _domainObjectModel = domainObjectModel;
         }
 
-        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, string filters, IDictionary<string, Type[]> filterTypesByName, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
+        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, string filters, Tuple<string, Type>[] filterTypes, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
         {
             // Legacy interface:
             if (page != 0 || psize != 0)
@@ -82,7 +77,7 @@ namespace Rhetos.RestGenerator.Utilities
             var readCommandInfo = new ReadCommandInfo
             {
                 DataSource = typeof(T).FullName,
-                Filters = ParseFilterParameters(filter, fparam, genericfilter, filters, filterTypesByName),
+                Filters = _queryParameters.ParseFilterParameters(filter, fparam, genericfilter, filters, filterTypes),
                 Top = top,
                 Skip = skip,
                 ReadRecords = readRecords,
@@ -124,7 +119,7 @@ namespace Rhetos.RestGenerator.Utilities
             CheckForErrors(result);
             var resultData = (ReadCommandResult)(((Rhetos.XmlSerialization.XmlBasicData<ReadCommandResult>)(result.CommandResults.Single().Data)).Value);
 
-            _performanceLogger.Write(sw, "RestService: ExecuteReadCommand(" + commandInfo.DataSource + ") Executed.");
+            _performanceLogger.Write(sw, () => "RestService: ExecuteReadCommand(" + commandInfo.DataSource + ") Executed.");
             return resultData;
         }
 
@@ -150,115 +145,6 @@ namespace Rhetos.RestGenerator.Utilities
             }
 
             return result.ToArray();
-        }
-
-        private FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, string filters, IDictionary<string, Type[]> filterTypesByName)
-        {
-            var parsedFilters = new List<FilterCriteria>();
-
-            ParseGenericFilters(filters, parsedFilters);
-            ParseGenericFilters(genericfilter, parsedFilters);
-
-            if (!string.IsNullOrEmpty(filter))
-            {
-                Type filterType = GetFilterType(filter, filterTypesByName);
-
-                object filterInstance;
-                if (!string.IsNullOrEmpty(fparam))
-                {
-                    filterInstance = JsonConvert.DeserializeObject(fparam, filterType);
-                    if (filterInstance == null)
-                        throw new LegacyClientException("Invalid filter parameter format for filter '" + filter + "', data: '" + fparam + "'.");
-                }
-                else
-                    filterInstance = Activator.CreateInstance(filterType);
-
-                parsedFilters.Add(new FilterCriteria { Filter = filterType.AssemblyQualifiedName, Value = filterInstance });
-            }
-
-            foreach (var filterCriteria in parsedFilters)
-                if (!string.IsNullOrEmpty(filterCriteria.Filter) && filterCriteria.Value is JToken)
-                {
-                    Type filterType = GetFilterType(filterCriteria.Filter, filterTypesByName);
-                    filterCriteria.Filter = filterType.AssemblyQualifiedName;
-                    filterCriteria.Value = ((JToken)filterCriteria.Value).ToObject(filterType);
-                }
-
-            return parsedFilters.ToArray();
-        }
-
-        private static void ParseGenericFilters(string filters, List<FilterCriteria> parsedFilters)
-        {
-            if (!string.IsNullOrEmpty(filters))
-            {
-                var parsedGenericFilter = JsonConvert.DeserializeObject<FilterCriteria[]>(filters);
-                if (parsedGenericFilter == null)
-                    throw new LegacyClientException("Invalid format of the generic filter: '" + filters + "'.");
-
-                foreach (var genericFilter in parsedGenericFilter)
-                    DetectJsonListType(genericFilter);
-
-                parsedFilters.AddRange(parsedGenericFilter);
-            }
-        }
-
-        private static void DetectJsonListType(FilterCriteria genericFilter)
-        {
-            if (genericFilter.Value is JArray)
-            {
-                var jArray = (JArray)genericFilter.Value;
-                if (jArray.Count > 0)
-                {
-                    var elementType = jArray.First().Type;
-                    if (jArray.All(item => item.Type == elementType))
-                    {
-                        switch (elementType)
-                        {
-                            case JTokenType.String:
-                                genericFilter.Value = jArray.ToObject<string[]>();
-                                break;
-                            case JTokenType.Integer:
-                                genericFilter.Value = jArray.ToObject<int[]>();
-                                break;
-                            case JTokenType.Guid:
-                                genericFilter.Value = jArray.ToObject<Guid[]>();
-                                break;
-                            case JTokenType.Boolean:
-                                genericFilter.Value = jArray.ToObject<bool[]>();
-                                break;
-                            case JTokenType.Date:
-                                genericFilter.Value = jArray.ToObject<DateTime[]>();
-                                break;
-                            case JTokenType.Float:
-                                genericFilter.Value = jArray.ToObject<decimal[]>();
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private Type GetFilterType(string filterName, IDictionary<string, Type[]> filterTypesByName)
-        {
-            Type filterType = null;
-
-            Type[] matchingTypes = null;
-            filterTypesByName.TryGetValue(filterName, out matchingTypes);
-            if (matchingTypes != null && matchingTypes.Count() > 1)
-                throw new LegacyClientException("Filter type '" + filterName + "' is ambiguous (" + matchingTypes[0].FullName + ", " + matchingTypes[1].FullName + ").");
-            if (matchingTypes != null && matchingTypes.Count() == 1)
-                filterType = matchingTypes[0];
-
-            if (filterType == null)
-                filterType = _domainObjectModel.GetType(filterName);
-
-            if (filterType == null)
-                filterType = Type.GetType(filterName);
-
-            if (filterType == null)
-                throw new LegacyClientException("Filter type '" + filterName + "' is not available for this data structure.");
-
-            return filterType;
         }
 
         public void Execute<T>(T action)

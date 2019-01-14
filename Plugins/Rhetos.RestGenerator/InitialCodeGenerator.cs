@@ -98,6 +98,7 @@ namespace Rhetos.Rest
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<QueryParameters>().InstancePerLifetimeScope();
             builder.RegisterType<ServiceUtility>().InstancePerLifetimeScope();
             " + ServiceRegistrationTag + @"
             base.Load(builder);

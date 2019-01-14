@@ -32,24 +32,24 @@ using Rhetos.Utilities;
 namespace Rhetos.RestGenerator.Plugins
 {
     [Export(typeof(IRestGeneratorPlugin))]
-    [ExportMetadata(MefProvider.Implements, typeof(FilterByInfo))]
-    public class FilterByCodeGenerator : IRestGeneratorPlugin
+    [ExportMetadata(MefProvider.Implements, typeof(QueryWithParameterInfo))]
+    public class QueryWithParameterCodeGenerator : IRestGeneratorPlugin
     {
         private readonly FilterSnippets _filterSnippets;
 
-        public FilterByCodeGenerator(FilterSnippets filterSnippets)
+        public QueryWithParameterCodeGenerator(FilterSnippets filterSnippets)
         {
             _filterSnippets = filterSnippets;
         }
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
-            var info = (FilterByInfo)conceptInfo;
+            var info = (QueryWithParameterInfo)conceptInfo;
 
-            if (DataStructureCodeGenerator.IsTypeSupported(info.Source))
+            if (DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
                 codeBuilder.InsertCode(
-                    _filterSnippets.ExpectedFilterTypesSnippet(info.Source, info.Parameter),
-                    DataStructureCodeGenerator.FilterTypesTag, info.Source);
+                    _filterSnippets.ExpectedFilterTypesSnippet(info.DataStructure, info.ParameterType),
+                    DataStructureCodeGenerator.FilterTypesTag, info.DataStructure);
         }
     }
 }

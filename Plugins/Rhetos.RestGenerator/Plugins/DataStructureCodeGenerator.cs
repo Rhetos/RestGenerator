@@ -71,12 +71,10 @@ namespace Rhetos.RestGenerator.Plugins
             {4}
         }}
     
-        public static readonly IDictionary<string, Type[]> FilterTypes = new List<Tuple<string, Type>>
+        public static readonly Tuple<string, Type>[] FilterTypes = new Tuple<string, Type>[]
             {{
                 " + FilterTypesTag.Evaluate(info) + @"
-            }}
-            .GroupBy(typeName => typeName.Item1)
-            .ToDictionary(g => g.Key, g => g.Select(typeName => typeName.Item2).Distinct().ToArray());
+            }};
 
         // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]

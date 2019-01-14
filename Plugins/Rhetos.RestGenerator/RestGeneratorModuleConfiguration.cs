@@ -18,6 +18,7 @@
 */
 
 using Autofac;
+using Rhetos.RestGenerator.Plugins;
 using System.ComponentModel.Composition;
 using System.Diagnostics.Contracts;
 
@@ -33,7 +34,7 @@ namespace Rhetos.RestGenerator
         protected override void Load(ContainerBuilder builder)
         {
             Rhetos.Extensibility.Plugins.FindAndRegisterPlugins<IRestGeneratorPlugin>(builder);
-
+            builder.RegisterType<FilterSnippets>().SingleInstance();
             base.Load(builder);
         }
     }
