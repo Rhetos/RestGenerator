@@ -149,6 +149,9 @@ namespace Rhetos.RestGenerator.Utilities
 
         public void Execute<T>(T action)
         {
+            if (action == null)
+                action = Activator.CreateInstance<T>();
+        
             var commandInfo = new ExecuteActionCommandInfo { Action = action };
             var result = _processingEngine.Execute(new[] { commandInfo });
             CheckForErrors(result);
