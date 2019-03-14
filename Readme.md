@@ -21,8 +21,8 @@ Following are URI templates for the web methods.
 **Reading data:**
 
 * Reading records: `/?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
-    * For filters, see *Filters* paragraph below.
-    * Example of sorting by multiple properties: `sort=CreationDate desc,Name,ID`.
+  * For filters, see *Filters* paragraph below.
+  * Example of sorting by multiple properties: `sort=CreationDate desc,Name,ID`.
 * Reading total records count for paging: `/TotalCount?filters={{filters}}&sort={{sort}}`
 * Reading records and total count: `/RecordsAndTotalCount?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
 * Reading a single record: `/{{id}}`
@@ -40,27 +40,29 @@ Following are URI templates for the web methods.
 **Reports:**
 
 * Downloading a report: `/?parameter={{parameter}}&convertFormat={{convertFormat}}`
-    * Query parameters `parameter` and `convertFormat` are optional.
-    * Example format `http://localhost/Rhetos/Rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
+  * Query parameters `parameter` and `convertFormat` are optional.
+  * Example format `http://localhost/Rhetos/Rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
 
 ### Filters
 
 Filters are given as a JSON-serialized array containing any number of filters of the following types:
 
-1. **Property filter**
-    * Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
-    * Available operations:
-    * `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
-    * `In`, `NotIn` -- Parameter Value is a JSON array.
-        * Example: Using a generic filter to read multiple items by ID:
-        `http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]`
-    * `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
-    * `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
-        Returns whether the property's value is within a given day, month or year.
-        Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
-2. **Predefined filter** without a parameter
+1. **Generic property filter**
+   * Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
+   * Available operations:
+   * `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
+   * `In`, `NotIn` -- Parameter Value is a JSON array.
+     * Example: Using a generic filter to read multiple items by ID:
+       `http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]`
+   * `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
+   * `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
+     Returns whether the property's value is within a given day, month or year.
+     Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
+2. **Specific filter without a parameter**
+    * Specific filters refer to concepts such as **ItemFilter**, **ComposableFilterBy** and **FilterBy**,
+      and also other predefined filters available in the object model.
     * Example: select active records (filter name: "Common.Active"): `[{"Filter":"Common.Active"}]`
-3. **Predefined filter** with a parameter
+3. **Specific filter with a parameter**
     * Example: select records that contain pattern "abc" (filter name: "Common.SmartSearch" with parameter property "Pattern"): `[{"Filter":"Common.SmartSearch","Value":{"Pattern":"abc"}}]`
 
 When combining multiple filters, the intersection of the filters is returned (AND).
@@ -71,9 +73,9 @@ These features are available for backward compatibility, they will be removed in
 
 * `/Count` WEB API method. Use `/TotalCount` method instead.
 * Reading method query parameters `page` and `psize`. Use `top` and `skip`.
-* Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Predefined filter with a parameter").
+* Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Specific filter with a parameter").
 * Reading method query parameter `genericfilter`. Renamed to `filters`.
-* Property filter operations `Equal` and `NotEqual`. Use `Equals` and `NotEquals` instead.
+* Generic property filter operations `Equal` and `NotEqual`. Use `Equals` and `NotEquals` instead.
 
 Partially supported features:
 
