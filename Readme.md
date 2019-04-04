@@ -11,10 +11,11 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
    3. [Writing data](#writing-data)
    4. [Actions](#actions)
    5. [Reports](#reports)
-2. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
-3. [Build](#build)
-4. [Installation](#installation)
-5. [Examples](#examples)
+2. [Examples](#examples)
+3. [HTTPS](#https)
+4. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
+5. [Build](#build)
+6. [Installation](#installation)
 
 ## Features
 
@@ -109,6 +110,22 @@ When applying multiple filters in a same request, the intersection of the filter
   * Query parameters `parameter` and `convertFormat` are optional.
   * Example format `http://localhost/Rhetos/Rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
 
+## Examples
+
+These examples expect that the Rhetos web application is available at URL <http://localhost/Rhetos/>
+
+Generic property filters:
+
+| Request | URL example |
+| --- | --- |
+| Using a generic filter to read **multiple items by ID** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]> |
+| Using a generic filter to search for **empty values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":""}]> |
+| Using a generic filter to search for **null values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":null}]> |
+
+## HTTPS
+
+To enable HTTPS, follow the instructions in [Set up HTTPS](https://github.com/Rhetos/Rhetos/wiki/Setting-up-Rhetos-for-HTTPS).
+
 ## Obsolete and partially supported features
 
 These features are available for backward compatibility, they will be removed in future versions:
@@ -141,15 +158,3 @@ and make sure the NuGet package location is listed in the *RhetosPackageSources.
   This package is available at the [NuGet.org](https://www.nuget.org/) online gallery.
   It can be downloaded or installed directly from there.
 * For more information, see [Installing plugin packages](https://github.com/Rhetos/Rhetos/wiki/Installing-plugin-packages).
-
-## Examples
-
-These examples expect that the Rhetos web application is available at URL <http://localhost/Rhetos/>
-
-Generic property filters:
-
-| Request | URL example |
-| --- | --- |
-| Using a generic filter to read **multiple items by ID** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]> |
-| Using a generic filter to search for **empty values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":""}]> |
-| Using a generic filter to search for **null values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":null}]> |
