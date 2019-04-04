@@ -5,69 +5,111 @@ It automatically generates **RESTful JSON web service** for all entities, action
 
 See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
+1. [Features](#features)
+   1. [General rules](#general-rules)
+   2. [Reading data](#reading-data)
+   3. [Writing data](#writing-data)
+   4. [Actions](#actions)
+   5. [Reports](#reports)
+2. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
+3. [Build](#build)
+4. [Installation](#installation)
+5. [Examples](#examples)
+
 ## Features
 
-### Web service methods
+### General rules
 
-For each data structure, a service is available at `<rhetos server url>/Rest/<module name>/<entity name>`.
+1. For each data structure or action, a service is available at base URI `<rhetos server url>/Rest/<module name>/<entity name>/`
+2. Any POST request should contain a header: `Content-Type: application/json; charset=utf-8`
 
-Example - a service for entity Claim in module Common, on default local server installation:
+For example, a service for entity *Claim* in module *Common*,
+on default local server installation (<http://localhost/Rhetos>):
 
-* Base service URI (reading service metadata): `http://localhost/Rhetos/Rest/Common/Claim`
-* Reading all entity's records: `http://localhost/Rhetos/Rest/Common/Claim/` (don't forget the *slash* at the end)
+* Base service URI (reading service metadata): `http://localhost/Rhetos/Rest/Common/Claim/`
+* To read all entity's records, simply enter the address in the web browser:
+  `http://localhost/Rhetos/Rest/Common/Claim/` (don't forget the *slash* at the end)
+
+Response:
+
+* The response status code will indicate the success of the request:
+  200 - OK,
+  4xx - client error (incorrect data or request format, authentication or authorization error),
+  500 - internal server error.
+* In case of an error, the response body will contain more information on the error. It is a JSON object with properties:
+  * UserMessage - a message to be displayed to the user.
+  * SystemMessage - additional error metadata for better client UX
+    (for example, a property that caused an error).
 
 Following are URI templates for the web methods.
 
-**Reading data:**
+### Reading data
 
-* Reading records: `/?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
-  * For filters, see *Filters* paragraph below.
-  * Example of sorting by multiple properties: `sort=CreationDate desc,Name,ID`.
-* Reading total records count for paging: `/TotalCount?filters={{filters}}&sort={{sort}}`
-* Reading records and total count: `/RecordsAndTotalCount?filters={{filters}}&top={{top}}&skip={{skip}}&sort={{sort}}`
-* Reading a single record: `/{{id}}`
+To read the data from the entity, or any other readable data structure,
+execute a GET request on its [base URI](#general-rules):
 
-**Writing data:**
+* Reading records: `/?filters=...&top=...&skip=...&sort=...`
+  * The parameters are optional.
+  * *Top* and *skip* values are integer number of records.
+  * See *Filters* description below.
+  * Example of *sorting* by multiple properties: `sort=CreationDate desc,Name,ID`.
+* Reading total records count for paging: `/TotalCount?filters=...&sort=...`
+* Reading records and total count: `/RecordsAndTotalCount?filters=...&top=...&skip=...&sort=...`
+* Reading a single record: `/{id}`
 
-* Inserting a record: POST at the entity's service base URI.
-* Updating a record: PUT `/{{id}}`
-* Deleting a record: DELETE `/{{id}}`
+See the [Examples](#examples) chapter below.
 
-**Actions:**
+**Filters** are provided as a JSON-serialized **array** containing any number of filters of the following types:
 
-* Executing an action: POST at the action's service base URI.
+1. **Generic** property filter
+   * Format: `{"Property":...,"Operation":..., "Value":...}`
+   * Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
+   * Available operations:
+     * `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
+     * `In`, `NotIn` -- Parameter Value is a JSON array.
+     * `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
+     * `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
+       Returns whether the property's value is within a given day, month or year.
+       Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
+2. **Specific filter** without a parameter
+   * Format: `{"Filter":...}` (provide a full name of the filter)
+   * Specific filters refer to concepts such as **ItemFilter**, **ComposableFilterBy** and **FilterBy**,
+     and also other [predefined filters](https://github.com/Rhetos/Rhetos/wiki/Filters-and-other-read-methods#predefined-filters) available in the object model.
+   * Example: get long books from the Bookstore demo by applying
+     [ItemFilter LongBooks](https://github.com/Rhetos/Bookstore/blob/master/src/DslScripts/AdditionalExamples/ExampleFilters.rhe)
+     on Book entity: `[{"Filter":"Bookstore.LongBooks"}]`
+3. **Specific filter** with a parameter
+   * Format: `{"Filter":...,"Value":...}` (value is usually a JSON object)
+   * Example: get books with at least 700 pages from the Bookstore demo by applying
+     [ComposableFilterBy LongBooks3](https://github.com/Rhetos/Bookstore/blob/master/src/DslScripts/AdditionalExamples/ExampleFilters.rhe)
+     on Book entity: `[{"Filter":"Bookstore.LongBooks3","Value":{"MinimumPages":700}}]`
 
-**Reports:**
+When applying multiple filters in a same request, the intersection of the filtered data is returned (AND).
 
-* Downloading a report: `/?parameter={{parameter}}&convertFormat={{convertFormat}}`
+### Writing data
+
+* Inserting a record: POST at the entity's service [base URI](#general-rules).
+* Updating a record: PUT `/<id>`
+* Deleting a record: DELETE `/<id>`
+
+### Actions
+
+* Executing an action: POST at the action's service [base URI](#general-rules).
+* The request body should contain a JSON serialized parameters object (properties of the Action in DSL script).
+  * If the action has no parameters, the body must be set to an empty JSON object "{}" (until RestGenerator v2.5.0),
+    or the body can by empty (since v2.6.0).
+* For example, execute an action "Common.AddToLog" to add a [custom log entry](https://github.com/Rhetos/Rhetos/wiki/Logging#logging-data-changes-and-auditing):
+  * POST `http://localhost/Rhetos/rest/Common/AddToLog/`
+  * Header: `Content-Type: application/json; charset=utf-8`
+  * Request body: `{ "Action":"just testing", "Description":"abc" }`
+
+### Reports
+
+* Downloading a report: `/?parameter=...&convertFormat=...`
   * Query parameters `parameter` and `convertFormat` are optional.
   * Example format `http://localhost/Rhetos/Rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
 
-### Filters
-
-Filters are given as a JSON-serialized array containing any number of filters of the following types:
-
-See the [examples](#examples) below.
-
-1. **Generic property filter**
-   * Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
-   * Available operations:
-   * `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
-   * `In`, `NotIn` -- Parameter Value is a JSON array.
-   * `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
-   * `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
-     Returns whether the property's value is within a given day, month or year.
-     Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
-2. **Specific filter without a parameter**
-    * Specific filters refer to concepts such as **ItemFilter**, **ComposableFilterBy** and **FilterBy**,
-      and also other predefined filters available in the object model.
-    * Example: select active records (filter name: "Common.Active"): `[{"Filter":"Common.Active"}]`
-3. **Specific filter with a parameter**
-    * Example: select records that contain pattern "abc" (filter name: "Common.SmartSearch" with parameter property "Pattern"): `[{"Filter":"Common.SmartSearch","Value":{"Pattern":"abc"}}]`
-
-When combining multiple filters, the intersection of the filters is returned (AND).
-
-### Obsolete and partially supported features
+## Obsolete and partially supported features
 
 These features are available for backward compatibility, they will be removed in future versions:
 
@@ -102,7 +144,9 @@ and make sure the NuGet package location is listed in the *RhetosPackageSources.
 
 ## Examples
 
-These examples expect that the application's Rhetos web server is available at URL <http://localhost/Rhetos/>
+These examples expect that the Rhetos web application is available at URL <http://localhost/Rhetos/>
+
+Generic property filters:
 
 | Request | URL example |
 | --- | --- |
