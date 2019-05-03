@@ -56,7 +56,7 @@ execute a GET request on its [base URI](#general-rules):
   * Example of *sorting* by multiple properties: `sort=CreationDate desc,Name,ID`.
 * Reading total records count for paging: `/TotalCount?filters=...&sort=...`
 * Reading records and total count: `/RecordsAndTotalCount?filters=...&top=...&skip=...&sort=...`
-* Reading a single record: `/{id}`
+* Reading a single record: `/<id>`
 
 See the [Examples](#examples) chapter below.
 
@@ -90,6 +90,8 @@ When applying multiple filters in a same request, the intersection of the filter
 ### Writing data
 
 * Inserting a record: POST at the entity's service [base URI](#general-rules).
+  * You may provide the "ID" value of the new record in the request body (just include the ID property in the JSON object).
+    If not, it will be automatically generated.
 * Updating a record: PUT `/<id>`
 * Deleting a record: DELETE `/<id>`
 
@@ -102,7 +104,7 @@ When applying multiple filters in a same request, the intersection of the filter
 * For example, execute an action "Common.AddToLog" to add a [custom log entry](https://github.com/Rhetos/Rhetos/wiki/Logging#logging-data-changes-and-auditing):
   * POST `http://localhost/Rhetos/rest/Common/AddToLog/`
   * Header: `Content-Type: application/json; charset=utf-8`
-  * Request body: `{ "Action":"just testing", "Description":"abc" }`
+  * Request body: `{"Action":"just testing","Description":"abc"}`
 
 ### Reports
 
