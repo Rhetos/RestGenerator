@@ -37,6 +37,8 @@ namespace Rhetos.RestGenerator.Plugins
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public InsertDataResult Insert{0}{1}({0}.{1} entity)
         {{
+            if (entity == null)
+                throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
             if (Guid.Empty == entity.ID)
                 entity.ID = Guid.NewGuid();
 
@@ -48,9 +50,11 @@ namespace Rhetos.RestGenerator.Plugins
         [WebInvoke(Method = ""PUT"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public void Update{0}{1}(string id, {0}.{1} entity)
         {{
+            if (entity == null)
+                throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
             Guid guid;
             if (!Guid.TryParse(id, out guid))
-                throw new Rhetos.LegacyClientException(""Invalid format of GUID parametar 'ID'."");
+                throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
             if (Guid.Empty == entity.ID)
                 entity.ID = guid;
             if (guid != entity.ID)
@@ -65,7 +69,7 @@ namespace Rhetos.RestGenerator.Plugins
         {{
             Guid guid;
             if (!Guid.TryParse(id, out guid))
-                throw new Rhetos.LegacyClientException(""Invalid format of GUID parametar 'ID'."");
+                throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
             var entity = new {0}.{1} {{ ID = guid }};
 
             _serviceUtility.DeleteData(entity);
