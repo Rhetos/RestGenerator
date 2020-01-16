@@ -123,7 +123,7 @@ namespace Rhetos.Rest
 }
 ";
         
-        private static readonly string _rootPath = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string _rootPath = Paths.BinFolder;
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
