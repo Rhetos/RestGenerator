@@ -19,6 +19,7 @@
 
 using Rhetos.Compiler;
 using Rhetos.Extensibility;
+using Rhetos.Utilities;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -35,7 +36,10 @@ namespace Rhetos.RestGenerator
         private readonly ICodeGenerator _codeGenerator;
         private readonly IAssemblyGenerator _assemblyGenerator;
 
-        public static string GetAssemblyPath() => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", "RestService.dll");
+        public static string GetAssemblyPath()
+        {
+            return Path.Combine(Paths.GeneratedFolder, "RestService.dll");
+        }
 
         public RestGenerator(
             IPluginsContainer<IRestGeneratorPlugin> plugins,
