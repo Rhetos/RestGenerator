@@ -123,8 +123,6 @@ namespace Rhetos.Rest
 }
 ";
         
-        private static readonly string _rootPath = Paths.BinFolder;
-
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             codeBuilder.InsertCode(CodeSnippet);
@@ -162,9 +160,9 @@ namespace Rhetos.Rest
             // RestGenerator
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceUtility));
 
-            foreach (var file in Directory.GetFiles(_rootPath, "ServerDom*.dll", SearchOption.AllDirectories))
+            foreach (var file in Paths.DomAssemblyFiles)
                 codeBuilder.AddReference(file);
-            codeBuilder.AddReference(Path.Combine(_rootPath, "Autofac.dll"));
+            codeBuilder.AddReference(typeof(Autofac.Module).Assembly.Location);
         }
     }
 }
