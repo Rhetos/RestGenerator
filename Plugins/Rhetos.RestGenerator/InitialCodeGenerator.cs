@@ -17,18 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using Rhetos.Web;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
-using System.IO;
-using System.ServiceModel;
-using System.Xml;
-using System.Net;
-using System.Runtime.Serialization;
-using System.Web.Routing;
-using System.ServiceModel.Description;
 using Rhetos.Utilities;
+using System;
+using System.Web.Routing;
+using System.Xml;
 
 namespace Rhetos.RestGenerator
 {
@@ -71,23 +65,29 @@ namespace Rhetos.Rest
         }
     }
 
-    public class RestServiceHost : ServiceHost
+    public class RestServiceHost : WebServiceHost
     {
-        private Type _serviceType;
-
         public RestServiceHost(Type serviceType, Uri[] baseAddresses)
-            : base(serviceType, baseAddresses)
-        {
-            _serviceType = serviceType;
-        }
+            : base(serviceType, baseAddresses) { }
 
         protected override void OnOpening()
         {
+            var setupDefaultBindingSizes = Description.Endpoints.Count == 0;
+            // WebServiceHost will automatically create HTTP and HTTPS REST-like endpoints/binding/behaviours pairs, if service endpoint/binding/behaviour configuration is empty 
+            // After OnOpening setup, we will setup default binding sizes, if needed
             base.OnOpening();
-            this.AddServiceEndpoint(_serviceType, new WebHttpBinding(""rhetosWebHttpBinding""), string.Empty);
-            this.AddServiceEndpoint(_serviceType, new BasicHttpBinding(""rhetosBasicHttpBinding""), ""SOAP"");
 
-            ((ServiceEndpoint)(Description.Endpoints.Where(e => e.Binding is WebHttpBinding).Single())).Behaviors.Add(new WebHttpBehavior()); 
+            if (setupDefaultBindingSizes)
+            {
+                const int sizeInBytes = 209715200;
+                foreach (var binding in Description.Endpoints.Select(x => x.Binding as WebHttpBinding))
+                {
+                    binding.MaxReceivedMessageSize = sizeInBytes;
+                    binding.ReaderQuotas.MaxArrayLength = sizeInBytes;
+                    binding.ReaderQuotas.MaxStringContentLength = sizeInBytes;
+                }
+            }
+
             if (Description.Behaviors.Find<Rhetos.Web.JsonErrorServiceBehavior>() == null)
                 Description.Behaviors.Add(new Rhetos.Web.JsonErrorServiceBehavior());
         }
@@ -146,7 +146,8 @@ namespace Rhetos.Rest
             codeBuilder.AddReferencesFromDependency(typeof(System.Web.Routing.RouteTable));
             codeBuilder.AddReferencesFromDependency(typeof(System.ServiceModel.Activation.ServiceHostFactory));
             codeBuilder.AddReferencesFromDependency(typeof(Route));
-            
+            codeBuilder.AddReferencesFromDependency(typeof(XmlDictionaryReaderQuotas)); // System.Runtime.Serialization, needed for "binding.ReaderQuotas" in code snippet above.
+
             // Rhetos
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.IService));
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Dom.DefaultConcepts.IEntity));

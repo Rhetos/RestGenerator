@@ -5,17 +5,19 @@ It automatically generates **RESTful JSON web service** for all entities, action
 
 See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
-1. [Features](#features)
-   1. [General rules](#general-rules)
-   2. [Reading data](#reading-data)
-   3. [Writing data](#writing-data)
-   4. [Actions](#actions)
-   5. [Reports](#reports)
-2. [Examples](#examples)
-3. [HTTPS](#https)
-4. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
-5. [Build](#build)
-6. [Installation](#installation)
+- [RestGenerator](#restgenerator)
+  - [Features](#features)
+    - [General rules](#general-rules)
+    - [Reading data](#reading-data)
+    - [Writing data](#writing-data)
+    - [Actions](#actions)
+    - [Reports](#reports)
+  - [Examples](#examples)
+  - [HTTPS](#https)
+  - [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
+  - [Build](#build)
+  - [Installation](#installation)
+    - [Overriding IIS binding configuration](#overriding-iis-binding-configuration)
 
 ## Features
 
@@ -160,3 +162,26 @@ and make sure the NuGet package location is listed in the *RhetosPackageSources.
   This package is available at the [NuGet.org](https://www.nuget.org/) online gallery.
   It can be downloaded or installed directly from there.
 * For more information, see [Installing plugin packages](https://github.com/Rhetos/Rhetos/wiki/Installing-plugin-packages).
+
+### Overriding IIS binding configuration
+
+Generated web service (WebServiceHost) will automatically create HTTP and HTTPS REST-like endpoint/binding/behavior pairs if service endpoint/binding/behavior configuration is empty.
+
+If you need to override default behavior (i.e. enable only HTTPS), you need to add following in `services` section:
+
+```XML
+<service name="Rhetos.Rest.RestService{module}{object}">
+  <clear />
+  <endpoint binding="webHttpBinding" bindingConfiguration="rhetosWebHttpsBinding" contract="Rhetos.Rest.RestService{module}{object}" />
+</service>
+```
+
+Also, you need to define new `webHttpBinding` `binding` item:
+
+
+```XML
+<binding name="rhetosWebHttpsBinding" maxReceivedMessageSize="209715200">
+  <security mode="Transport" />
+  <readerQuotas maxArrayLength="209715200" maxStringContentLength="209715200" />
+</binding>
+```
