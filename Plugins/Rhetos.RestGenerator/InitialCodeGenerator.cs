@@ -31,9 +31,13 @@ namespace Rhetos.RestGenerator
         public const string RhetosRestClassesTag = "/*InitialCodeGenerator.RhetosRestClassesTag*/";
         public const string ServiceRegistrationTag = "/*InitialCodeGenerator.ServiceRegistrationTag*/";
         public const string ServiceInitializationTag = "/*InitialCodeGenerator.ServiceInitializationTag*/";
+        public const string ServiceHostOnOpeningBeginTag = "/*ServiceHostOnOpeningBegin*/";
+        public const string ServiceHostOnOpeningEndTag = "/*ServiceHostOnOpeningEnd*/";
 
-        private const string CodeSnippet =
-@"
+        public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
+        {
+            string CodeSnippet =
+$@"
 using Autofac;
 using Module = Autofac.Module;
 using Rhetos.Dom.DefaultConcepts;
@@ -54,77 +58,77 @@ using System.Text;
 using System.Web.Routing;
 
 namespace Rhetos.Rest
-{
+{{
     public class RestServiceHostFactory : Autofac.Integration.Wcf.AutofacServiceHostFactory
-    {
+    {{
         protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
-        {
+        {{
             RestServiceHost host = new RestServiceHost(serviceType, baseAddresses);
 
             return host;
-        }
-    }
+        }}
+    }}
 
     public class RestServiceHost : WebServiceHost
-    {
+    {{
         public RestServiceHost(Type serviceType, Uri[] baseAddresses)
-            : base(serviceType, baseAddresses) { }
+            : base(serviceType, baseAddresses) {{ }}
 
         protected override void OnOpening()
-        {
+        {{
+            {ServiceHostOnOpeningBeginTag}
             var setupDefaultBindingSizes = Description.Endpoints.Count == 0;
             // WebServiceHost will automatically create HTTP and HTTPS REST-like endpoints/binding/behaviours pairs, if service endpoint/binding/behaviour configuration is empty 
             // After OnOpening setup, we will setup default binding sizes, if needed
             base.OnOpening();
 
             if (setupDefaultBindingSizes)
-            {
+            {{
                 const int sizeInBytes = 209715200;
                 foreach (var binding in Description.Endpoints.Select(x => x.Binding as WebHttpBinding))
-                {
+                {{
                     binding.MaxReceivedMessageSize = sizeInBytes;
                     binding.ReaderQuotas.MaxArrayLength = sizeInBytes;
                     binding.ReaderQuotas.MaxStringContentLength = sizeInBytes;
-                }
-            }
+                }}
+            }}
 
             if (Description.Behaviors.Find<Rhetos.Web.JsonErrorServiceBehavior>() == null)
                 Description.Behaviors.Add(new Rhetos.Web.JsonErrorServiceBehavior());
-        }
-    }
+            {ServiceHostOnOpeningEndTag}
+        }}
+    }}
 
     [System.ComponentModel.Composition.Export(typeof(Module))]
     public class RestServiceModuleConfiguration : Module
-    {
+    {{
         protected override void Load(ContainerBuilder builder)
-        {
+        {{
             builder.RegisterType<QueryParameters>().InstancePerLifetimeScope();
             builder.RegisterType<ServiceUtility>().InstancePerLifetimeScope();
-            " + ServiceRegistrationTag + @"
+            {ServiceRegistrationTag}
             base.Load(builder);
-        }
-    }
+        }}
+    }}
 
     [System.ComponentModel.Composition.Export(typeof(Rhetos.IService))]
     public class RestServiceInitializer : Rhetos.IService
-    {
+    {{
         public void Initialize()
-        {
-            " + ServiceInitializationTag + @"
-        }
+        {{
+            {ServiceInitializationTag}
+        }}
 
         public void InitializeApplicationInstance(System.Web.HttpApplication context)
-        {
-        }
-    }
+        {{
+        }}
+    }}
 
-" + RhetosRestClassesTag + @"
+{RhetosRestClassesTag}
 
-}
+}}
 ";
-        
-        public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
-        {
+
             codeBuilder.InsertCode(CodeSnippet);
 
             // Global

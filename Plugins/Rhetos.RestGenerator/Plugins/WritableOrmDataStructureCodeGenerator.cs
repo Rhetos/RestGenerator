@@ -17,25 +17,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
-using Rhetos.Extensibility;
-using Rhetos.RestGenerator;
 
 namespace Rhetos.RestGenerator.Plugins
 {
     /// <summary>
     /// This is not exported, but called from DataStructureCodeGenerator if exists.
     /// </summary>
-    public class WritableOrmDataStructureCodeGenerator
+    public static class WritableOrmDataStructureCodeGenerator
     {      
-        private const string ImplementationCodeSnippet = @"
+        public static void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
+        {
+            DataStructureInfo info = (DataStructureInfo) conceptInfo;
+
+            if (info is IWritableOrmDataStructure)
+            {
+                string snippet = $@"
         [OperationContract]
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public InsertDataResult Insert{0}{1}({0}.{1} entity)
+        public InsertDataResult Insert{info.Module.Name}{info.Name}({info.Module.Name}.{info.Name} entity)
         {{
             if (entity == null)
                 throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
@@ -48,7 +50,7 @@ namespace Rhetos.RestGenerator.Plugins
 
         [OperationContract]
         [WebInvoke(Method = ""PUT"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public void Update{0}{1}(string id, {0}.{1} entity)
+        public void Update{info.Module.Name}{info.Name}(string id, {info.Module.Name}.{info.Name} entity)
         {{
             if (entity == null)
                 throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
@@ -65,27 +67,18 @@ namespace Rhetos.RestGenerator.Plugins
 
         [OperationContract]
         [WebInvoke(Method = ""DELETE"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public void Delete{0}{1}(string id)
+        public void Delete{info.Module.Name}{info.Name}(string id)
         {{
             Guid guid;
             if (!Guid.TryParse(id, out guid))
                 throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
-            var entity = new {0}.{1} {{ ID = guid }};
+            var entity = new {info.Module.Name}.{info.Name} {{ ID = guid }};
 
             _serviceUtility.DeleteData(entity);
         }}
 
 ";
-
-        public static void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
-        {
-            DataStructureInfo info = (DataStructureInfo) conceptInfo;
-
-            if (info is IWritableOrmDataStructure)
-            {
-                codeBuilder.InsertCode(
-                    String.Format(ImplementationCodeSnippet, info.Module.Name, info.Name),
-                    DataStructureCodeGenerator.AdditionalOperationsTag.Evaluate(info));
+                codeBuilder.InsertCode(snippet, DataStructureCodeGenerator.AdditionalOperationsTag.Evaluate(info));
             }
         }
     }

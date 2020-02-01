@@ -18,13 +18,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Rhetos.RestGenerator.Utilities
 {
-    [Obsolete]
+    [Obsolete("Use TotalCountResult instead.")]
     public class CountResult
     {
         public int TotalRecords { get; set; }

@@ -17,17 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
-using Rhetos.RestGenerator;
-using Rhetos.Utilities;
+using System.ComponentModel.Composition;
 
 namespace Rhetos.RestGenerator.Plugins
 {

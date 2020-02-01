@@ -27,7 +27,7 @@ namespace Rhetos.RestGenerator.Utilities
 {
     public class QueryParameters
     {
-        private IDomainObjectModel _domainObjectModel;
+        private readonly IDomainObjectModel _domainObjectModel;
 
         public QueryParameters(
             IDomainObjectModel domainObjectModel)
@@ -96,11 +96,11 @@ namespace Rhetos.RestGenerator.Utilities
             List<Type> matchingTypes = filterTypes.Concat(_standardFilterTypes)
                 .Where(f => f.Item1.Equals(filterName)).Select(f => f.Item2).Distinct().ToList();
 
-            if (matchingTypes.Count() > 1)
+            if (matchingTypes.Count > 1)
                 throw new ClientException($"Filter type '{filterName}' is ambiguous ({matchingTypes.First().FullName}, {matchingTypes.Last().FullName})." +
                     $" Please specify full filter name.");
 
-            if (matchingTypes.Count() == 1)
+            if (matchingTypes.Count == 1)
                 filterType = matchingTypes.Single();
 
             if (filterType == null)

@@ -25,7 +25,7 @@ using System.Linq;
 
 namespace Rhetos.RestGenerator.Utilities
 {
-    public class Json
+    public static class Json
     {
         /// <summary>
         /// A custom error handler for JSON deserialization, that throws a Rhetos.ClientException with an error description.
@@ -75,8 +75,8 @@ namespace Rhetos.RestGenerator.Utilities
         /// </summary>
         public static object FinishPartiallyDeserializedObject(object o, Type type)
         {
-            if (o is JToken)
-                return ((JToken)o).ToObject(type);
+            if (o is JToken jToken)
+                return jToken.ToObject(type);
             else
                 return o;
         }
@@ -86,29 +86,25 @@ namespace Rhetos.RestGenerator.Utilities
         /// </summary>
         public static object FinishPartiallyDeserializedArray(object o)
         {
-            if (o is JArray)
+            if (o is JArray jArray && jArray.Count > 0)
             {
-                var jArray = (JArray)o;
-                if (jArray.Count > 0)
+                var elementType = jArray.First().Type;
+                if (jArray.All(item => item.Type == elementType))
                 {
-                    var elementType = jArray.First().Type;
-                    if (jArray.All(item => item.Type == elementType))
+                    switch (elementType)
                     {
-                        switch (elementType)
-                        {
-                            case JTokenType.String:
-                                return jArray.ToObject<string[]>();
-                            case JTokenType.Integer:
-                                return jArray.ToObject<int[]>();
-                            case JTokenType.Guid:
-                                return jArray.ToObject<Guid[]>();
-                            case JTokenType.Boolean:
-                                return jArray.ToObject<bool[]>();
-                            case JTokenType.Date:
-                                return jArray.ToObject<DateTime[]>();
-                            case JTokenType.Float:
-                                return jArray.ToObject<decimal[]>();
-                        }
+                        case JTokenType.String:
+                            return jArray.ToObject<string[]>();
+                        case JTokenType.Integer:
+                            return jArray.ToObject<int[]>();
+                        case JTokenType.Guid:
+                            return jArray.ToObject<Guid[]>();
+                        case JTokenType.Boolean:
+                            return jArray.ToObject<bool[]>();
+                        case JTokenType.Date:
+                            return jArray.ToObject<DateTime[]>();
+                        case JTokenType.Float:
+                            return jArray.ToObject<decimal[]>();
                     }
                 }
             }

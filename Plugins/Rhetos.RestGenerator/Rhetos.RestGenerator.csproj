@@ -192,6 +192,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Plugins\QueryWithParameterCodeGenerator.cs" />
     <Compile Include="Plugins\FilterSnippets.cs" />
     <Compile Include="Plugins\FilterByCodeGenerator.cs" />

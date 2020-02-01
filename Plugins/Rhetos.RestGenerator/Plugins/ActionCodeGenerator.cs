@@ -17,16 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
-using Rhetos.RestGenerator;
+using System.ComponentModel.Composition;
 
 namespace Rhetos.RestGenerator.Plugins
 {
@@ -36,41 +31,40 @@ namespace Rhetos.RestGenerator.Plugins
     {
         private static string ServiceRegistrationCodeSnippet(ActionInfo info)
         {
-            return string.Format(@"builder.RegisterType<RestService{0}{1}>().InstancePerLifetimeScope();
-            ", info.Module.Name, info.Name);
+            return $@"builder.RegisterType<RestService{info.Module.Name}{info.Name}>().InstancePerLifetimeScope();
+            ";
         }
 
         private static string ServiceInitializationCodeSnippet(ActionInfo info)
         {
-            return string.Format(@"System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute(""Rest/{0}/{1}"", 
-                new RestServiceHostFactory(), typeof(RestService{0}{1})));
-            ", info.Module.Name, info.Name);
+            return $@"System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute(""Rest/{info.Module.Name}/{info.Name}"", 
+                new RestServiceHostFactory(), typeof(RestService{info.Module.Name}{info.Name})));
+            ";
         }
     
         private static string ServiceDefinitionCodeSnippet(ActionInfo info)
         {
-            return String.Format(
-@"
+            return $@"
     [System.ServiceModel.ServiceContract]
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
-    public class RestService{0}{1}
+    public class RestService{info.Module.Name}{info.Name}
     {{
         private ServiceUtility _serviceUtility;
 
-        public RestService{0}{1}(ServiceUtility serviceUtility) 
+        public RestService{info.Module.Name}{info.Name}(ServiceUtility serviceUtility) 
         {{
             _serviceUtility = serviceUtility;
         }}
 
         [OperationContract]
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public void Execute{0}{1}({0}.{1} action)
+        public void Execute{info.Module.Name}{info.Name}({info.Module.Name}.{info.Name} action)
         {{
-            _serviceUtility.Execute<{0}.{1}>(action);
+            _serviceUtility.Execute<{info.Module.Name}.{info.Name}>(action);
         }}
     }}
 
-", info.Module.Name, info.Name);
+";
         }
         
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)

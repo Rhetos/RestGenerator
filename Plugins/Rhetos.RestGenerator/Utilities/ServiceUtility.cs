@@ -18,8 +18,6 @@
 */
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Rhetos.Dom;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Logging;
 using Rhetos.Processing;
@@ -27,19 +25,15 @@ using Rhetos.Processing.DefaultCommands;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.ServiceModel.Web;
-using System.Text;
 
 namespace Rhetos.RestGenerator.Utilities
 {
     public class ServiceUtility
     {
-        private IProcessingEngine _processingEngine;
-        private QueryParameters _queryParameters;
-        private ILogger _performanceLogger;
+        private readonly IProcessingEngine _processingEngine;
+        private readonly QueryParameters _queryParameters;
+        private readonly ILogger _performanceLogger;
 
         private static void CheckForErrors(ProcessingResult result)
         {
@@ -98,7 +92,9 @@ namespace Rhetos.RestGenerator.Utilities
         {
             Guid id;
             if (!Guid.TryParse(idString, out id))
+#pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
                 throw new LegacyClientException("Invalid format of GUID parametar 'ID'.");
+#pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
 
             var filterInstance = new[] { id };
 
@@ -119,7 +115,7 @@ namespace Rhetos.RestGenerator.Utilities
             CheckForErrors(result);
             var resultData = (ReadCommandResult)(((Rhetos.XmlSerialization.XmlBasicData<ReadCommandResult>)(result.CommandResults.Single().Data)).Value);
 
-            _performanceLogger.Write(sw, () => "RestService: ExecuteReadCommand(" + commandInfo.DataSource + ") Executed.");
+            _performanceLogger.Write(sw, () => $"RestService: ExecuteReadCommand({commandInfo.DataSource}) Executed.");
             return resultData;
         }
 
@@ -134,7 +130,7 @@ namespace Rhetos.RestGenerator.Utilities
                 {
                     var sortPropertyInfo = property.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (sortPropertyInfo.Length > 2)
-                        throw new ClientException("Invalid 'sort' parameter format (" + sort + ").");
+                        throw new ClientException($"Invalid 'sort' parameter format ({sort}).");
 
                     result.Add(new OrderByProperty
                     {
@@ -206,7 +202,9 @@ namespace Rhetos.RestGenerator.Utilities
             {
                 parameterInstance = JsonConvert.DeserializeObject(parameter, typeof(T));
                 if (parameterInstance == null)
-                    throw new LegacyClientException("Invalid parameter format for report '" + typeof(T).FullName + "', data: '" + parameter + "'.");
+#pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
+                    throw new LegacyClientException($"Invalid parameter format for report '{typeof(T).FullName}', data: '{parameter}'.");
+#pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
             }
             else
                 parameterInstance = Activator.CreateInstance(typeof(T));
@@ -225,7 +223,9 @@ namespace Rhetos.RestGenerator.Utilities
             catch (Autofac.Core.Registration.ComponentNotRegisteredException ex)
             {
                 if (ex.Message.Contains(typeof(IReportRepository).FullName))
-                    throw new LegacyClientException("Report " + typeof(T).FullName + " does not provide file downloading.", ex);
+#pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
+                    throw new LegacyClientException($"Report {typeof(T).FullName} does not provide file downloading.", ex);
+#pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
                 else
                     throw;
             }

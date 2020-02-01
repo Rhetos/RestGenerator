@@ -17,16 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using System.Globalization;
-using System.Xml;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
-using Rhetos.RestGenerator;
-using Rhetos.Utilities;
+using System.ComponentModel.Composition;
 
 namespace Rhetos.RestGenerator.Plugins
 {
@@ -53,27 +48,27 @@ namespace Rhetos.RestGenerator.Plugins
 
         private static string ServiceRegistrationCodeSnippet(DataStructureInfo info)
         {
-            return string.Format(@"builder.RegisterType<RestService{0}{1}>().InstancePerLifetimeScope();
-            ", info.Module.Name, info.Name);
+            return $@"builder.RegisterType<RestService{info.Module.Name}{info.Name}>().InstancePerLifetimeScope();
+            ";
         }
 
         private static string ServiceInitializationCodeSnippet(DataStructureInfo info)
         {
-            return string.Format(@"System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute(""Rest/{0}/{1}"", 
-                new RestServiceHostFactory(), typeof(RestService{0}{1})));
-            ", info.Module.Name, info.Name);
+            return $@"System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute(""Rest/{info.Module.Name}/{info.Name}"", 
+                new RestServiceHostFactory(), typeof(RestService{info.Module.Name}{info.Name})));
+            ";
         }
 
         private static string ServiceDefinitionCodeSnippet(DataStructureInfo info)
         {
-            return string.Format(@"
+            return $@"
     [System.ServiceModel.ServiceContract]
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
-    public class RestService{0}{1}
+    public class RestService{info.Module.Name}{info.Name}
     {{
         private ServiceUtility _serviceUtility;
 
-        public RestService{0}{1}(ServiceUtility serviceUtility)
+        public RestService{info.Module.Name}{info.Name}(ServiceUtility serviceUtility)
         {{
             _serviceUtility = serviceUtility;
         }}
@@ -82,15 +77,13 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/?parameter={{parameter}}&convertFormat={{convertFormat}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public DownloadReportResult DownloadReport(string parameter, string convertFormat)
         {{
-            return _serviceUtility.DownloadReport<{0}.{1}>(parameter, convertFormat);
+            return _serviceUtility.DownloadReport<{info.Module.Name}.{info.Name}>(parameter, convertFormat);
         }}
 
-        " + AdditionalOperationsTag.Evaluate(info) + @"
+        {AdditionalOperationsTag.Evaluate(info)}
     }}
 
-    ",
-            info.Module.Name,
-            info.Name);
+    ";
         }
     }
 }

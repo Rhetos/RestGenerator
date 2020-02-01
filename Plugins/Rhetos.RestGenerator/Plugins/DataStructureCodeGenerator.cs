@@ -17,16 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
-using System.Globalization;
-using System.Xml;
 using Rhetos.Compiler;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Extensibility;
-using Rhetos.RestGenerator;
-using Rhetos.Utilities;
+using System.ComponentModel.Composition;
 
 namespace Rhetos.RestGenerator.Plugins
 {
@@ -44,46 +39,46 @@ namespace Rhetos.RestGenerator.Plugins
 
         private static string ServiceRegistrationCodeSnippet(DataStructureInfo info)
         {
-            return string.Format(@"builder.RegisterType<RestService{0}{1}>().InstancePerLifetimeScope();
-            ", info.Module.Name, info.Name);
+            return $@"builder.RegisterType<RestService{info.Module.Name}{info.Name}>().InstancePerLifetimeScope();
+            ";
         }
 
         private static string ServiceInitializationCodeSnippet(DataStructureInfo info)
         {
-            return string.Format(@"System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute(""Rest/{0}/{1}"", 
-                new RestServiceHostFactory(), typeof(RestService{0}{1})));
-            ", info.Module.Name, info.Name);
+            return $@"System.Web.Routing.RouteTable.Routes.Add(new System.ServiceModel.Activation.ServiceRoute(""Rest/{info.Module.Name}/{info.Name}"", 
+                new RestServiceHostFactory(), typeof(RestService{info.Module.Name}{info.Name})));
+            ";
         }
 
         private static string ServiceDefinitionCodeSnippet(DataStructureInfo info)
         {
-            return string.Format(@"
+            return $@"
     [System.ServiceModel.ServiceContract]
     [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
-    public class RestService{0}{1}
+    public class RestService{info.Module.Name}{info.Name}
     {{
         private ServiceUtility _serviceUtility;
-        {2}
+        {AdditionalPropertyInitialization.Evaluate(info)}
 
-        public RestService{0}{1}(ServiceUtility serviceUtility{3})
+        public RestService{info.Module.Name}{info.Name}(ServiceUtility serviceUtility{AdditionalPropertyConstructorParameter.Evaluate(info)})
         {{
             _serviceUtility = serviceUtility;
-            {4}
+            {AdditionalPropertyConstructorSetProperties.Evaluate(info)}
         }}
     
         public static readonly Tuple<string, Type>[] FilterTypes = new Tuple<string, Type>[]
             {{
-                " + FilterTypesTag.Evaluate(info) + @"
+                {FilterTypesTag.Evaluate(info)}
             }};
 
         // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]
         [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public RecordsResult<{0}.{1}> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
+        public RecordsResult<{info.Module.Name}.{info.Name}> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
+            var data = _serviceUtility.GetData<{info.Module.Name}.{info.Name}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: false);
-            return new RecordsResult<{0}.{1}> {{ Records = data.Records }};
+            return new RecordsResult<{info.Module.Name}.{info.Name}> {{ Records = data.Records }};
         }}
 
         [Obsolete]
@@ -91,7 +86,7 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public CountResult GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<{info.Module.Name}.{info.Name}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new CountResult {{ TotalRecords = data.TotalCount }};
         }}
@@ -101,7 +96,7 @@ namespace Rhetos.RestGenerator.Plugins
         [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<{info.Module.Name}.{info.Name}>(filter, fparam, genericfilter, filters, FilterTypes, 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new TotalCountResult {{ TotalCount = data.TotalCount }};
         }}
@@ -109,31 +104,25 @@ namespace Rhetos.RestGenerator.Plugins
         // [Obsolete] parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
         [OperationContract]
         [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public RecordsAndTotalCountResult<{0}.{1}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
+        public RecordsAndTotalCountResult<{info.Module.Name}.{info.Name}> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            return _serviceUtility.GetData<{0}.{1}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
+            return _serviceUtility.GetData<{info.Module.Name}.{info.Name}>(filter, fparam, genericfilter, filters, FilterTypes, top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: true);
         }}
 
         [OperationContract]
         [WebGet(UriTemplate = ""/{{id}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        public {0}.{1} GetById(string id)
+        public {info.Module.Name}.{info.Name} GetById(string id)
         {{
-            var result = _serviceUtility.GetDataById<{0}.{1}>(id);
+            var result = _serviceUtility.GetDataById<{info.Module.Name}.{info.Name}>(id);
             if (result == null)
                 throw new Rhetos.LegacyClientException(""There is no resource of this type with a given ID."") {{ HttpStatusCode = HttpStatusCode.NotFound, Severe = false }};
             return result;
         }}
 
-        " + AdditionalOperationsTag.Evaluate(info) + @"
+        {AdditionalOperationsTag.Evaluate(info)}
     }}
-    ",
-            info.Module.Name,
-            info.Name,
-            AdditionalPropertyInitialization.Evaluate(info),
-            AdditionalPropertyConstructorParameter.Evaluate(info),
-            AdditionalPropertyConstructorSetProperties.Evaluate(info)
-            );
+    ";
         }
 
         public static bool IsTypeSupported(DataStructureInfo conceptInfo)

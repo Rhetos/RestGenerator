@@ -17,12 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+// This file is used by Code Analysis to maintain SuppressMessage
+// attributes that are applied to this project.
+// Project-level suppressions either have no target or are given
+// a specific target and scoped to a namespace, type, member, etc.
 
-namespace Rhetos.RestGenerator.Utilities
-{
-    public class InsertDataResult
-    {
-        public Guid ID { get; set; }
-    }
-}
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2479:Whitespace and control characters in string literals should be explicit",
+    Justification = "Large code snippets are more readable as verbatim multiple string formatting.")]
