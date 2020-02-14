@@ -124,8 +124,11 @@ namespace Rhetos.Rest
         }}
     }}
 
+#pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
+
 {RhetosRestClassesTag}
 
+#pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
 }}
 ";
 
