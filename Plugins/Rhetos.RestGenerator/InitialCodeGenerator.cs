@@ -57,7 +57,7 @@ using System.IO;
 using System.Text;
 using System.Web.Routing;
 
-namespace Rhetos.Rest
+namespace RestService
 {{
     public class RestServiceHostFactory : Autofac.Integration.Wcf.AutofacServiceHostFactory
     {{
