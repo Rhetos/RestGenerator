@@ -202,8 +202,6 @@
     <Compile Include="Plugins\ActionCodeGenerator.cs" />
     <Compile Include="Plugins\DataStructureCodeGenerator.cs" />
     <Compile Include="Plugins\ModuleExternalReferenceCodeGenerator.cs" />
-    <Compile Include="Plugins\WritableOrmDataStructureCodeGenerator.cs" />
-    <Compile Include="Plugins\WriteCodeGenerator.cs" />
     <Compile Include="RestGeneratorModuleConfiguration.cs" />
     <Compile Include="RestGenerator.cs" />
     <Compile Include="InitialCodeGenerator.cs">

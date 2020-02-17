@@ -28,34 +28,42 @@ namespace Rhetos.RestGenerator
 {
     public class InitialCodeGenerator : IRestGeneratorPlugin
     {
+        // Keeping 'const' for backward compatibility:
         public const string RhetosRestClassesTag = "/*InitialCodeGenerator.RhetosRestClassesTag*/";
         public const string ServiceRegistrationTag = "/*InitialCodeGenerator.ServiceRegistrationTag*/";
         public const string ServiceInitializationTag = "/*InitialCodeGenerator.ServiceInitializationTag*/";
-        public const string ServiceHostOnOpeningBeginTag = "/*ServiceHostOnOpeningBegin*/";
-        public const string ServiceHostOnOpeningEndTag = "/*ServiceHostOnOpeningEnd*/";
+        public static readonly string ServiceInstanceInitializationTag = "/*InitialCodeGenerator.ServiceInstanceInitializationTag*/";
+        public static readonly string ServiceHostOnOpeningBeginTag = "/*InitialCodeGenerator.ServiceHostOnOpeningBeginTag*/";
+        public static readonly string ServiceHostOnOpeningEndTag = "/*InitialCodeGenerator.ServiceHostOnOpeningEndTag*/";
+        public static readonly string ServiceHostOnOpeningDefaultBindingTag = "/*InitialCodeGenerator.ServiceHostOnOpeningDefaultBindingTag*/";
+        public static readonly string DataRestServicePropertiesTag = "/*InitialCodeGenerator.DataRestServicePropertiesTag*/";
+        public static readonly string DataRestServiceConstructorParameterTag = "/*InitialCodeGenerator.DataRestServiceConstructorParameterTag*/";
+        public static readonly string DataRestServiceConstructorTag = "/*InitialCodeGenerator.DataRestServiceConstructorTag*/";
+        public static readonly string DataRestServiceMethodsTag = "/*InitialCodeGenerator.DataRestServiceMethodsTag*/";
+        public static readonly string ActionRestServicePropertiesTag = "/*InitialCodeGenerator.ActionRestServicePropertiesTag*/";
+        public static readonly string ActionRestServiceConstructorParameterTag = "/*InitialCodeGenerator.ActionRestServiceConstructorParameterTag*/";
+        public static readonly string ActionRestServiceConstructorTag = "/*InitialCodeGenerator.ActionRestServiceConstructorTag*/";
+        public static readonly string ActionRestServiceMethodsTag = "/*InitialCodeGenerator.ActionRestServiceMethodsTag*/";
+        public static readonly string ReportRestServicePropertiesTag = "/*InitialCodeGenerator.ReportRestServicePropertiesTag*/";
+        public static readonly string ReportRestServiceConstructorParameterTag = "/*InitialCodeGenerator.ReportRestServiceConstructorParameterTag*/";
+        public static readonly string ReportRestServiceConstructorTag = "/*InitialCodeGenerator.ReportRestServiceConstructorTag*/";
+        public static readonly string ReportRestServiceMethodsTag = "/*InitialCodeGenerator.ReportRestServiceMethodsTag*/";
+        public static readonly string FilterTypesByDataStructureTag = "/*InitialCodeGenerator.FilterTypesByDataStructureTag*/";
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
             string CodeSnippet =
-$@"
-using Autofac;
-using Module = Autofac.Module;
+$@"using Autofac;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.RestGenerator.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Configuration;
-using System.ServiceModel.Description;
-using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
-using System.Web;
 using System.Net;
-using System.IO;
 using System.Text;
-using System.Web.Routing;
 
 namespace RestService
 {{
@@ -63,9 +71,7 @@ namespace RestService
     {{
         protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses)
         {{
-            RestServiceHost host = new RestServiceHost(serviceType, baseAddresses);
-
-            return host;
+            return new RestServiceHost(serviceType, baseAddresses);
         }}
     }}
 
@@ -78,7 +84,7 @@ namespace RestService
         {{
             {ServiceHostOnOpeningBeginTag}
             var setupDefaultBindingSizes = Description.Endpoints.Count == 0;
-            // WebServiceHost will automatically create HTTP and HTTPS REST-like endpoints/binding/behaviours pairs, if service endpoint/binding/behaviour configuration is empty 
+            // WebServiceHost will automatically create HTTP and HTTPS REST-like endpoints/binding/behaviors pairs, if service endpoint/binding/behavior configuration is empty 
             // After OnOpening setup, we will setup default binding sizes, if needed
             base.OnOpening();
 
@@ -90,6 +96,7 @@ namespace RestService
                     binding.MaxReceivedMessageSize = sizeInBytes;
                     binding.ReaderQuotas.MaxArrayLength = sizeInBytes;
                     binding.ReaderQuotas.MaxStringContentLength = sizeInBytes;
+                    {ServiceHostOnOpeningDefaultBindingTag}
                 }}
             }}
 
@@ -106,6 +113,9 @@ namespace RestService
         {{
             builder.RegisterType<QueryParameters>().InstancePerLifetimeScope();
             builder.RegisterType<ServiceUtility>().InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(DataRestService<>)).InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(ActionRestService<>)).InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(ReportRestService<>)).InstancePerLifetimeScope();
             {ServiceRegistrationTag}
             base.Load(builder);
         }}
@@ -121,12 +131,175 @@ namespace RestService
 
         public void InitializeApplicationInstance(System.Web.HttpApplication context)
         {{
+            {ServiceInstanceInitializationTag}
         }}
+    }}
+
+    public static class DataRestService
+    {{
+        // This is separated from generic rest service class, because a static field in a generic type is not shared among instances of different close constructed types.
+        public static readonly IReadOnlyDictionary<string, Tuple<string, Type>[]> FilterTypesByDataStructure = new Dictionary<string, Tuple<string, Type>[]>
+        {{
+            {FilterTypesByDataStructureTag}
+        }};
     }}
 
 #pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
 
-{RhetosRestClassesTag}
+    [System.ServiceModel.ServiceContract]
+    [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
+    public class DataRestService<TDataStructure> where TDataStructure : IEntity, new()
+    {{
+        private readonly ServiceUtility _serviceUtility;
+        {DataRestServicePropertiesTag}
+
+        public DataRestService(ServiceUtility serviceUtility{DataRestServiceConstructorParameterTag})
+        {{
+            _serviceUtility = serviceUtility;
+            {DataRestServiceConstructorTag}
+        }}
+
+        // Obsolete parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
+        [OperationContract]
+        [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public RecordsResult<TDataStructure> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
+        {{
+            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, DataRestService.FilterTypesByDataStructure[typeof(TDataStructure).FullName], top, skip, page, psize, sort,
+                readRecords: true, readTotalCount: false);
+            return new RecordsResult<TDataStructure> {{ Records = data.Records }};
+        }}
+
+        [Obsolete(""Use GetTotalCount instead."")]
+        [OperationContract]
+        [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public CountResult GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
+        {{
+            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, DataRestService.FilterTypesByDataStructure[typeof(TDataStructure).FullName], 0, 0, 0, 0, sort,
+                readRecords: false, readTotalCount: true);
+            return new CountResult {{ TotalRecords = data.TotalCount }};
+        }}
+
+        // Obsolete parameters: filter, fparam, genericfilter (use filters).
+        [OperationContract]
+        [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
+        {{
+            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, DataRestService.FilterTypesByDataStructure[typeof(TDataStructure).FullName], 0, 0, 0, 0, sort,
+                readRecords: false, readTotalCount: true);
+            return new TotalCountResult {{ TotalCount = data.TotalCount }};
+        }}
+
+        // Obsolete parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
+        [OperationContract]
+        [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public RecordsAndTotalCountResult<TDataStructure> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
+        {{
+            return _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, DataRestService.FilterTypesByDataStructure[typeof(TDataStructure).FullName], top, skip, page, psize, sort,
+                readRecords: true, readTotalCount: true);
+        }}
+
+        [OperationContract]
+        [WebGet(UriTemplate = ""/{{id}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public TDataStructure GetById(string id)
+        {{
+            var result = _serviceUtility.GetDataById<TDataStructure>(id);
+            if (result == null)
+                throw new Rhetos.LegacyClientException(""There is no resource of this type with a given ID."") {{ HttpStatusCode = HttpStatusCode.NotFound, Severe = false }};
+            return result;
+        }}
+
+        [OperationContract]
+        [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public InsertDataResult Insert(TDataStructure entity)
+        {{
+            if (entity == null)
+                throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
+            if (Guid.Empty == entity.ID)
+                entity.ID = Guid.NewGuid();
+
+            _serviceUtility.InsertData(entity);
+            return new InsertDataResult {{ ID = entity.ID }};
+        }}
+
+        [OperationContract]
+        [WebInvoke(Method = ""PUT"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public void Update(string id, TDataStructure entity)
+        {{
+            if (entity == null)
+                throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
+            Guid guid;
+            if (!Guid.TryParse(id, out guid))
+                throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
+            if (Guid.Empty == entity.ID)
+                entity.ID = guid;
+            if (guid != entity.ID)
+                throw new Rhetos.LegacyClientException(""Given entity ID is not equal to resource ID from URI."");
+
+            _serviceUtility.UpdateData(entity);
+        }}
+
+        [OperationContract]
+        [WebInvoke(Method = ""DELETE"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public void Delete(string id)
+        {{
+            Guid guid;
+            if (!Guid.TryParse(id, out guid))
+                throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
+            var entity = new TDataStructure {{ ID = guid }};
+
+            _serviceUtility.DeleteData(entity);
+        }}
+
+        {DataRestServiceMethodsTag}
+    }}
+
+    [System.ServiceModel.ServiceContract]
+    [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
+    public class ActionRestService<TDataStructure> where TDataStructure : class, new()
+    {{
+        private readonly ServiceUtility _serviceUtility;
+        {ActionRestServicePropertiesTag}
+
+        public ActionRestService(ServiceUtility serviceUtility{ActionRestServiceConstructorParameterTag})
+        {{
+            _serviceUtility = serviceUtility;
+            {ActionRestServiceConstructorTag}
+        }}
+
+        [OperationContract]
+        [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public void Execute(TDataStructure action)
+        {{
+            _serviceUtility.Execute<TDataStructure>(action);
+        }}
+
+        {ActionRestServiceMethodsTag}
+    }}
+
+    [System.ServiceModel.ServiceContract]
+    [System.ServiceModel.Activation.AspNetCompatibilityRequirements(RequirementsMode = System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed)]
+    public class ReportRestService<TDataStructure> where TDataStructure : class, new()
+    {{
+        private readonly ServiceUtility _serviceUtility;
+        {ReportRestServicePropertiesTag}
+
+        public ReportRestService(ServiceUtility serviceUtility{ReportRestServiceConstructorParameterTag})
+        {{
+            _serviceUtility = serviceUtility;
+            {ReportRestServiceConstructorTag}
+        }}
+
+        [OperationContract]
+        [WebGet(UriTemplate = ""/?parameter={{parameter}}&convertFormat={{convertFormat}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        public DownloadReportResult DownloadReport(string parameter, string convertFormat)
+        {{
+            return _serviceUtility.DownloadReport<TDataStructure>(parameter, convertFormat);
+        }}
+
+        {ReportRestServiceMethodsTag}
+    }}
+
+    {RhetosRestClassesTag}
 
 #pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
 }}
@@ -167,6 +340,10 @@ namespace RestService
 
             // RestGenerator
             codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.ServiceUtility));
+            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.RestGenerator.Utilities.DownloadReportResult));
+            codeBuilder.AddReferencesFromDependency(typeof(Rhetos.Processing.DefaultCommands.ReadCommandResult));
+            codeBuilder.AddReferencesFromDependency(typeof(Newtonsoft.Json.JsonConvert));
+            codeBuilder.AddReferencesFromDependency(typeof(Newtonsoft.Json.Linq.JToken));
 
             foreach (var file in Paths.DomAssemblyFiles)
                 codeBuilder.AddReference(file);

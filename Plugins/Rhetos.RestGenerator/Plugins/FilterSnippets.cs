@@ -24,10 +24,6 @@ namespace Rhetos.RestGenerator.Plugins
 {
     public class FilterSnippets
     {
-        public FilterSnippets()
-        {
-        }
-
         public string ExpectedFilterTypesSnippet(DataStructureInfo source, string filterParameter)
         {
             var fullParameterName = filterParameter;

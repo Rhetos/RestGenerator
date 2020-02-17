@@ -20,12 +20,9 @@
 using Rhetos.Compiler;
 using Rhetos.Extensibility;
 using Rhetos.Utilities;
-using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using ICodeGenerator = Rhetos.Compiler.ICodeGenerator;
 
 namespace Rhetos.RestGenerator
 {
@@ -54,8 +51,8 @@ namespace Rhetos.RestGenerator
 
         public void Generate()
         {
-            IAssemblySource assemblySource = _codeGenerator.ExecutePlugins(_plugins, "/*", "*/", new InitialCodeGenerator());
-            CompilerParameters parameters = new CompilerParameters
+            var assemblySource = _codeGenerator.ExecutePlugins(_plugins, "/*", "*/", new InitialCodeGenerator());
+            var parameters = new System.CodeDom.Compiler.CompilerParameters
             {
                 GenerateExecutable = false,
                 GenerateInMemory = false,
