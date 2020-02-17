@@ -28,6 +28,7 @@ namespace Rhetos.RestGenerator
 {
     public class InitialCodeGenerator : IRestGeneratorPlugin
     {
+        public static readonly string UsingTag = "/*InitialCodeGenerator.UsingTag*/";
         // Keeping 'const' for backward compatibility:
         public const string RhetosRestClassesTag = "/*InitialCodeGenerator.RhetosRestClassesTag*/";
         public const string ServiceRegistrationTag = "/*InitialCodeGenerator.ServiceRegistrationTag*/";
@@ -64,6 +65,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Net;
 using System.Text;
+{UsingTag}
 
 namespace RestService
 {{
