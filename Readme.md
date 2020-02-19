@@ -5,19 +5,21 @@ It automatically generates **RESTful JSON web service** for all entities, action
 
 See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
-- [RestGenerator](#restgenerator)
-  - [Features](#features)
-    - [General rules](#general-rules)
-    - [Reading data](#reading-data)
-    - [Writing data](#writing-data)
-    - [Actions](#actions)
-    - [Reports](#reports)
-  - [Examples](#examples)
-  - [HTTPS](#https)
-  - [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
-  - [Build](#build)
-  - [Installation](#installation)
-    - [Overriding IIS binding configuration](#overriding-iis-binding-configuration)
+1. [Features](#features)
+   1. [General rules](#general-rules)
+   2. [Reading data](#reading-data)
+   3. [Writing data](#writing-data)
+   4. [Actions](#actions)
+   5. [Reports](#reports)
+2. [Examples](#examples)
+3. [HTTPS](#https)
+4. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
+5. [Build](#build)
+6. [Installation](#installation)
+   1. [Overriding IIS binding configuration](#overriding-iis-binding-configuration)
+7. [Troubleshooting](#troubleshooting)
+   1. [Value cannot be null. Parameter name: contract](#value-cannot-be-null-parameter-name-contract)
+   2. [Could not find a base address that matches scheme](#could-not-find-a-base-address-that-matches-scheme)
 
 ## Features
 
@@ -167,21 +169,42 @@ and make sure the NuGet package location is listed in the *RhetosPackageSources.
 
 Generated web service (WebServiceHost) will automatically create HTTP and HTTPS REST-like endpoint/binding/behavior pairs if service endpoint/binding/behavior configuration is empty.
 
-If you need to override default behavior (i.e. enable only HTTPS), you need to add following in `services` section:
+If you need to override default behavior (i.e. enable only HTTPS), you can setup the service configuation on Web.config file:
 
-```XML
-<service name="Rhetos.Rest.RestService{module}{object}">
-  <clear />
-  <endpoint binding="webHttpBinding" bindingConfiguration="rhetosWebHttpsBinding" contract="Rhetos.Rest.RestService{module}{object}" />
-</service>
-```
+1. Set the Rhetos build configuration option `RestGenerator.ServiceContractConfiguration` to `Config`,
+   to force the service to read the custom configuration,
+   then **rebuild** the application with this configuration.
+   * If using DeployPackages, add the following build configuration in `appSettings` section in Web.config. `<add key="RestGenerator.ServiceContractConfiguration" value="Config" />`.
+   * If using Rhetos CLI, set the build configuration option in `rhetos-build.settings.json` file.
+2. Add the following `service` element in `system.serviceModel / services` section:
+   ```xml
+   <service name="RestService">
+     <clear />
+     <endpoint binding="webHttpBinding" bindingConfiguration="rhetosWebHttpsBinding" contract="RestServiceContract" />
+   </service>
+   ```
+3. Specify the new `binding` element in `system.serviceModel / bindings / webHttpBinding` section. For example:
+   ```xml
+   <binding name="rhetosWebHttpsBinding" maxReceivedMessageSize="209715200">
+     <security mode="Transport" />
+     <readerQuotas maxArrayLength="209715200" maxStringContentLength="209715200" />
+   </binding>
+   ```
 
-Also, you need to define new `webHttpBinding` `binding` item:
+## Troubleshooting
 
+### Value cannot be null. Parameter name: contract
 
-```XML
-<binding name="rhetosWebHttpsBinding" maxReceivedMessageSize="209715200">
-  <security mode="Transport" />
-  <readerQuotas maxArrayLength="209715200" maxStringContentLength="209715200" />
-</binding>
-```
+The application startup will show error `Value cannot be null. Parameter name: contract`.
+if Rhetos build configuation option `RestGenerator.ServiceContractConfiguration` is set to `Config`,
+but there is no RestService service configuration available in Web.config.
+
+Add the service configuration (see setup instructions above),
+or remove `RestGenerator.ServiceContractConfiguration` build option and rebuild the application.
+
+### Could not find a base address that matches scheme
+
+The application startup will show error `Could not find a base address that matches scheme https for the endpoint with binding WebHttpBinding. Registered base address schemes are [http].`
+if `binding` is not configured properly in Web.config.
+
+Review that `security` element matches the authentication method.
