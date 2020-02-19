@@ -54,7 +54,8 @@ namespace Rhetos.RestGenerator
         public static readonly string ReportRestServiceConstructorTag = "/*InitialCodeGenerator.ReportRestServiceConstructorTag*/";
         public static readonly string ReportRestServiceMethodsTag = "/*InitialCodeGenerator.ReportRestServiceMethodsTag*/";
         public static readonly string FilterTypesByDataStructureTag = "/*InitialCodeGenerator.FilterTypesByDataStructureTag*/";
-
+        public static readonly string WritableDataStructuresTag = "/*InitialCodeGenerator.WritableDataStructuresTag*/";
+        
         /// <remarks>
         /// By default, WebServiceHost generated endpoints for generated services.
         /// We can customize endpoints and bindings by inserting custom C# code in RestServiceHost class, or by adding the service configuration in Web.config.
@@ -186,6 +187,11 @@ namespace RestService
         {{
             {FilterTypesByDataStructureTag}
         }};
+
+        public static readonly HashSet<string> WritableDataStructures = new HashSet<string>(new string[]
+        {{
+            {WritableDataStructuresTag}
+        }});
     }}
 
 #pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
@@ -257,6 +263,8 @@ namespace RestService
         [WebInvoke(Method = ""POST"", UriTemplate = """", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public InsertDataResult Insert(TDataStructure entity)
         {{
+            if (!RestServiceMetadata.WritableDataStructures.Contains(typeof(TDataStructure).FullName))
+                throw new Rhetos.ClientException($""Invalid request: '{{typeof(TDataStructure).FullName}}' is not writable."");
             if (entity == null)
                 throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
             if (Guid.Empty == entity.ID)
@@ -270,6 +278,8 @@ namespace RestService
         [WebInvoke(Method = ""PUT"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public void Update(string id, TDataStructure entity)
         {{
+            if (!RestServiceMetadata.WritableDataStructures.Contains(typeof(TDataStructure).FullName))
+                throw new Rhetos.ClientException($""Invalid request: '{{typeof(TDataStructure).FullName}}' is not writable."");
             if (entity == null)
                 throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
             Guid guid;
@@ -287,6 +297,8 @@ namespace RestService
         [WebInvoke(Method = ""DELETE"", UriTemplate = ""{{id}}"", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public void Delete(string id)
         {{
+            if (!RestServiceMetadata.WritableDataStructures.Contains(typeof(TDataStructure).FullName))
+                throw new Rhetos.ClientException($""Invalid request: '{{typeof(TDataStructure).FullName}}' is not writable."");
             Guid guid;
             if (!Guid.TryParse(id, out guid))
                 throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");

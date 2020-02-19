@@ -58,6 +58,11 @@ namespace Rhetos.RestGenerator.Plugins
                 {FilterTypesTag.Evaluate(info)} }} }},
             ",
                     InitialCodeGenerator.FilterTypesByDataStructureTag);
+
+                if (info is IWritableOrmDataStructure)
+                    codeBuilder.InsertCode(
+                        $"\"{info.Module.Name}.{info.Name}\",\r\n            ",
+                        InitialCodeGenerator.WritableDataStructuresTag);
             }
         }
     }
