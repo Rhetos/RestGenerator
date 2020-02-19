@@ -193,7 +193,7 @@ namespace RestService
     {DataRestServiceAttributesTag}
     {serviceContractAttributes}
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    public class DataRestService<TDataStructure> where TDataStructure : IEntity, new()
+    public class DataRestService<TDataStructure> where TDataStructure : class, IEntity, new()
     {{
         private readonly ServiceUtility _serviceUtility;
         {DataRestServicePropertiesTag}
