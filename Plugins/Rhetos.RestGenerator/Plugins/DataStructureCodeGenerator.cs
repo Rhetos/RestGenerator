@@ -54,10 +54,10 @@ namespace Rhetos.RestGenerator.Plugins
                     InitialCodeGenerator.ServiceInitializationTag);
 
                 codeBuilder.InsertCode(
-            $@"{{ ""{info.Module.Name}.{info.Name}"", new Tuple<string, Type>[] {{
-                {FilterTypesTag.Evaluate(info)} }} }},
-            ",
-                    InitialCodeGenerator.FilterTypesByDataStructureTag);
+            $@"public static Tuple<string, Type>[] {$"Get_{info.Module.Name}_{info.Name}_FilterTypes"}() => new Tuple<string, Type>[] {{
+                {FilterTypesTag.Evaluate(info)} }};
+        ",
+                    InitialCodeGenerator.RestServiceMetadataMembersTag);
 
                 if (info is IWritableOrmDataStructure)
                     codeBuilder.InsertCode(

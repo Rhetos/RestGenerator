@@ -53,9 +53,9 @@ namespace Rhetos.RestGenerator
         public static readonly string ReportRestServiceConstructorParameterTag = "/*InitialCodeGenerator.ReportRestServiceConstructorParameterTag*/";
         public static readonly string ReportRestServiceConstructorTag = "/*InitialCodeGenerator.ReportRestServiceConstructorTag*/";
         public static readonly string ReportRestServiceMethodsTag = "/*InitialCodeGenerator.ReportRestServiceMethodsTag*/";
-        public static readonly string FilterTypesByDataStructureTag = "/*InitialCodeGenerator.FilterTypesByDataStructureTag*/";
+        public static readonly string RestServiceMetadataMembersTag = "/*InitialCodeGenerator.RestServiceMetadataMembersTag*/";
         public static readonly string WritableDataStructuresTag = "/*InitialCodeGenerator.WritableDataStructuresTag*/";
-        
+
         /// <remarks>
         /// By default, WebServiceHost generated endpoints for generated services.
         /// We can customize endpoints and bindings by inserting custom C# code in RestServiceHost class, or by adding the service configuration in Web.config.
@@ -100,6 +100,7 @@ using Rhetos.Dom.DefaultConcepts;
 using Rhetos.RestGenerator.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -182,11 +183,27 @@ namespace RestService
 
     public static class RestServiceMetadata
     {{
+        {RestServiceMetadataMembersTag}
+
         // This is separated from generic rest service class, because a static field in a generic type is not shared among instances of different close constructed types.
-        public static readonly IReadOnlyDictionary<string, Tuple<string, Type>[]> FilterTypesByDataStructure = new Dictionary<string, Tuple<string, Type>[]>
+        private static ConcurrentDictionary<string, Tuple<string, Type>[]> FilterTypesByDataStructure = new ConcurrentDictionary<string, Tuple<string, Type>[]>();
+
+        public static Tuple<string,Type>[] GetFilterTypesByDataStructure(string dataStructureName)
         {{
-            {FilterTypesByDataStructureTag}
-        }};
+            if(FilterTypesByDataStructure.TryGetValue(dataStructureName, out Tuple<string,Type>[] value))
+                return value;
+
+            var filterTypes = typeof(RestServiceMetadata)
+                .GetMethod($""Get_{{dataStructureName.Replace('.', '_')}}_FilterTypes"")
+                .Invoke(null, new object[] {{}}) as Tuple<string, Type>[];
+            FilterTypesByDataStructure.AddOrUpdate(dataStructureName, filterTypes, ErrorOnUpdate);
+            return filterTypes;
+        }}
+
+        private static Tuple<string, Type>[] ErrorOnUpdate(string arg1, Tuple<string, Type>[] arg2)
+        {{
+            throw new Rhetos.FrameworkException(""Allowed filter types for each data structure should never be changed."");
+        }}
 
         public static readonly HashSet<string> WritableDataStructures = new HashSet<string>(new string[]
         {{
@@ -215,7 +232,7 @@ namespace RestService
         [WebGet(UriTemplate = ""/?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public RecordsResult<TDataStructure> Get(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.FilterTypesByDataStructure[typeof(TDataStructure).FullName], top, skip, page, psize, sort,
+            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.GetFilterTypesByDataStructure(typeof(TDataStructure).FullName), top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: false);
             return new RecordsResult<TDataStructure> {{ Records = data.Records }};
         }}
@@ -225,7 +242,7 @@ namespace RestService
         [WebGet(UriTemplate = ""/Count?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public CountResult GetCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.FilterTypesByDataStructure[typeof(TDataStructure).FullName], 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.GetFilterTypesByDataStructure(typeof(TDataStructure).FullName), 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new CountResult {{ TotalRecords = data.TotalCount }};
         }}
@@ -235,7 +252,7 @@ namespace RestService
         [WebGet(UriTemplate = ""/TotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public TotalCountResult GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
         {{
-            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.FilterTypesByDataStructure[typeof(TDataStructure).FullName], 0, 0, 0, 0, sort,
+            var data = _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.GetFilterTypesByDataStructure(typeof(TDataStructure).FullName), 0, 0, 0, 0, sort,
                 readRecords: false, readTotalCount: true);
             return new TotalCountResult {{ TotalCount = data.TotalCount }};
         }}
@@ -245,7 +262,7 @@ namespace RestService
         [WebGet(UriTemplate = ""/RecordsAndTotalCount?filter={{filter}}&fparam={{fparam}}&genericfilter={{genericfilter}}&filters={{filters}}&top={{top}}&skip={{skip}}&page={{page}}&psize={{psize}}&sort={{sort}}"", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         public RecordsAndTotalCountResult<TDataStructure> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort)
         {{
-            return _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.FilterTypesByDataStructure[typeof(TDataStructure).FullName], top, skip, page, psize, sort,
+            return _serviceUtility.GetData<TDataStructure>(filter, fparam, genericfilter, filters, RestServiceMetadata.GetFilterTypesByDataStructure(typeof(TDataStructure).FullName), top, skip, page, psize, sort,
                 readRecords: true, readTotalCount: true);
         }}
 
