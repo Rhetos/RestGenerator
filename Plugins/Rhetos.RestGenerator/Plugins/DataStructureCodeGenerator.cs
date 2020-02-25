@@ -54,7 +54,7 @@ namespace Rhetos.RestGenerator.Plugins
                     InitialCodeGenerator.ServiceInitializationTag);
 
                 codeBuilder.InsertCode(
-            $@"public static Tuple<string, Type>[] {$"Get_{info.Module.Name}_{info.Name}_FilterTypes"}() => new Tuple<string, Type>[] {{
+            $@"public static Tuple<string, Type>[] Get_{info.Module.Name}_{info.Name}_FilterTypes() => new Tuple<string, Type>[] {{
                 {FilterTypesTag.Evaluate(info)} }};
         ",
                     InitialCodeGenerator.RestServiceMetadataMembersTag);

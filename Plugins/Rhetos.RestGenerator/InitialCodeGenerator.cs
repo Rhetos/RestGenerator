@@ -188,21 +188,13 @@ namespace RestService
         // This is separated from generic rest service class, because a static field in a generic type is not shared among instances of different close constructed types.
         private static ConcurrentDictionary<string, Tuple<string, Type>[]> FilterTypesByDataStructure = new ConcurrentDictionary<string, Tuple<string, Type>[]>();
 
-        public static Tuple<string,Type>[] GetFilterTypesByDataStructure(string dataStructureName)
-        {{
-            if(FilterTypesByDataStructure.TryGetValue(dataStructureName, out Tuple<string,Type>[] value))
-                return value;
+        public static Tuple<string,Type>[] GetFilterTypesByDataStructure(string dataStructureName) => FilterTypesByDataStructure.GetOrAdd(dataStructureName, GetFilterTypesByDataStructureName);
 
-            var filterTypes = typeof(RestServiceMetadata)
-                .GetMethod($""Get_{{dataStructureName.Replace('.', '_')}}_FilterTypes"")
-                .Invoke(null, new object[] {{}}) as Tuple<string, Type>[];
-            FilterTypesByDataStructure.AddOrUpdate(dataStructureName, filterTypes, ErrorOnUpdate);
-            return filterTypes;
-        }}
-
-        private static Tuple<string, Type>[] ErrorOnUpdate(string arg1, Tuple<string, Type>[] arg2)
+        private static Tuple<string, Type>[] GetFilterTypesByDataStructureName(string dataStructureName)
         {{
-            throw new Rhetos.FrameworkException(""Allowed filter types for each data structure should never be changed."");
+            return typeof(RestServiceMetadata)
+                .GetMethod($""Get_{{ dataStructureName.Replace('.', '_')}}_FilterTypes"")
+                  .Invoke(null, new object[] {{ }}) as Tuple<string, Type>[];
         }}
 
         public static readonly HashSet<string> WritableDataStructures = new HashSet<string>(new string[]
