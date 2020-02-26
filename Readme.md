@@ -169,7 +169,7 @@ and make sure the NuGet package location is listed in the *RhetosPackageSources.
 
 Generated web service (WebServiceHost) will automatically create HTTP and HTTPS REST-like endpoint/binding/behavior pairs if service endpoint/binding/behavior configuration is empty.
 
-If you need to override default behavior (i.e. enable only HTTPS), you can setup the service configuation on Web.config file:
+If you need to override default endpoint behavior (i.e. enable only HTTPS), you can setup the service configuation in Web.config file:
 
 1. Set the Rhetos build configuration option `RestGenerator.ServiceContractConfiguration` to `Config`,
    to force the service to read the custom configuration,

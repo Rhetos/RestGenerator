@@ -193,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="InitialCodeGeneratorMacro.cs" />
+    <Compile Include="Plugins\RestServiceContractInfo.cs" />
+    <Compile Include="Plugins\RestServiceContractCodeGenerator.cs" />
     <Compile Include="Plugins\QueryWithParameterCodeGenerator.cs" />
     <Compile Include="Plugins\FilterSnippets.cs" />
     <Compile Include="Plugins\FilterByCodeGenerator.cs" />
