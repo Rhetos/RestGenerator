@@ -31,8 +31,6 @@ namespace Rhetos.RestGenerator.Plugins
     {
         public static readonly CsTag<DataStructureInfo> FilterTypesTag = "FilterTypes";
 
-        public static readonly CsTag<DataStructureInfo> AdditionalOperationsTag = "AdditionalOperations";
-
         public static bool IsTypeSupported(DataStructureInfo conceptInfo)
         {
             return conceptInfo is IOrmDataStructure

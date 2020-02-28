@@ -35,6 +35,7 @@ namespace Rhetos.RestGenerator.Plugins
         /// </summary>
         [ConceptKey]
         public IConceptInfo ServiceGenerator { get; set; }
+
         [ConceptKey]
         public string ServiceClassAttributeTag { get; set; }
     }
