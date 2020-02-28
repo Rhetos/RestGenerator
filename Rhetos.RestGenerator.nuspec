@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Rhetos.RestGenerator</id>
-    <version>2.6.0-dev</version>
+    <version>3.0.0-dev</version>
     <authors>Omega software</authors>
     <owners>Omega software</owners>
     <licenseUrl>http://opensource.org/licenses/AGPL-3.0</licenseUrl>
@@ -17,6 +17,7 @@
   </metadata>
   <files>
     <file src="Readme.md" target="" />
+    <file src="ChangeLog.md" target="" />
     <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.dll" target="lib\net451" />
     <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.pdb" target="lib\net451" />
   </files>
