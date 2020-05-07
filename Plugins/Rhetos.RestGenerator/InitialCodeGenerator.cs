@@ -61,7 +61,8 @@ namespace Rhetos.RestGenerator
         {
 
             string CodeSnippet =
-$@"using Autofac;
+$@"#pragma warning disable // Ignore unused namespaces.
+using Autofac;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.RestGenerator.Utilities;
 using System;
@@ -75,6 +76,7 @@ using System.ServiceModel.Web;
 using System.Net;
 using System.Text;
 {UsingTag}
+#pragma warning restore // Ignore unused namespaces.
 
 namespace RestService
 {{
@@ -149,10 +151,12 @@ namespace RestService
 
     public static class RestServiceMetadata
     {{
+        #pragma warning disable CA1825 // Avoid zero-length array allocations. Some metadata can be empty, available to be extended by plugins.
+
         {RestServiceMetadataMembersTag}
 
         // This is separated from generic rest service class, because a static field in a generic type is not shared among instances of different close constructed types.
-        private static ConcurrentDictionary<string, Tuple<string, Type>[]> FilterTypesByDataStructure = new ConcurrentDictionary<string, Tuple<string, Type>[]>();
+        private static readonly ConcurrentDictionary<string, Tuple<string, Type>[]> FilterTypesByDataStructure = new ConcurrentDictionary<string, Tuple<string, Type>[]>();
 
         public static Tuple<string,Type>[] GetFilterTypesByDataStructure(string dataStructureName) => FilterTypesByDataStructure.GetOrAdd(dataStructureName, GetFilterTypesByDataStructureName);
 
@@ -160,13 +164,15 @@ namespace RestService
         {{
             return typeof(RestServiceMetadata)
                 .GetMethod($""Get_{{ dataStructureName.Replace('.', '_')}}_FilterTypes"")
-                  .Invoke(null, new object[] {{ }}) as Tuple<string, Type>[];
+                  .Invoke(null, Array.Empty<object>()) as Tuple<string, Type>[];
         }}
 
         public static readonly HashSet<string> WritableDataStructures = new HashSet<string>(new string[]
         {{
             {WritableDataStructuresTag}
         }});
+
+        #pragma warning restore CA1825 // Avoid zero-length array allocations.
     }}
 
 #pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
@@ -256,8 +262,7 @@ namespace RestService
                 throw new Rhetos.ClientException($""Invalid request: '{{typeof(TDataStructure).FullName}}' is not writable."");
             if (entity == null)
                 throw new Rhetos.ClientException(""Invalid request: Missing the record data. The data should be provided in the request message body."");
-            Guid guid;
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out Guid guid))
                 throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
             if (Guid.Empty == entity.ID)
                 entity.ID = guid;
@@ -273,8 +278,7 @@ namespace RestService
         {{
             if (!RestServiceMetadata.WritableDataStructures.Contains(typeof(TDataStructure).FullName))
                 throw new Rhetos.ClientException($""Invalid request: '{{typeof(TDataStructure).FullName}}' is not writable."");
-            Guid guid;
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out Guid guid))
                 throw new Rhetos.LegacyClientException(""Invalid format of GUID parameter 'ID'."");
             var entity = new TDataStructure {{ ID = guid }};
 
