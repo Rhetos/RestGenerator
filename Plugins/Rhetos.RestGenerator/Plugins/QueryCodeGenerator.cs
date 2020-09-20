@@ -26,24 +26,24 @@ using System.ComponentModel.Composition;
 namespace Rhetos.RestGenerator.Plugins
 {
     [Export(typeof(IRestGeneratorPlugin))]
-    [ExportMetadata(MefProvider.Implements, typeof(FilterByInfo))]
-    public class FilterByCodeGenerator : IRestGeneratorPlugin
+    [ExportMetadata(MefProvider.Implements, typeof(QueryInfo))]
+    public class QueryCodeGenerator : IRestGeneratorPlugin
     {
         private readonly FilterSnippets _filterSnippets;
 
-        public FilterByCodeGenerator(FilterSnippets filterSnippets)
+        public QueryCodeGenerator(FilterSnippets filterSnippets)
         {
             _filterSnippets = filterSnippets;
         }
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
-            var info = (FilterByInfo)conceptInfo;
+            var info = (QueryInfo)conceptInfo;
 
-            if (DataStructureCodeGenerator.IsTypeSupported(info.Source))
+            if (DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
                 codeBuilder.InsertCode(
-                    _filterSnippets.ExpectedFilterTypesSnippet(info.Source, info.Parameter),
-                    DataStructureCodeGenerator.FilterTypesTag, info.Source);
+                    _filterSnippets.ExpectedFilterTypesSnippet(info.DataStructure, info.Parameter),
+                    DataStructureCodeGenerator.FilterTypesTag, info.DataStructure);
         }
     }
 }
