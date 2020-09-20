@@ -26,7 +26,7 @@ using System.ComponentModel.Composition;
 namespace Rhetos.RestGenerator.Plugins
 {
     [Export(typeof(IRestGeneratorPlugin))]
-    [ExportMetadata(MefProvider.Implements, typeof(QueryWithParameterInfo))]
+    [ExportMetadata(MefProvider.Implements, typeof(QueryExpressionInfo))]
     public class QueryWithParameterCodeGenerator : IRestGeneratorPlugin
     {
         private readonly FilterSnippets _filterSnippets;
@@ -38,11 +38,11 @@ namespace Rhetos.RestGenerator.Plugins
 
         public void GenerateCode(IConceptInfo conceptInfo, ICodeBuilder codeBuilder)
         {
-            var info = (QueryWithParameterInfo)conceptInfo;
+            var info = (QueryExpressionInfo)conceptInfo;
 
             if (DataStructureCodeGenerator.IsTypeSupported(info.DataStructure))
                 codeBuilder.InsertCode(
-                    _filterSnippets.ExpectedFilterTypesSnippet(info.DataStructure, info.ParameterType),
+                    _filterSnippets.ExpectedFilterTypesSnippet(info.DataStructure, info.Parameter),
                     DataStructureCodeGenerator.FilterTypesTag, info.DataStructure);
         }
     }
