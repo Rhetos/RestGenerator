@@ -1,4 +1,9 @@
-# Rhetos release notes
+# RestGenerator release notes
+
+## 4.0.0 (2020-09-23)
+
+* Update to Rhetos 4.1.0.
+* Using new base concepts (Rhetos 4.1) for generating the available filter parameters.
 
 ## 3.0.0 (2020-05-14)
 
