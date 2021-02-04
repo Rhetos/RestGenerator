@@ -12,12 +12,13 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
    4. [Actions](#actions)
    5. [Reports](#reports)
 2. [Examples](#examples)
-3. [HTTPS](#https)
-4. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
-5. [Build](#build)
-6. [Installation](#installation)
+3. [Developing client applications](#developing-client-applications)
+4. [HTTPS](#https)
+5. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
+6. [Build](#build)
+7. [Installation](#installation)
    1. [Overriding IIS binding configuration](#overriding-iis-binding-configuration)
-7. [Troubleshooting](#troubleshooting)
+8. [Troubleshooting](#troubleshooting)
    1. [Value cannot be null. Parameter name: contract](#value-cannot-be-null-parameter-name-contract)
    2. [Could not find a base address that matches scheme](#could-not-find-a-base-address-that-matches-scheme)
 
@@ -127,6 +128,53 @@ Generic property filters:
 | Using a generic filter to read **multiple items by ID** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]> |
 | Using a generic filter to search for **empty values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":""}]> |
 | Using a generic filter to search for **null values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":null}]> |
+
+## Developing client applications
+
+When developing client applications, use standard JSON serialization and URL encoding helpers
+to generate URL parameters for the REST web requests.
+
+For example, when generating `filters` parameter for GET request,
+avoid generating URL query parameters manually, directly as strings.
+It would provide opportunity for errors with certain characters
+that cannot be directly written in JSON or URL,
+they must be escaped with prefix character or encoded in hex format.
+
+The following example demonstrates an expected format of URL parameters,
+by using **Newtonsoft.Json** for JSON serialization (available as NuGet)
+and standard .NET Framework class UrlEncode.
+
+```cs
+using Newtonsoft.Json;
+using System;
+using System.Net;
+namespace JsonUrlEncoded
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var reportParameter = new
+            {
+                Text = @"Characters\/""?",
+                DateFrom = DateTime.Now,
+                OwnerID = Guid.NewGuid()
+            };
+
+            var microsoftDateTimeFormat = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
+            string json = JsonConvert.SerializeObject(reportParameter, microsoftDateTimeFormat);
+            string url = WebUtility.UrlEncode(json);
+
+            Console.WriteLine($"JSON: {json}");
+            Console.WriteLine($"URL: {url}");
+        }
+    }
+}
+```
+
+Note that URL encoding should be skipped when sending parameters in request body (POST and PUT),
+or if using a REST library that will automatically encode URL query parameters for each request
+(**RestSharp**, for example).
 
 ## HTTPS
 
