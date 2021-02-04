@@ -132,16 +132,17 @@ Generic property filters:
 ## Developing client applications
 
 When developing client applications, use standard JSON serialization and URL encoding helpers
-to generate URL parameters for the REST web requests.
+to generate URL query string parameters for the REST web requests.
+It is recommended to use common libraries for REST requests, such as **RestSharp** for .NET applications.
 
 For example, when generating `filters` parameter for GET request,
-avoid generating URL query parameters manually, directly as strings.
+avoid generating URL query string manually.
 It would provide opportunity for errors with certain characters
 that cannot be directly written in JSON or URL,
 they must be escaped with prefix character or encoded in hex format.
 
-The following example demonstrates an expected format of URL parameters,
-by using **Newtonsoft.Json** for JSON serialization (available as NuGet)
+The following example demonstrates an expected format of URL query parameters,
+by using **Newtonsoft.Json** for JSON serialization
 and standard .NET Framework class UrlEncode.
 
 ```cs
@@ -154,25 +155,30 @@ namespace JsonUrlEncoded
     {
         static void Main(string[] args)
         {
-            var reportParameter = new
+            var myCustomFilter = new
             {
-                Text = @"Characters\/""?",
-                DateFrom = DateTime.Now,
-                OwnerID = Guid.NewGuid()
+                Filter = "MyCustomFilter",
+                Value = new
+                {
+                    Text = @"Characters\/""?",
+                    DateFrom = DateTime.Now,
+                    OwnerID = Guid.NewGuid()
+                }
             };
 
+            var filters = new[] { myCustomFilter };
             var microsoftDateTimeFormat = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
-            string json = JsonConvert.SerializeObject(reportParameter, microsoftDateTimeFormat);
-            string url = WebUtility.UrlEncode(json);
+            string json = JsonConvert.SerializeObject(filters, microsoftDateTimeFormat);
+            string urlQuery = WebUtility.UrlEncode(json);
 
             Console.WriteLine($"JSON: {json}");
-            Console.WriteLine($"URL: {url}");
+            Console.WriteLine($"URL query: ?filters={urlQuery}");
         }
     }
 }
 ```
 
-Note that URL encoding should be skipped when sending parameters in request body (POST and PUT),
+Note that URL query encoding should be skipped when sending parameters in request body (POST and PUT),
 or if using a REST library that will automatically encode URL query parameters for each request
 (**RestSharp**, for example).
 
