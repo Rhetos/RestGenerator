@@ -367,3 +367,4 @@ Install/
 
 # Rhetos user-specific files
 *.local.settings.json
+*.local.json

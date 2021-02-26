@@ -12,13 +12,18 @@
     <copyright>Copyright Omega software 2015</copyright>
     <tags>Rhetos plugin</tags>
     <dependencies>
-      <dependency id="Rhetos.CommonConcepts" version="4.1.0" />
+      <dependency id="Rhetos.CommonConcepts" version="5.0.0-dev" />
     </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net5.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+    </frameworkReferences>
   </metadata>
   <files>
     <file src="Readme.md" target="" />
     <file src="ChangeLog.md" target="" />
-    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.dll" target="lib\net472" />
-    <file src="Plugins\Rhetos.RestGenerator\bin\Debug\Rhetos.RestGenerator.pdb" target="lib\net472" />
+    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.pdb" target="lib\net5.0" />
+    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.dll" target="lib\net5.0" />
   </files>
 </package>
