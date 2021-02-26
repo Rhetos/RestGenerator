@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhetos.RestGenerator", "Plugins\Rhetos.RestGenerator\Rhetos.RestGenerator.csproj", "{96F36FDA-7AF3-4FFC-8015-AA283337FD74}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Extensions.RestApi", "src\Rhetos.Extensions.RestApi\Rhetos.Extensions.RestApi.csproj", "{8FE70079-395C-4CD2-9584-223173E14B90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{96F36FDA-7AF3-4FFC-8015-AA283337FD74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96F36FDA-7AF3-4FFC-8015-AA283337FD74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96F36FDA-7AF3-4FFC-8015-AA283337FD74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96F36FDA-7AF3-4FFC-8015-AA283337FD74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FE70079-395C-4CD2-9584-223173E14B90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FE70079-395C-4CD2-9584-223173E14B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FE70079-395C-4CD2-9584-223173E14B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FE70079-395C-4CD2-9584-223173E14B90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67979022-446D-472C-9E82-77AEDF455B12}
 	EndGlobalSection
 EndGlobal

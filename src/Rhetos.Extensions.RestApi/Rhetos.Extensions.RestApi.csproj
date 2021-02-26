@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rhetos.CommonConcepts" Version="5.0.0-dev*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rhetos.Extensions.AspNetCore\Rhetos.Extensions.AspNetCore.csproj" />
+  </ItemGroup>
+
+</Project>
