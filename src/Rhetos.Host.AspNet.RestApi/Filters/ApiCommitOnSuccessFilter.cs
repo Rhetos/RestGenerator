@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Rhetos.Host.AspNet;
 using Rhetos.Persistence;
 
 namespace Rhetos.Host.AspNet.RestApi.Filters
@@ -24,8 +23,8 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
             if (context.HttpContext.Response.StatusCode == 200 && context.Exception == null)
             {
                 rhetosPersistenceTransaction.Value.CommitChanges();
-                rhetosPersistenceTransaction.Value.Dispose();
             }
+            rhetosPersistenceTransaction.Value.Dispose();
         }
     }
 }
