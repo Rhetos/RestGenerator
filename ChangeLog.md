@@ -1,5 +1,9 @@
 # RestGenerator release notes
 
+## 5.0.0 (TO BE RELEASED)
+
+* Migration to ASP.NET Core 5 (Rhetos 5.0).
+
 ## 4.0.0 (2020-09-23)
 
 * Update to Rhetos 4.1.0.

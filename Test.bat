@@ -1,3 +1,16 @@
+SETLOCAL
+
+@SET Config=%1%
+@IF [%1] == [] SET Config=Debug
+
+@REM During the Build process we are not executing the dbupdate command so we must explicitly call it here
+"test\Rhetos.RestGenerator.TestApp\bin\Debug\net5.0\rhetos.exe" dbupdate "test\Rhetos.RestGenerator.TestApp\bin\Debug\net5.0\Rhetos.RestGenerator.TestApp.dll" || GOTO Error0
+
+@REM Using "no-build" option as optimization, because Test.bat should always be executed after Build.bat.
+dotnet test Rhetos.RestGenerator.sln --no-build || GOTO Error0
+
+@REM ================================================
+
 @REM Prerequisites:
 @REM  - "CURL" command-line utility added to system path
 @REM  - Rhetos packages Rhetos.CommonConceptsTest and Rhetos.RestGenerator deployed to Rhetos server at http://localhost/Rhetos, with Windows authentication.
