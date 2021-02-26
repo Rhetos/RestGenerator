@@ -1,0 +1,8 @@
+﻿Module TestAction
+{
+	Action ReturnError '(parameter, repository, userInfo) => throw new Rhetos.UserException($"TestError, {parameter.DateTime}, {(parameter.Binary != null ? BitConverter.ToString(parameter.Binary) : "null")}.")'
+	{
+		Binary Binary;
+		DateTime DateTime;
+	}
+}

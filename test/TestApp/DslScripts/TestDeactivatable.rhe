@@ -1,0 +1,8 @@
+﻿Module TestDeactivatable
+{
+    Entity BasicEnt
+    {
+        Deactivatable;
+        ShortString Name;
+    }
+}

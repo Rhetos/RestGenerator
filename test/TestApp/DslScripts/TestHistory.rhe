@@ -1,0 +1,12 @@
+﻿Module TestHistory
+{
+	Entity Standard
+	{
+		History { AllProperties; }
+        Integer Code;
+        ShortString Name;
+        DateTime Birthday;
+        ItemFilter TooLongName 'item => item.Name.Length > 10';
+		InvalidData TooLongName '[Test] Name too long.';
+	}
+}

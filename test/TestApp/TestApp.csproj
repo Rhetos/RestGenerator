@@ -5,7 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Rhetos.Host.AspNet.RestApi\Rhetos.Host.AspNet.RestApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Rhetos.MsBuild" Version="5.0.0-dev*" />
+    <PackageReference Include="Rhetos.Host" Version="5.0.0-dev*" />
+    <PackageReference Include="Rhetos.Host.AspNet" Version="5.0.0-dev*" />
+    <PackageReference Include="Rhetos.CommonConcepts" Version="5.0.0-dev*" />
   </ItemGroup>
 
 </Project>

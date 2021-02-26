@@ -1,0 +1,39 @@
+﻿module AspNetDemo
+{
+	Entity DemoEntity
+	{
+		Logging;
+		ShortString Name;
+		Integer Value;
+		ItemFilter LongNames 'item => item.Name.Length > 5';
+		ComposableFilterBy HighValueParam '(query, repository, parameter) =>
+        {
+            return query.Where(item => item.Value >= parameter.MinimumValue);
+        }';
+	}
+
+	Parameter HighValueParam
+	{
+		Integer MinimumValue;
+	}
+
+	Entity AnotherEntity
+	{
+	}
+
+	Browse ReadOnlyDemo AspNetDemo.DemoEntity
+	{
+        Take Name;
+	}
+
+	Browse WritableDemo AspNetDemo.DemoEntity
+	{
+        Take Name;
+		Write '_domRepository.AspNetDemo.DemoEntity.Save(
+			insertedNew.Select(x => new DemoEntity { ID = x.ID, Name = x.Name + "_WriteInfo" }),
+			updatedNew.Select(x => new DemoEntity { ID = x.ID, Name = x.Name }),
+			deletedIds.Select(x => new DemoEntity { ID = x.ID }),
+            checkUserPermissions
+            );';
+	}
+}

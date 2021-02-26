@@ -17,10 +17,6 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 5. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
 6. [Build](#build)
 7. [Installation](#installation)
-   1. [Overriding IIS binding configuration](#overriding-iis-binding-configuration)
-8. [Troubleshooting](#troubleshooting)
-   1. [Value cannot be null. Parameter name: contract](#value-cannot-be-null-parameter-name-contract)
-   2. [Could not find a base address that matches scheme](#could-not-find-a-base-address-that-matches-scheme)
 
 ## Features
 
@@ -206,59 +202,38 @@ Partially supported features:
 You don't need to build it from source in order to use it in your application.
 
 To build the package from source, run `Build.bat`.
-The script will pause in case of an error.
 The build output is a NuGet package in the "Install" subfolder.
 
 ## Installation
 
-To install this package to a Rhetos server, add it to the Rhetos server's *RhetosPackages.config* file
-and make sure the NuGet package location is listed in the *RhetosPackageSources.config* file.
+To install this package to a Rhetos web application, follow the steps:
 
-* The package ID is "**Rhetos.RestGenerator**".
-  This package is available at the [NuGet.org](https://www.nuget.org/) online gallery.
-  It can be downloaded or installed directly from there.
-* For more information, see [Installing plugin packages](https://github.com/Rhetos/Rhetos/wiki/Installing-plugin-packages).
-
-### Overriding IIS binding configuration
-
-Generated web service (WebServiceHost) will automatically create HTTP and HTTPS REST-like endpoint/binding/behavior pairs if service endpoint/binding/behavior configuration is empty.
-
-If you need to override default endpoint behavior (i.e. enable only HTTPS), you can setup the service configuation in Web.config file:
-
-1. Set the Rhetos build configuration option `RestGenerator.ServiceContractConfiguration` to `Config`,
-   to force the service to read the custom configuration,
-   then **rebuild** the application with this configuration.
-   * If using DeployPackages, add the following build configuration in `appSettings` section in Web.config. `<add key="RestGenerator.ServiceContractConfiguration" value="Config" />`.
-   * If using Rhetos CLI, set the build configuration option in `rhetos-build.settings.json` file.
-2. Add the following `service` element in `system.serviceModel / services` section:
-   ```xml
-   <service name="RestService">
-     <clear />
-     <endpoint binding="webHttpBinding" bindingConfiguration="rhetosWebHttpsBinding" contract="RestServiceContract" />
-   </service>
+1. Add 'Rhetos.RestGenerator' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery:
+2. Extend Rhetos services configuration (at `services.AddRhetos`) with the REST API:
+   ```cs
+                .AddRestApi(o =>
+                {
+                    o.BaseRoute = "rest";
+                });
    ```
-3. Specify the new `binding` element in `system.serviceModel / bindings / webHttpBinding` section. For example:
-   ```xml
-   <binding name="rhetosWebHttpsBinding" maxReceivedMessageSize="209715200">
-     <security mode="Transport" />
-     <readerQuotas maxArrayLength="209715200" maxStringContentLength="209715200" />
-   </binding>
+3. For backward compatible JSON format, add 'Microsoft.AspNetCore.Mvc.NewtonsoftJson' NuGet package, and
+   the following code to Startup.ConfigureServices method:
+   ```cs
+            // Using NewtonsoftJson for backward-compatibility with older versions of RestGenerator:
+            // 1. legacy Microsoft DateTime serialization,
+            // 2. byte[] serialization as JSON array of integers instead of Base64 string.
+            services.AddControllers()
+                .AddNewtonsoftJson(o =>
+                {
+                    o.UseMemberCasing();
+                    o.SerializerSettings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
+                    o.SerializerSettings.Converters.Add(new ByteArrayConverter());
+                });
    ```
 
-## Troubleshooting
+Adding OpenAPI:
 
-### Value cannot be null. Parameter name: contract
-
-The application startup will show error `Value cannot be null. Parameter name: contract`.
-if Rhetos build configuation option `RestGenerator.ServiceContractConfiguration` is set to `Config`,
-but there is no RestService service configuration available in Web.config.
-
-Add the service configuration (see setup instructions above),
-or remove `RestGenerator.ServiceContractConfiguration` build option and rebuild the application.
-
-### Could not find a base address that matches scheme
-
-The application startup will show error `Could not find a base address that matches scheme https for the endpoint with binding WebHttpBinding. Registered base address schemes are [http].`
-if `binding` is not configured properly in Web.config.
-
-Review that `security` element matches the authentication method.
+1. Add Swagger to the application, see instructions: [Get started with Swashbuckle and ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-5.0&tabs=visual-studio).
+2. In Startup.ConfigureServices method, in `.AddRestApi` method call add `o.GroupNameMapper = (conceptInfo, name) => "rhetos";`.
+3. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call add `c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });`.
+4. In Startup.Configure method add, in `.UseSwaggerUI` method call add `c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos Rest Api");`. If there are multiple swagger endpoints configured here, place this one first if you want to open it by default.
