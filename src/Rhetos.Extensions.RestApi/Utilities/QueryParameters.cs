@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rhetos.Dom;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Extensions.AspNetCore;
+using Rhetos.Host.AspNet;
 
 namespace Rhetos.Extensions.RestApi.Utilities
 {

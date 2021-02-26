@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using Rhetos;
 using Rhetos.Dom;
-using Rhetos.Extensions.AspNetCore;
+using Rhetos.Host.AspNet;
 using Rhetos.Extensions.RestApi;
 using Rhetos.Extensions.RestApi.Filters;
 using Rhetos.Extensions.RestApi.Metadata;

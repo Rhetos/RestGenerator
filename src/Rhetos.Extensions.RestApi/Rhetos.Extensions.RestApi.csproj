@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Rhetos.Host.AspNet" Version="5.0.0-dev*" />
     <PackageReference Include="Rhetos.CommonConcepts" Version="5.0.0-dev*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Rhetos.Extensions.AspNetCore\Rhetos.Extensions.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

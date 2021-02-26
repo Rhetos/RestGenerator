@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Rhetos.Extensions.AspNetCore;
+using Rhetos.Host.AspNet;
 using Rhetos.Utilities;
 
 namespace Rhetos.Extensions.RestApi.Utilities

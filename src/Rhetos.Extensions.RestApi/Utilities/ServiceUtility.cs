@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Extensions.AspNetCore;
+using Rhetos.Host.AspNet;
 using Rhetos.Processing;
 using Rhetos.Processing.DefaultCommands;
 

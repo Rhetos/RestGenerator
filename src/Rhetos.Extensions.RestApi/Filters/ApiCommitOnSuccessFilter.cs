@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Rhetos.Extensions.AspNetCore;
+using Rhetos.Host.AspNet;
 using Rhetos.Persistence;
 
 namespace Rhetos.Extensions.RestApi.Filters
