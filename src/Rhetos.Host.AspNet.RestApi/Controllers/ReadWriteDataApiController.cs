@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Host.AspNet.RestApi.Metadata;
 using Rhetos.Host.AspNet.RestApi.Utilities;
-using Rhetos.Processing;
 
 namespace Rhetos.Host.AspNet.RestApi.Controllers
 {

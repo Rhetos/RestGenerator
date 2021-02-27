@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Rhetos.Host.AspNet;
 using Rhetos.Utilities;
 
 namespace Rhetos.Host.AspNet.RestApi.Utilities
 {
+    /// <summary>
+    /// Converts exceptions to a HTTP WEB response that contains JSON-serialized string error message.
+    /// </summary>
     public class JsonErrorHandler
     {
         private readonly ILocalizer localizer;
@@ -55,15 +57,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 if (clientException.Message == "User is not authenticated." && responseStatusCode == StatusCodes.Status400BadRequest)
                     responseStatusCode = StatusCodes.Status401Unauthorized;
             }
-            else if (error is FrameworkException)
-            {
-                responseStatusCode = StatusCodes.Status500InternalServerError;
-                responseMessage = new ResponseMessage { SystemMessage = FrameworkException.GetInternalServerErrorMessage(localizer, error) };
-            }
             else
             {
                 responseStatusCode = StatusCodes.Status500InternalServerError;
-                responseMessage = new ResponseMessage() { SystemMessage = error.Message };
+                responseMessage = new ResponseMessage { SystemMessage = FrameworkException.GetInternalServerErrorMessage(localizer, error) };
             }
 
             return (responseMessage, responseStatusCode);
