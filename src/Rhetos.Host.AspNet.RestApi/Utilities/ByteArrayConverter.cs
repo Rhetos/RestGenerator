@@ -55,18 +55,18 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                             // skip
                             break;
                         default:
-                            throw new Exception(
+                            throw new ArgumentException(
                             string.Format(
                                 "Unexpected token when reading bytes: {0}",
                                 reader.TokenType));
                     }
                 }
 
-                throw new Exception("Unexpected end when reading bytes.");
+                throw new ArgumentException("Unexpected end when reading bytes.");
             }
             else
             {
-                throw new Exception(
+                throw new ArgumentException(
                     string.Format(
                         "Unexpected token parsing binary. "
                         + "Expected StartArray, got {0}.",

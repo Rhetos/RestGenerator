@@ -8,9 +8,10 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
     public class DataStructureInfoMetadata : ConceptInfoRestMetadata
     {
         private readonly Tuple<string, Type>[] parameters;
-        public DataStructureInfoMetadata(IEnumerable<Tuple<string, Type>> parameters)
+
+        public DataStructureInfoMetadata(Tuple<string, Type>[] parameters)
         {
-            this.parameters = parameters.ToArray();
+            this.parameters = parameters;
         }
 
         public Tuple<string, Type>[] GetParameters()
