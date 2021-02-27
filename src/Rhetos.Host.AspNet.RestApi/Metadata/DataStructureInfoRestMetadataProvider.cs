@@ -37,13 +37,13 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
 
             var dataStructuresByWriteInfo = dslModel
                 .FindByType<WriteInfo>()
-                .Select(writeInfo => writeInfo.DataStructure)
+                .Select(writeInfo => writeInfo.DataStructure.GetKey())
                 .Distinct()
                 .ToHashSet();
 
             Type DataStructureControllerType(DataStructureInfo dataStructureInfo)
             {
-                if (dataStructureInfo is IWritableOrmDataStructure || dataStructuresByWriteInfo.Contains(dataStructureInfo))
+                if (dataStructureInfo is IWritableOrmDataStructure || dataStructuresByWriteInfo.Contains(dataStructureInfo.GetKey()))
                     return typeof(ReadWriteDataApiController<>);
                 else if (IsDataStructureTypeSupported(dataStructureInfo))
                     return typeof(ReadDataApiController<>);
