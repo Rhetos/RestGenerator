@@ -86,7 +86,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
         {
             Guid id;
             if (!Guid.TryParse(idString, out id))
-                throw new ClientException("Invalid format of GUID parametar 'ID'.");
+                throw new LegacyClientException("Invalid format of GUID parametar 'ID'.");
 
             var filterInstance = new[] { id };
 
