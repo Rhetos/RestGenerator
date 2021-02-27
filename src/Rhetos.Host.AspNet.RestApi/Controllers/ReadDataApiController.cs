@@ -27,12 +27,16 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
                 return dataStructureInfoMetadata.GetParameters();
             });
         }
-        
+
+        /// <remarks>
+        /// Obsolete parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
+        /// </remarks>
         [HttpGet]
         public ActionResult<RecordsResult<T>> Get(string filter = null, string fparam = null, string genericfilter = null, string filters = null,
             int top = 0, int skip = 0, int page = 0, int psize = 0, string sort = null)
         {
-            var data = serviceUtility.GetData<T>(filter, fparam, genericfilter, filters, dataStructureParameters.Value, top, skip, page, psize, sort, true, false);
+            var data = serviceUtility.GetData<T>(filter, fparam, genericfilter, filters, dataStructureParameters.Value, top, skip, page, psize, sort,
+                readRecords: true, readTotalCount: false);
             return new JsonResult(new RecordsResult<T>() { Records = data.Records });
         }
 
@@ -46,6 +50,9 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
             return new JsonResult(new CountResult {TotalRecords = data.TotalCount });
         }
 
+        /// <remarks>
+        /// Obsolete parameters: filter, fparam, genericfilter (use filters).
+        /// </remarks>
         [HttpGet]
         [Route("TotalCount")]
         public ActionResult<TotalCountResult> GetTotalCount(string filter, string fparam, string genericfilter, string filters, string sort)
@@ -55,6 +62,9 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
             return new JsonResult(new TotalCountResult { TotalCount = data.TotalCount });
         }
 
+        /// <remarks>
+        /// Obsolete parameters: filter, fparam, genericfilter (use filters), page, psize (use top and skip).
+        /// </remarks>
         [HttpGet]
         [Route("RecordsAndTotalCount")]
         public ActionResult<RecordsAndTotalCountResult<T>> GetRecordsAndTotalCount(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize,
