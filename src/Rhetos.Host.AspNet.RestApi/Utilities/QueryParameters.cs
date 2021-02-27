@@ -104,7 +104,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 filterType = Type.GetType(filterName);
 
             if (filterType == null)
-                throw new ClientException($"Filter type '{filterName}' is not available for this data structure. Please make sure that FullName or AssemblyQualifiedName is provided in web request for this filter, if using a custom filter type.");
+                throw new ClientException($"Filter type '{filterName}' is not available for this data structure. Please make sure that correct filter name is provided in web request.");
 
             return filterType;
         }
