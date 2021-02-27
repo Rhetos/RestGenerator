@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Rhetos.Host.AspNet.RestApi.Utilities;
 
 namespace Rhetos.Host.AspNet.RestApi.Controllers
@@ -14,7 +15,7 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
         }
 
         [HttpPost]
-        public void Execute([FromBody]T action)
+        public void Execute([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]T action)
         {
             serviceUtility.Execute(action);
         }
