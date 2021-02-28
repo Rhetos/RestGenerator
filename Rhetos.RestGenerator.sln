@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Host.AspNet.RestApi", "src\Rhetos.Host.AspNet.RestApi\Rhetos.Host.AspNet.RestApi.csproj", "{8FE70079-395C-4CD2-9584-223173E14B90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "test\TestApp\TestApp.csproj", "{5F2269FD-4048-4C6A-8143-555B84D8DDE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "test\TestApp\TestApp.csproj", "{5F2269FD-4048-4C6A-8143-555B84D8DDE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAE39472-6157-4E0E-AF6A-844AE36AFB93}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Clean.bat = Clean.bat
 		Directory.Build.props = Directory.Build.props
 		Readme.md = Readme.md
+		Rhetos.RestGenerator.nuspec = Rhetos.RestGenerator.nuspec
 		Test.bat = Test.bat
 	EndProjectSection
 EndProject
