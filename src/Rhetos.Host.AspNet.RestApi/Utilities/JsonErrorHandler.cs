@@ -16,8 +16,8 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
 
         public class ResponseMessage
         {
-            public string UserMessage;
-            public string SystemMessage;
+            public string UserMessage { get;set; }
+            public string SystemMessage { get; set; }
             public override string ToString()
             {
                 return "SystemMessage: " + (SystemMessage ?? "<null>") + ", UserMessage: " + (UserMessage ?? "<null>");
