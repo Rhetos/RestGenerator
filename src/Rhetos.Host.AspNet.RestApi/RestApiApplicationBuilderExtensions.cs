@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Builder
     {
         /// <summary>
         /// Add discovered Rhetos controllers to MVC feature pipeline and maps them to their respective routes.
-        /// Call before 'app.UseRouting()'.
+        /// Call before 'app.UseEndpoints()'.
         /// </summary>
         public static IApplicationBuilder UseRhetosRestApi(this IApplicationBuilder app)
         {
