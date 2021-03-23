@@ -22,15 +22,15 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
 ### General rules
 
-1. For each data structure or action, a service is available at base URI `<rhetos server url>/Rest/<module name>/<entity name>/`
+1. For each data structure or action, a service is available at base URI `<rhetos server url>/rest/<module name>/<entity name>/`
 2. Any POST request should contain a header: `Content-Type: application/json; charset=utf-8`
 
 For example, a service for entity *Claim* in module *Common*,
 on default local server installation (<http://localhost/Rhetos>):
 
-* Base service URI (reading service metadata): `http://localhost/Rhetos/Rest/Common/Claim/`
+* Base service URI (reading service metadata): `http://localhost/Rhetos/rest/Common/Claim/`
 * To read all entity's records, simply enter the address in the web browser:
-  `http://localhost/Rhetos/Rest/Common/Claim/` (don't forget the *slash* at the end)
+  `http://localhost/Rhetos/rest/Common/Claim/` (don't forget the *slash* at the end)
 
 Response:
 
@@ -111,7 +111,7 @@ When applying multiple filters in a same request, the intersection of the filter
 
 * Downloading a report: `/?parameter=...&convertFormat=...`
   * Query parameters `parameter` and `convertFormat` are optional.
-  * Example format `http://localhost/Rhetos/Rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
+  * Example format `http://localhost/Rhetos/rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
 
 ## Examples
 
