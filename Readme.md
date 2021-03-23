@@ -236,4 +236,4 @@ Adding OpenAPI:
 1. Add Swagger to the application, see instructions: [Get started with Swashbuckle and ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-5.0&tabs=visual-studio).
 2. In Startup.ConfigureServices method, in `.AddRestApi` method call add `o.GroupNameMapper = (conceptInfo, name) => "rhetos";`.
 3. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call add `c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });`.
-4. In Startup.Configure method add, in `.UseSwaggerUI` method call add `c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos Rest Api");`. If there are multiple swagger endpoints configured here, place this one first if you want to open it by default.
+4. In Startup.Configure method add, in `.UseSwaggerUI` method call add `c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");`. If there are multiple swagger endpoints configured here, place this one first if you want to open it by default.

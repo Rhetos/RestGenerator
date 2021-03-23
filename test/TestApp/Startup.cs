@@ -82,7 +82,7 @@ namespace TestApp
                 app.UseSwaggerUI(c =>
                 {
                     // Add Swagger endpoint for Rhetos REST API.
-                    c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos Rest Api");
+                    c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApp v1");
                 });
             }
