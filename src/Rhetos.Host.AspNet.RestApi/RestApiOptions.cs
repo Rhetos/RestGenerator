@@ -16,8 +16,10 @@ namespace Rhetos.Host.AspNet.RestApi
             new DataStructureInfoRestMetadataProvider(),
         };
 
-        public string BaseRoute { get; set; } = "RhetosRestApi";
+        public string BaseRoute { get; set; } = "rest";
+
         public List<IConceptInfoRestMetadataProvider> ConceptInfoRestMetadataProviders { get; set; } = new List<IConceptInfoRestMetadataProvider>(_defaultMetadataProviders);
+
         public Func<IConceptInfo, string, string> GroupNameMapper { get; set; }
     }
 }
