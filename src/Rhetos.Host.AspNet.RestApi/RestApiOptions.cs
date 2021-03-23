@@ -9,8 +9,15 @@ namespace Rhetos.Host.AspNet.RestApi
 {
     public class RestApiOptions
     {
-        public string BaseRoute { get; set; }
-        public List<IConceptInfoRestMetadataProvider> ConceptInfoRestMetadataProviders { get; set; }
+        private static readonly IConceptInfoRestMetadataProvider[] _defaultMetadataProviders =
+        {
+            new ActionInfoRestMetadataProvider(),
+            new ReportDataInfoRestMetadataProvider(),
+            new DataStructureInfoRestMetadataProvider(),
+        };
+
+        public string BaseRoute { get; set; } = "RhetosRestApi";
+        public List<IConceptInfoRestMetadataProvider> ConceptInfoRestMetadataProviders { get; set; } = new List<IConceptInfoRestMetadataProvider>(_defaultMetadataProviders);
         public Func<IConceptInfo, string, string> GroupNameMapper { get; set; }
     }
 }

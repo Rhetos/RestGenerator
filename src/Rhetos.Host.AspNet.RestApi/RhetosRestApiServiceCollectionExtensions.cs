@@ -22,23 +22,15 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RhetosRestApiServiceCollectionExtensions
     {
-        private static readonly IConceptInfoRestMetadataProvider[] _defaultMetadataProviders =
-        {
-            new ActionInfoRestMetadataProvider(),
-            new ReportDataInfoRestMetadataProvider(),
-            new DataStructureInfoRestMetadataProvider(),
-        };
-
         public static RhetosAspNetServiceCollectionBuilder AddRestApi(this RhetosAspNetServiceCollectionBuilder builder,
-            Action<RestApiOptions> configureOptions, Action<ControllerRestInfoRepository> onControllerRestInfoCreated = null)
+            Action<RestApiOptions> configureOptions = null)
         {
-            var options = new RestApiOptions()
-            {
-                BaseRoute = "RhetosRestApi",
-                ConceptInfoRestMetadataProviders = new List<IConceptInfoRestMetadataProvider>(_defaultMetadataProviders)
-            };
+            builder.Services.AddOptions();
 
-            configureOptions?.Invoke(options);
+            if (configureOptions != null)
+            {
+                builder.Services.Configure<RestApiOptions>(configureOptions);
+            }
 
             builder.Services.TryAddScoped<QueryParameters>();
             builder.Services.TryAddScoped<ServiceUtility>();
@@ -46,43 +38,9 @@ namespace Microsoft.Extensions.DependencyInjection
             
             builder.Services.TryAddScoped<ApiExceptionFilter>();
             builder.Services.TryAddScoped<ApiCommitOnSuccessFilter>();
-
-            var controllerRepository = CreateControllerRestInfoRepository(builder.RhetosHost, options);
-            onControllerRestInfoCreated?.Invoke(controllerRepository);
-
-            builder.Services.AddSingleton(controllerRepository);
-
-            builder.Services
-                .AddControllers(o =>
-                {
-                    o.Conventions.Add(new RestApiControllerRouteConvention(options, controllerRepository));
-                })
-                .ConfigureApplicationPartManager(p =>
-                {
-                    p.FeatureProviders.Add(new RestApiControllerFeatureProvider(controllerRepository));
-                });
+            builder.Services.TryAddSingleton<ControllerRestInfoRepository>();
 
             return builder;
-        }
-
-        private static ControllerRestInfoRepository CreateControllerRestInfoRepository(RhetosHost rhetosHost, RestApiOptions options)
-        {
-            var controllerRepository = new ControllerRestInfoRepository();
-            foreach (var conceptInfoRestMetadataProvider in options.ConceptInfoRestMetadataProviders)
-            {
-                var metadataFromProvider = conceptInfoRestMetadataProvider.GetConceptInfoRestMetadata(rhetosHost);
-                foreach (var metadataItem in metadataFromProvider)
-                    controllerRepository.ControllerConceptInfo.Add(metadataItem.ControllerType, metadataItem);
-            }
-
-            // transform all group names
-            if (options.GroupNameMapper != null)
-            {
-                foreach (var restMetadata in controllerRepository.ControllerConceptInfo.Values)
-                    restMetadata.ApiExplorerGroupName = options.GroupNameMapper.Invoke(restMetadata.ConceptInfo, restMetadata.ApiExplorerGroupName);
-            }
-
-            return controllerRepository;
         }
     }
 }
