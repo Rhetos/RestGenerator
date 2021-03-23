@@ -26,7 +26,6 @@ namespace TestApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -55,21 +54,6 @@ namespace TestApp
                     o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
                     o.GroupNameMapper = (conceptInfo, name) => "rhetos"; // OpenAPI document name.
                 });
-
-            // TODO: Is Authentication and Authorization necessary here?
-            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            //    .AddCookie(o => o.Events.OnRedirectToLogin = context =>
-            //    {
-            //        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            //        return Task.CompletedTask;
-            //    });
-
-            //services.AddAuthorization(a =>
-            //{
-            //    a.FallbackPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme)
-            //        .RequireAuthenticatedUser()
-            //        .Build();
-            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,6 +70,8 @@ namespace TestApp
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApp v1");
                 });
             }
+
+            app.UseRhetosRestApi();
 
             app.UseRouting();
 
