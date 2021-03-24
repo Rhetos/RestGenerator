@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "test\TestApp\Tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAE39472-6157-4E0E-AF6A-844AE36AFB93}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		Build.bat = Build.bat
 		ChangeLog.md = ChangeLog.md
 		Clean.bat = Clean.bat
