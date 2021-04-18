@@ -29,7 +29,8 @@ namespace Microsoft.AspNetCore.Builder
             }
 
             // Slightly hacky way to modify features and conventions AFTER service provider has already been built
-            // Due to this, it is important that this method is executed prior to any others that force feature enumeration (e.g. app.UseRouting())
+            // Due to this, it is important that this method is executed prior to any others that force feature enumeration
+            // Feature enumeration will usually happen during any endpoint mapping, so this should occur prior to app.UseEndpoints or any middleware that invokes it
             // Also, due to inner workings of MVC, this method will not work if controllers are in 'AsServices' mode (via services.AddControllersAsServices())
             var mvcOptions = app.ApplicationServices.GetRequiredService<IOptions<MvcOptions>>();
             var restApiOptions = app.ApplicationServices.GetRequiredService<IOptions<RestApiOptions>>();
