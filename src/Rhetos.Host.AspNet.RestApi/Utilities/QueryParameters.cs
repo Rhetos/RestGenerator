@@ -17,12 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Rhetos.Dom;
+using Rhetos.Dom.DefaultConcepts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rhetos.Dom;
-using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet;
 
 namespace Rhetos.Host.AspNet.RestApi.Utilities
 {
@@ -96,6 +95,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
 
             if (matchingTypes.Count == 1)
                 filterType = matchingTypes.Single();
+
+            // TODO: Remove usage of IDomainObjectModel.GetType and Type.GetType, to make REST API more predictable, since run-time type resolution depends on currently loaded assemblies,
+            // and may behave unpredictable on startup. The filterTypes should contain all available filters.
+            // This changes should be configurable to allow backward compatibility for old applications.
 
             if (filterType == null)
                 filterType = domainObjectModel.GetType(filterName);

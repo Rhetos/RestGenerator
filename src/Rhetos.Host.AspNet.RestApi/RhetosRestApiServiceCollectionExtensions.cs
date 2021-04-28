@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Autofac;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Newtonsoft.Json;
-using Rhetos;
-using Rhetos.Dom;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rhetos.Host.AspNet;
 using Rhetos.Host.AspNet.RestApi;
 using Rhetos.Host.AspNet.RestApi.Filters;
 using Rhetos.Host.AspNet.RestApi.Metadata;
 using Rhetos.Host.AspNet.RestApi.Utilities;
-using Rhetos.Persistence;
-using Rhetos.Processing;
-using Rhetos.Utilities;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
