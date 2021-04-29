@@ -82,12 +82,12 @@ See the [Examples](#examples) chapter below.
    * Specific filters refer to concepts such as **ItemFilter**, **ComposableFilterBy** and **FilterBy**,
      and also other [predefined filters](https://github.com/Rhetos/Rhetos/wiki/Filters-and-other-read-methods#predefined-filters) available in the object model.
    * Example: get long books from the Bookstore demo by applying
-     [ItemFilter LongBooks](https://github.com/Rhetos/Bookstore/blob/master/src/DslScripts/AdditionalExamples/ExampleFilters.rhe)
+     [ItemFilter LongBooks](https://github.com/Rhetos/Bookstore/blob/master/src/Bookstore.Service/DslScripts/AdditionalExamples/ExampleFilters.rhe)
      on Book entity: `[{"Filter":"Bookstore.LongBooks"}]`
 3. **Specific filter** with a parameter
    * Format: `{"Filter":...,"Value":...}` (value is usually a JSON object)
    * Example: get books with at least 700 pages from the Bookstore demo by applying
-     [ComposableFilterBy LongBooks3](https://github.com/Rhetos/Bookstore/blob/master/src/DslScripts/AdditionalExamples/ExampleFilters.rhe)
+     [ComposableFilterBy LongBooks3](https://github.com/Rhetos/Bookstore/blob/master/src/Bookstore.Service/DslScripts/AdditionalExamples/ExampleFilters.rhe)
      on Book entity: `[{"Filter":"Bookstore.LongBooks3","Value":{"MinimumPages":700}}]`
 
 When applying multiple filters in a same request, the intersection of the filtered data is returned (AND).
