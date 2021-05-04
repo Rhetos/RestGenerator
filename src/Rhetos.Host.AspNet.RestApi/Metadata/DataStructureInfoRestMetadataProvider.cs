@@ -20,12 +20,14 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
 
             DataStructureInfoMetadata CreateFromGenericController(Type genericControllerType, DataStructureInfo dataStructureInfo)
             {
-                var parameters = dataStructureReadParameters.GetReadParameters(dataStructureInfo.FullName, true)
+                var readParameters = dataStructureReadParameters.GetReadParameters(dataStructureInfo.FullName, true)
                     .Select(parameter => Tuple.Create(parameter.Name, parameter.Type))
                     .ToArray();
 
-                var dataStructureInfoMetadata = new DataStructureInfoMetadata(parameters)
+                var dataStructureInfoMetadata = new DataStructureInfoMetadata
                 {
+                    ReadParameters = readParameters,
+                    ConceptInfo = dataStructureInfo,
                     ControllerType = genericControllerType.MakeGenericType(domainObjectModel.GetType($"{dataStructureInfo.FullName}")),
                     ControllerName = $"{dataStructureInfo.Module.Name}.{dataStructureInfo.Name}",
                     RelativeRoute = $"{dataStructureInfo.Module.Name}/{dataStructureInfo.Name}",

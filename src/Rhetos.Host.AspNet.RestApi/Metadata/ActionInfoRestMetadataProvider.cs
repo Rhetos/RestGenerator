@@ -19,7 +19,7 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
 
             var restMetadata = dslModel
                 .FindByType<ActionInfo>()
-                .Select(actionInfo => new ConceptInfoRestMetadata()
+                .Select(actionInfo => new ConceptInfoRestMetadata
                 {
                     ConceptInfo = actionInfo,
                     ControllerType = typeof(ActionApiController<>).MakeGenericType(domainObjectModel.GetType($"{actionInfo.FullName}")),

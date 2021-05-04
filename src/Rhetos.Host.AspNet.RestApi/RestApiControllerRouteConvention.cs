@@ -28,7 +28,7 @@ namespace Rhetos.Host.AspNet.RestApi
                 var route = $"{restApiOptions.BaseRoute}/{restMetadata.RelativeRoute}";
                 controller.ControllerName = restMetadata.ControllerName;
                 controller.ApiExplorer.GroupName = restMetadata.ApiExplorerGroupName;
-                controller.ApiExplorer.IsVisible = restMetadata.IsVisible;
+                controller.ApiExplorer.IsVisible = restMetadata.ApiExplorerIsVisible;
 
                 controller.Selectors.Add(new SelectorModel()
                 {

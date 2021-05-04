@@ -7,16 +7,9 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
 {
     public class DataStructureInfoMetadata : ConceptInfoRestMetadata
     {
-        private readonly Tuple<string, Type>[] parameters;
-
-        public DataStructureInfoMetadata(Tuple<string, Type>[] parameters)
-        {
-            this.parameters = parameters;
-        }
-
-        public Tuple<string, Type>[] GetParameters()
-        {
-            return parameters;
-        }
+        /// <summary>
+        /// Filter types and other parameter types, that are supported on this data structure's controller for reading the data.
+        /// </summary>
+        public Tuple<string, Type>[] ReadParameters { get; set; }
     }
 }

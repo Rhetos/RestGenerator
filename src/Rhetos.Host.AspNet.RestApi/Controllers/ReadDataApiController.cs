@@ -22,7 +22,7 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
                 if (dataStructureInfoMetadata == null)
                     throw new InvalidOperationException(
                         $"Registered {nameof(ConceptInfoRestMetadata)} for {GetType()} should be an instance of {nameof(DataStructureInfoMetadata)}.");
-                return dataStructureInfoMetadata.GetParameters();
+                return dataStructureInfoMetadata.ReadParameters;
             });
         }
 

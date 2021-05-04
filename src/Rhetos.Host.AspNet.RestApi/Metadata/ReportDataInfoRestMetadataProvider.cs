@@ -19,8 +19,9 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
 
             var restMetadata = dslModel
                 .FindByType<ReportDataInfo>()
-                .Select(reportDataInfo => new ConceptInfoRestMetadata()
+                .Select(reportDataInfo => new ConceptInfoRestMetadata
                 {
+                    ConceptInfo = reportDataInfo,
                     ControllerType = typeof(ReportApiController<>).MakeGenericType(domainObjectModel.GetType($"{reportDataInfo.FullName}")),
                     ControllerName = $"{reportDataInfo.Module.Name}.{reportDataInfo.Name}",
                     RelativeRoute = $"{reportDataInfo.Module.Name}/{reportDataInfo.Name}",
