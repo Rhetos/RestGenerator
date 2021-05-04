@@ -17,6 +17,7 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 5. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
 6. [Build](#build)
 7. [Installation](#installation)
+8. [Adding Swagger/OpenAPI](#adding-swaggeropenapi)
 
 ## Features
 
@@ -231,9 +232,40 @@ Installing this package to a Rhetos web application:
                 });
    ```
 
-Adding OpenAPI:
+## Adding Swagger/OpenAPI
 
-1. Add Swagger to the application, see instructions: [Get started with Swashbuckle and ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-5.0&tabs=visual-studio).
-2. In Startup.ConfigureServices method, in `.AddRestApi` method call add `o.GroupNameMapper = (conceptInfo, name) => "rhetos";`.
-3. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call add `c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });`.
-4. In Startup.Configure method add, in `.UseSwaggerUI` method call add `c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");`. If there are multiple swagger endpoints configured here, place this one first if you want to open it by default.
+If not already included, add Swashbuckle to your ASP.NET Core application, see instructions: [Get started with Swashbuckle and ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-5.0&tabs=visual-studio).
+
+**Add support for multiple entities with the same name in different modules:**
+
+* By default, Swashbuckle will return "Failed to load API definition." error, it the same type name occurs in different namespaces. To fix this, in Startup.ConfigureServices method, inside `services.AddSwaggerGen` method call add `c.CustomSchemaIds(type => type.ToString()); // Allows multiple entities with the same name in different modules`.
+For more info see "Conflicting schemaIds" in the [Swagger documentation](https://github.com/domaindrivendev/Swashbuckle.AspNetCore#customize-schema-ids).
+
+**Show Rhetos REST API in the Swagger UI:**
+
+Option A) Show Rhetos REST API in a single Swagger document (page).
+
+1. In Startup.ConfigureServices method, in `.AddRestApi` method call,
+   add `o.GroupNameMapper = (conceptInfo, controller, oldName) => "rhetos";`.
+2. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call,
+   add `c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });`.
+3. In Startup.Configure method add, in `.UseSwaggerUI` method call,
+   add `c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");`.
+   If there are multiple swagger endpoints configured here, **place this one first** if you want to open it by default.
+
+Option B) Show Rhetos REST API split into multiple Swagger documents (pages) to improve load time of the Swagger UI for large projects.
+
+1. If exists, remove any code that sets `GroupNameMapper` from Startup.cs (DSL module name is used by default for grouping).
+2. For each module in your application add the following code and replace `MyModuleName` accordingly (it is case sensitive).
+   1. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call,
+      add `c.SwaggerDoc("MyModuleName", new OpenApiInfo { Title = "MyModuleName REST API", Version = "v1" });`.
+   2. In Startup.Configure method add, in `.UseSwaggerUI` method call,
+      add `c.SwaggerEndpoint("/swagger/MyModuleName/swagger.json", "MyModuleName REST API");`.
+      If there are multiple swagger endpoints configured here,  **place at the first position** the one that you want to open by default.
+
+Option C) Show Rhetos REST API split into **custom** multiple Swagger documents (pages) to improve load time of the Swagger UI for large projects.
+
+1. In Startup.ConfigureServices method, in `.AddRestApi` method call,
+   add `o.GroupNameMapper = (conceptInfo, controller, oldName) =>  ... return document name for each conceptInfo ...`.
+   Implement the custom delegate here, that will result with different Swagger document names based on conceptInfo.
+2. Add `SwaggerDoc` and `SwaggerEndpoint` same as in the option B, but for each document name instead of each module name.
