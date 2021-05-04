@@ -35,7 +35,7 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
             if (_restApiOptions.Value.GroupNameMapper != null)
             {
                 foreach (var restMetadata in controllerConceptInfo.Values)
-                    restMetadata.ApiExplorerGroupName = _restApiOptions.Value.GroupNameMapper.Invoke(restMetadata.ConceptInfo, restMetadata.ApiExplorerGroupName);
+                    restMetadata.ApiExplorerGroupName = _restApiOptions.Value.GroupNameMapper.Invoke(restMetadata.ConceptInfo, restMetadata.ControllerType, restMetadata.ApiExplorerGroupName);
             }
 
             return controllerConceptInfo;

@@ -40,6 +40,6 @@ namespace Rhetos.Host.AspNet.RestApi
         /// Overrides ApiExplorer group names, initially provided by <see cref="IConceptInfoRestMetadataProvider"/>.
         /// Initial group names are typically module names.
         /// </summary>
-        public Func<IConceptInfo, string, string> GroupNameMapper { get; set; }
+        public Func<IConceptInfo, Type, string, string> GroupNameMapper { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace TestApp
                 {
                     o.BaseRoute = "rest";
                     o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
-                    o.GroupNameMapper = (conceptInfo, name) => "rhetos"; // OpenAPI document name.
+                    o.GroupNameMapper = (conceptInfo, controller, oldName) => "rhetos"; // OpenAPI document name.
                 });
         }
 
