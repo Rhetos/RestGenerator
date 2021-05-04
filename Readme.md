@@ -259,7 +259,7 @@ As an alternative, you can show Rhetos REST API **split into multiple** Swagger 
    2. Option B) If you want to specify custom Swagger documents, in Startup.ConfigureServices method, in `.AddRestApi` method call,
       add `o.GroupNameMapper = (conceptInfo, controller, oldName) =>  ... return document name for each conceptInfo ...`.
       Implement the custom delegate here, that will result with different Swagger document names based on `conceptInfo` parameter.
-2. For each document name specified above (each DSL module, e.g.), add the following code and replace `MyModuleName` accordingly (it is case sensitive).
+2. For each document name specified above (each DSL module, e.g.), add the following code and replace `MyModuleName` with the document name accordingly (it is case sensitive).
    1. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call,
       add `c.SwaggerDoc("MyModuleName", new OpenApiInfo { Title = "MyModuleName REST API", Version = "v1" });`.
    2. In Startup.Configure method add, in `.UseSwaggerUI` method call,
