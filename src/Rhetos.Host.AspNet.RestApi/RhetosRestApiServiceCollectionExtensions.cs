@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-using Rhetos.Host.AspNet;
+using Rhetos;
 using Rhetos.Host.AspNet.RestApi;
 using Rhetos.Host.AspNet.RestApi.Filters;
 using Rhetos.Host.AspNet.RestApi.Metadata;
@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RhetosRestApiServiceCollectionExtensions
     {
-        public static RhetosAspNetServiceCollectionBuilder AddRestApi(this RhetosAspNetServiceCollectionBuilder builder,
+        public static RhetosServiceCollectionBuilder AddRestApi(this RhetosServiceCollectionBuilder builder,
             Action<RestApiOptions> configureOptions = null)
         {
             builder.Services.AddOptions();
