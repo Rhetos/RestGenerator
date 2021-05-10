@@ -24,6 +24,7 @@ namespace TestApp
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(type => type.ToString()); // Allows multiple entities with the same name in different modules.
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TestApp", Version = "v1" });
                 // Adding Rhetos REST API to Swagger with document name "rhetos".
                 c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });
