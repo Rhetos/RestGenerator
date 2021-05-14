@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-using Rhetos.Host.AspNet;
+using Rhetos;
 using Rhetos.Host.AspNet.RestApi;
 using Rhetos.Host.AspNet.RestApi.Filters;
 using Rhetos.Host.AspNet.RestApi.Metadata;
@@ -10,9 +10,11 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RhetosRestApiServiceCollectionExtensions
     {
-        public static RhetosAspNetServiceCollectionBuilder AddRestApi(this RhetosAspNetServiceCollectionBuilder builder,
+        public static RhetosServiceCollectionBuilder AddRestApi(this RhetosServiceCollectionBuilder builder,
             Action<RestApiOptions> configureOptions = null)
         {
+            builder.AddRestApiFilters();
+
             builder.Services.AddOptions();
 
             if (configureOptions != null)
@@ -22,11 +24,21 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.TryAddScoped<QueryParameters>();
             builder.Services.TryAddScoped<ServiceUtility>();
-            builder.Services.TryAddScoped<JsonErrorHandler>();
+            builder.Services.TryAddSingleton<ControllerRestInfoRepository>();
             
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds Rhetos sepcific filters into the ASP.NET request processing pipeline.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static RhetosServiceCollectionBuilder AddRestApiFilters(this RhetosServiceCollectionBuilder builder)
+        {
+            builder.Services.TryAddScoped<JsonErrorHandler>();
             builder.Services.TryAddScoped<ApiExceptionFilter>();
             builder.Services.TryAddScoped<ApiCommitOnSuccessFilter>();
-            builder.Services.TryAddSingleton<ControllerRestInfoRepository>();
 
             return builder;
         }
