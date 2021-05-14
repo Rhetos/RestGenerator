@@ -87,7 +87,7 @@ namespace TestApp
         {
             rhetosHostBuilder
                 .ConfigureRhetosAppDefaults()
-                .UseBuilderLogProvider(new Rhetos.Host.Net.Logging.RhetosBuilderDefaultLogProvider()) // Delegate RhetosHost logging to standard NetCore targets.
+                .UseBuilderLogProviderFromHost(serviceProvider)
                 .ConfigureConfiguration(cfg => cfg
                     .AddJsonFile("ConnectionString.local.json")
                     .MapNetCoreConfiguration(Configuration));
