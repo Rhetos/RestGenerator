@@ -8,12 +8,12 @@ SET Prerelease=auto
 REM Updating the build version of all projects.
 PowerShell -ExecutionPolicy ByPass .\tools\Build\ChangeVersion.ps1 %Version% %Prerelease% || GOTO Error0
 
-dotnet build --configuration %Config% -p:RhetosDeploy=false || GOTO Error1
+dotnet build --configuration %Config% -p:RhetosDeploy=false || GOTO Error0
 
 IF NOT EXIST Install\ MD Install
-DEL /F /S /Q Install\* || GOTO Error1
-WHERE /Q NuGet.exe || ECHO ERROR: Please download the NuGet.exe command line tool. && GOTO Error1
-NuGet pack -OutputDirectory Install || GOTO Error1
+DEL /F /S /Q Install\* || GOTO Error0
+WHERE /Q NuGet.exe || ECHO ERROR: Please download the NuGet.exe command line tool. && GOTO Error0
+NuGet pack -OutputDirectory Install || GOTO Error0
 
 REM Restoring the build version back to "dev" (internal development build), to avoid spamming git history with timestamped prerelease versions.
 PowerShell -ExecutionPolicy ByPass .\Tools\Build\ChangeVersion.ps1 %Version% dev || GOTO Error0
@@ -24,9 +24,8 @@ PowerShell -ExecutionPolicy ByPass .\Tools\Build\ChangeVersion.ps1 %Version% dev
 @ECHO %~nx0 SUCCESSFULLY COMPLETED.
 @EXIT /B 0
 
-:Error1
-@PowerShell -ExecutionPolicy ByPass .\Tools\Build\ChangeVersion.ps1 %Version% dev >nul
 :Error0
+@PowerShell -ExecutionPolicy ByPass .\Tools\Build\ChangeVersion.ps1 %Version% dev >nul
 @ECHO.
 @ECHO %~nx0 FAILED.
 @IF /I [%1] NEQ [/NOPAUSE] @PAUSE
