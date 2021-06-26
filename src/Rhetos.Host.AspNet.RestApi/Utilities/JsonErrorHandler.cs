@@ -60,7 +60,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             else
             {
                 responseStatusCode = StatusCodes.Status500InternalServerError;
-                responseMessage = new ResponseMessage { SystemMessage = FrameworkException.GetInternalServerErrorMessage(localizer, error) };
+                responseMessage = new ResponseMessage { SystemMessage = ErrorReporting.GetInternalServerErrorMessage(localizer, error) };
             }
 
             return (responseMessage, responseStatusCode);
