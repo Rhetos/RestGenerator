@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds Rhetos sepcific filters into the ASP.NET request processing pipeline.
+        /// Adds Rhetos specific filters into the ASP.NET request processing pipeline.
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>

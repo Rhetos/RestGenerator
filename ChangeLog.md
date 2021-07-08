@@ -2,7 +2,7 @@
 
 ## 5.0.0 (TO BE RELEASED)
 
-* Migration to ASP.NET Core 5 (Rhetos 5.0).
+* Migrated from .NET Framework to .NET 5 (ASP.NET Core 5) and Rhetos 5.
 
 ## 4.0.0 (2020-09-23)
 

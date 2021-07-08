@@ -79,10 +79,6 @@ namespace TestApp
             });
         }
 
-        // This is extracted to separate public static method so it can be used BOTH from Startup class
-        // and any other code that wishes to recreate RhetosHost specific for this web application
-        // Common use is to call this from Program.CreateRhetosHostBuilder method which is by convention consumed by
-        // Rhetos tools.
         private void ConfigureRhetosHostBuilder(IServiceProvider serviceProvider, IRhetosHostBuilder rhetosHostBuilder)
         {
             rhetosHostBuilder
