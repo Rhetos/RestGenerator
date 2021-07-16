@@ -13,13 +13,13 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
    3. [Writing data](#writing-data)
    4. [Actions](#actions)
    5. [Reports](#reports)
+   6. [Obsolete features](#obsolete-features)
 2. [Examples](#examples)
 3. [Developing client applications](#developing-client-applications)
 4. [HTTPS](#https)
-5. [Obsolete and partially supported features](#obsolete-and-partially-supported-features)
-6. [Build](#build)
-7. [Installation](#installation)
-8. [Adding Swagger/OpenAPI](#adding-swaggeropenapi)
+5. [Build](#build)
+6. [Installation](#installation)
+7. [Adding Swagger/OpenAPI](#adding-swaggeropenapi)
 
 ## Features
 
@@ -116,6 +116,16 @@ When applying multiple filters in a same request, the intersection of the filter
   * Query parameters `parameter` and `convertFormat` are optional.
   * Example format `http://localhost/Rhetos/rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
 
+### Obsolete features
+
+The following features are available for backward compatibility, they might be removed in future versions:
+
+* `/Count` WEB API method. Use `/TotalCount` method instead.
+* Reading method query parameters `page` and `psize`. Use `top` and `skip`.
+* Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Specific filter with a parameter").
+* Reading method query parameter `genericfilter`. Renamed to `filters`.
+* Generic property filter operations `Equal` and `NotEqual`. Use `Equals` and `NotEquals` instead.
+
 ## Examples
 
 These examples expect that the Rhetos web application is available at URL <http://localhost/Rhetos/>
@@ -185,20 +195,6 @@ or if using a REST library that will automatically encode URL query parameters f
 
 To enable HTTPS, follow the instructions in [Set up HTTPS](https://github.com/Rhetos/Rhetos/wiki/Setting-up-Rhetos-for-HTTPS).
 
-## Obsolete and partially supported features
-
-These features are available for backward compatibility, they will be removed in future versions:
-
-* `/Count` WEB API method. Use `/TotalCount` method instead.
-* Reading method query parameters `page` and `psize`. Use `top` and `skip`.
-* Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Specific filter with a parameter").
-* Reading method query parameter `genericfilter`. Renamed to `filters`.
-* Generic property filter operations `Equal` and `NotEqual`. Use `Equals` and `NotEquals` instead.
-
-Partially supported features:
-
-* `DateNotIn`, `EndsWith` and `NotContains` operations are supported only for *Rhetos v1.0* or later.
-
 ## Build
 
 **Note:** This package is already available at the [NuGet.org](https://www.nuget.org/) online gallery.
@@ -211,7 +207,7 @@ The build output is a NuGet package in the "Install" subfolder.
 
 Installing this package to a Rhetos web application:
 
-1. Add 'Rhetos.RestGenerator' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery:
+1. Add 'Rhetos.RestGenerator' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery.
 2. Extend Rhetos services configuration (at `services.AddRhetos`) with the REST API:
    ```cs
                 .AddRestApi(o =>
@@ -257,13 +253,15 @@ As an alternative, you can show Rhetos REST API **split into multiple** Swagger 
 
 1. Specify document names in Rhetos REST API:
    1. Option A) If you want to have one Swagger documents *for each DSL module*,
-      remove any code from Startup.cs that sets `GroupNameMapper` (by default DSL module name is used for grouping).
+      remove any code from Startup.cs that sets `GroupNameMapper`.
+      DSL Module name is used for grouping by default.
    2. Option B) If you want to specify custom Swagger documents, in Startup.ConfigureServices method, in `.AddRestApi` method call,
       add `o.GroupNameMapper = (conceptInfo, controller, oldName) =>  ... return document name for each conceptInfo ...`.
       Implement the custom delegate here, that will result with different Swagger document names based on `conceptInfo` parameter.
-2. For each document name specified above (each DSL module, e.g.), add the following code and replace `MyModuleName` with the document name accordingly (it is case sensitive).
+2. For each document name specified above (each DSL Module, e.g.), add the following code and replace `MyModuleName` with the document name accordingly (it is case sensitive).
    1. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call,
       add `c.SwaggerDoc("MyModuleName", new OpenApiInfo { Title = "MyModuleName REST API", Version = "v1" });`.
    2. In Startup.Configure method add, in `.UseSwaggerUI` method call,
       add `c.SwaggerEndpoint("/swagger/MyModuleName/swagger.json", "MyModuleName REST API");`.
       If there are multiple swagger endpoints configured here,  **place at the first position** the one that you want to open by default.
+   3. For example, see lines with `SwaggerDoc` and `SwaggerEndpoint` in [Bookstore Startup.cs](https://github.com/Rhetos/Bookstore/blob/baa33901c71224d13e5bae2c8312f34cd759428e/src/Bookstore.Service/Startup.cs), for modules Bookstore, Common, AuthenticationDemo and DemoRowPermissions2.
