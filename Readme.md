@@ -208,7 +208,7 @@ The build output is a NuGet package in the "Install" subfolder.
 Installing this package to a Rhetos web application:
 
 1. Add 'Rhetos.RestGenerator' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery.
-2. Extend Rhetos services configuration (at `services.AddRhetos`) with the REST API:
+2. Extend Rhetos services configuration (at `services.AddRhetosHost`) with the REST API:
    ```cs
                 .AddRestApi(o =>
                 {
