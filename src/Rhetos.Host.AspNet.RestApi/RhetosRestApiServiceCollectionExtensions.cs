@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rhetos;
 using Rhetos.Host.AspNet.RestApi;
@@ -25,7 +26,7 @@ using Rhetos.Host.AspNet.RestApi.Metadata;
 using Rhetos.Host.AspNet.RestApi.Utilities;
 using System;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Rhetos
 {
     public static class RhetosRestApiServiceCollectionExtensions
     {
