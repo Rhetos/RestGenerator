@@ -171,15 +171,21 @@ namespace JsonUrlEncoded
                 {
                     Text = @"Characters\/""?",
                     DateFrom = DateTime.Now,
-                    OwnerID = Guid.NewGuid()
+                    OwnerID = Guid.NewGuid(),
+                    File = new byte[] { 1, 2, 3 }
                 }
             };
-
             var filters = new[] { myCustomFilter };
-            var microsoftDateTimeFormat = new JsonSerializerSettings { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat };
-            string json = JsonConvert.SerializeObject(filters, microsoftDateTimeFormat);
-            string urlQuery = WebUtility.UrlEncode(json);
 
+            var jsonSettings = new JsonSerializerSettings();
+            // If needed, configure Newtonsoft.Json for backward-compatibility with older versions of RestGenerator v1-v4:
+            // 1. legacy Microsoft DateTime serialization,
+            // 2. byte[] serialization as JSON array of integers instead of Base64 string.
+            //jsonSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
+            //jsonSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter()); // Rhetos.RestGenerator NuGet
+            
+            string json = JsonConvert.SerializeObject(filters, jsonSettings);
+            string urlQuery = WebUtility.UrlEncode(json);
             Console.WriteLine($"JSON: {json}");
             Console.WriteLine($"URL query: ?filters={urlQuery}");
         }
@@ -210,24 +216,24 @@ Installing this package to a Rhetos web application:
 1. Add 'Rhetos.RestGenerator' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery.
 2. Extend Rhetos services configuration (at `services.AddRhetosHost`) with the REST API:
    ```cs
-                .AddRestApi(o =>
-                {
-                    o.BaseRoute = "rest";
-                });
+   .AddRestApi(o =>
+   {
+       o.BaseRoute = "rest";
+   });
    ```
 3. For backward compatible JSON format, add 'Microsoft.AspNetCore.Mvc.NewtonsoftJson' NuGet package, and
    the following code to Startup.ConfigureServices method:
    ```cs
-            // Using NewtonsoftJson for backward-compatibility with older versions of RestGenerator:
-            // 1. legacy Microsoft DateTime serialization,
-            // 2. byte[] serialization as JSON array of integers instead of Base64 string.
-            services.AddControllers()
-                .AddNewtonsoftJson(o =>
-                {
-                    o.UseMemberCasing();
-                    o.SerializerSettings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-                    o.SerializerSettings.Converters.Add(new ByteArrayConverter());
-                });
+   // Using NewtonsoftJson for backward-compatibility with older versions of RestGenerator:
+   // 1. legacy Microsoft DateTime serialization,
+   // 2. byte[] serialization as JSON array of integers instead of Base64 string.
+   services.AddControllers()
+       .AddNewtonsoftJson(o =>
+       {
+           o.UseMemberCasing();
+           o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
+           o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter());
+       });
    ```
 
 ## Adding Swagger/OpenAPI
