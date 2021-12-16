@@ -28,6 +28,10 @@ using Rhetos.Host.AspNet.RestApi.Utilities;
 
 namespace Rhetos.Host.AspNet.RestApi.Filters
 {
+    /// <summary>
+    /// Standard Rhetos REST error response format:
+    /// In case of exception, the web response body will be an object with UserMessage and SystemMessage properties.
+    /// </summary>
     public class ApiExceptionFilter : IActionFilter, IOrderedFilter
     {
         private readonly JsonErrorHandler jsonErrorHandler;

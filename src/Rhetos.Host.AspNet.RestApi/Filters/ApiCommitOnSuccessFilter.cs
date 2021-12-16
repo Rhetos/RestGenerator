@@ -23,6 +23,9 @@ using Rhetos.Persistence;
 
 namespace Rhetos.Host.AspNet.RestApi.Filters
 {
+    /// <summary>
+    /// Automatically commit unit of work on successful response with code 200, rollback otherwise.
+    /// </summary>
     public class ApiCommitOnSuccessFilter : IActionFilter, IOrderedFilter
     {
         private readonly IRhetosComponent<IUnitOfWork> rhetosUnitOfWork;
