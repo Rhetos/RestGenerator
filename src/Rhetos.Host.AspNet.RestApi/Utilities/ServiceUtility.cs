@@ -17,14 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Newtonsoft.Json;
+using Rhetos.Dom.DefaultConcepts;
+using Rhetos.Processing;
+using Rhetos.Processing.DefaultCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet;
-using Rhetos.Processing;
-using Rhetos.Processing.DefaultCommands;
 
 namespace Rhetos.Host.AspNet.RestApi.Utilities
 {
@@ -39,8 +38,8 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 // TODO: Remove this method after simplifying ProcessingEngine error handling to always throw exceptions on error.
                 if (result.UserMessage != null)
-                    throw new UserException(result.UserMessage, result.SystemMessage); // JsonErrorHandler will return HttpStatusCode.BadRequest.
-                throw new FrameworkException(result.SystemMessage); // JsonErrorHandler will return HttpStatusCode.InternalServerError.
+                    throw new UserException(result.UserMessage, result.SystemMessage); // ApiExceptionFilter will return HttpStatusCode.BadRequest.
+                throw new FrameworkException(result.SystemMessage); // ApiExceptionFilter will return HttpStatusCode.InternalServerError.
             }
         }
 
@@ -184,19 +183,19 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             return result;
         }
 
-        public DownloadReportResult DownloadReport<T>(string parameter, string convertFormat)
+        public DownloadReportResult DownloadReport(Type reportType, string parameterJson, string convertFormat)
         {
             object parameterInstance;
-            if (!string.IsNullOrEmpty(parameter))
+            if (!string.IsNullOrEmpty(parameterJson))
             {
-                parameterInstance = JsonConvert.DeserializeObject(parameter, typeof(T));
+                parameterInstance = JsonConvert.DeserializeObject(parameterJson, reportType);
                 if (parameterInstance == null)
 #pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
-                    throw new LegacyClientException($"Invalid parameter format for report '{typeof(T).FullName}', data: '{parameter}'.");
+                    throw new LegacyClientException($"Invalid parameter format for report '{reportType.FullName}', data: '{parameterJson}'.");
 #pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
             }
             else
-                parameterInstance = Activator.CreateInstance(typeof(T));
+                parameterInstance = Activator.CreateInstance(reportType);
 
             var commandInfo = new DownloadReportCommandInfo
             {
@@ -213,7 +212,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 if (ex.Message.Contains(typeof(IReportRepository).FullName))
 #pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
-                    throw new LegacyClientException($"Report {typeof(T).FullName} does not provide file downloading.", ex);
+                    throw new LegacyClientException($"Report {reportType.FullName} does not provide file downloading.", ex);
 #pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
                 else
                     throw;

@@ -35,7 +35,7 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
         [HttpGet]
         public ActionResult<DownloadReportResult> DownloadReport(string parameter, string convertFormat)
         {
-            var reportResult = serviceUtility.DownloadReport<T>(parameter, convertFormat);
+            var reportResult = serviceUtility.DownloadReport(typeof(T), parameter, convertFormat);
             return new JsonResult(reportResult);
         }
     }
