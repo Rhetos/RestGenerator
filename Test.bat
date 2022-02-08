@@ -1,12 +1,12 @@
 SETLOCAL
 
-@SET Config=%1%
-@IF [%1] == [] SET Config=Debug
-
 @REM During the Build process we are not executing the dbupdate command so we must explicitly call it here
-"test\TestApp\bin\Debug\net5.0\rhetos.exe" dbupdate "test\TestApp\bin\Debug\net5.0\TestApp.dll" || GOTO Error0
+test\TestApp\bin\Debug\net5.0\rhetos.exe dbupdate test\TestApp\bin\Debug\net5.0\TestApp.dll || GOTO Error0
 
 @REM Using "no-build" option as optimization, because Test.bat should always be executed after Build.bat.
+dotnet test --no-build || GOTO Error0
+
+@REM Running the TestApp for the curl tests below.
 start "Rhetos.RestGenerator test app. Close manually after tests are done." dotnet run --project test\TestApp --no-build || GOTO Error0
 @REM Waiting for TestApp to start.
 timeout /t 5
