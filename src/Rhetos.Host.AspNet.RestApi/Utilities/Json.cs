@@ -77,6 +77,8 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
         {
             if (o is JToken jToken)
                 return jToken.ToObject(type);
+            if (o is string s && type.IsValueType)
+                return DeserializeOrException(s, type);
             else
                 return o;
         }

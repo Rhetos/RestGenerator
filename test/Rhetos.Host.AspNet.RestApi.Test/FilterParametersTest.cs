@@ -20,6 +20,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Rhetos.Host.AspNet.RestApi.Test.Tools;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TestApp;
@@ -65,7 +66,6 @@ namespace Rhetos.Host.AspNet.RestApi.Test
         [InlineData("rest/Common/MyClaim/?filters=[{\"Filter\":\"Claim\",\"Value\":{\"ClaimResource\":\"Common.RolePermission\",\"ClaimRight\":\"Read\"}}]")]
 
         // Deactivatable:
-        // (THIS TEST REQUIRES Rhetos.CommonConceptsTest)
         [InlineData("rest/TestDeactivatable/BasicEnt/")]
         [InlineData("rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"Rhetos.Dom.DefaultConcepts.ActiveItems,%20Rhetos.Dom.DefaultConcepts.Interfaces\"}]")]
         [InlineData("rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"Rhetos.Dom.DefaultConcepts.ActiveItems\"}]")]
@@ -88,6 +88,37 @@ namespace Rhetos.Host.AspNet.RestApi.Test
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+
+        public async Task JsonValueTypeAsStringWithIncorrectFormat()
+        {
+            string url = "rest/TestHistory/Standard/?filters=[{\"Filter\":\"System.DateTime\",\"Value\":\"/Date(1544195644420+0100)/\"}]";
+
+            var logEntries = new LogEntries();
+            var client = _factory
+                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
+                .CreateClient();
+            var response = await client.GetAsync(url);
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            output.WriteLine(responseContent);
+            output.WriteLine(string.Join(Environment.NewLine, logEntries));
+
+            Assert.Equal<object>(
+                "400 {\"UserMessage\":\"Operation could not be completed because the request sent to the server was not valid or not properly formatted.\""
+                    + ",\"SystemMessage\":\"The provided filter parameter has invalid JSON format: Error parsing comment. Expected: *, got D. Path '', line 1, position 1. Filter parameter: /Date(1544195644420 0100)/\"}",
+                $"{(int)response.StatusCode} {responseContent}");
+
+            string[] exceptedLogPatterns = new[] {
+                "[Information]",
+                "Rhetos.ClientException: The provided filter",
+                "/Date(1544195644420 0100)/"
+                // The command summary is not reported by ProcessingEngine, because the ClientException occurred before the command was constructed.
+            };
+            Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
+                entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
         }
     }
 }
