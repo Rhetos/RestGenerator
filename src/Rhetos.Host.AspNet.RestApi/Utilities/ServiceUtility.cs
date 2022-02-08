@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Processing;
 using Rhetos.Processing.DefaultCommands;
+using Rhetos.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,17 +32,6 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
     {
         private readonly IProcessingEngine _processingEngine;
         private readonly QueryParameters _queryParameters;
-
-        private static void CheckForErrors(ProcessingResult result)
-        {
-            if (!result.Success)
-            {
-                // TODO: Remove this method after simplifying ProcessingEngine error handling to always throw exceptions on error.
-                if (result.UserMessage != null)
-                    throw new UserException(result.UserMessage, result.SystemMessage); // ApiExceptionFilter will return HttpStatusCode.BadRequest.
-                throw new FrameworkException(result.SystemMessage); // ApiExceptionFilter will return HttpStatusCode.InternalServerError.
-            }
-        }
 
         public ServiceUtility(IRhetosComponent<IProcessingEngine> rhetosProcessingEngine, QueryParameters queryParameters)
         {
@@ -100,11 +90,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
 
         private ReadCommandResult ExecuteReadCommand(ReadCommandInfo commandInfo)
         {
-            var result = _processingEngine.Execute(new[] { commandInfo });
-            CheckForErrors(result);
-            var resultData = (ReadCommandResult)(((Rhetos.XmlSerialization.XmlBasicData<ReadCommandResult>)(result.CommandResults.Single().Data)).Value);
-
-            return resultData;
+            return _processingEngine.Execute(commandInfo);
         }
 
         private OrderByProperty[] ParseSortParameter(string sort)
@@ -137,11 +123,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 action = Activator.CreateInstance<T>();
         
             var commandInfo = new ExecuteActionCommandInfo { Action = action };
-            var result = _processingEngine.Execute(new[] { commandInfo });
-            CheckForErrors(result);
+            _processingEngine.Execute(commandInfo);
         }
 
-        public ProcessingResult InsertData<T>(T entity)
+        public void InsertData<T>(T entity)
         {
             var commandInfo = new SaveEntityCommandInfo
             {
@@ -149,13 +134,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 DataToInsert = new[] { (IEntity)entity }
             };
 
-            var result = _processingEngine.Execute(new[] { commandInfo });
-            CheckForErrors(result);
-
-            return result;
+            _processingEngine.Execute(commandInfo);
         }
 
-        public ProcessingResult UpdateData<T>(T entity)
+        public void UpdateData<T>(T entity)
         {
             var commandInfo = new SaveEntityCommandInfo
             {
@@ -163,13 +145,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 DataToUpdate = new[] { (IEntity)entity }
             };
 
-            var result = _processingEngine.Execute(new[] { commandInfo });
-            CheckForErrors(result);
-
-            return result;
+            _processingEngine.Execute(commandInfo);
         }
 
-        public ProcessingResult DeleteData<T>(T entity)
+        public void DeleteData<T>(T entity)
         {
             var commandInfo = new SaveEntityCommandInfo
             {
@@ -177,10 +156,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 DataToDelete = new[] { (IEntity)entity }
             };
 
-            var result = _processingEngine.Execute(new[] { commandInfo });
-            CheckForErrors(result);
-
-            return result;
+            _processingEngine.Execute(commandInfo);
         }
 
         public DownloadReportResult DownloadReport(Type reportType, string parameterJson, string convertFormat)
@@ -203,10 +179,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 ConvertFormat = convertFormat
             };
 
-            ProcessingResult result;
+            DownloadReportCommandResult result;
             try
             {
-                result = _processingEngine.Execute(new[] { commandInfo });
+                result = _processingEngine.Execute(commandInfo);
             }
             catch (Autofac.Core.Registration.ComponentNotRegisteredException ex)
             {
@@ -218,14 +194,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                     throw;
             }
 
-            CheckForErrors(result);
-
-            var reportCommandResult = (DownloadReportCommandResult)result.CommandResults.Single().Data;
-
             return new DownloadReportResult
                 {
-                    ReportFile = reportCommandResult.ReportFile,
-                    SuggestedFileName = reportCommandResult.SuggestedFileName
+                    ReportFile = result.ReportFile,
+                    SuggestedFileName = result.SuggestedFileName
                 };
         }
     }

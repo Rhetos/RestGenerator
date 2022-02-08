@@ -17,14 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Rhetos.Host.AspNet.RestApi.Utilities;
+using System;
+using System.Linq;
 
 namespace Rhetos.Host.AspNet.RestApi.Filters
 {
@@ -32,6 +32,15 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
     /// Standard Rhetos REST error response format:
     /// In case of exception, the web response body will be an object with UserMessage and SystemMessage properties.
     /// </summary>
+    /// <remarks>
+    /// It also writes the exception to the application's log, based on severity:
+    /// <see cref="UserException"/> is logged as Trace level (not logged by default), because it is expected during the standard app usage
+    /// (for example, user forgot to enter a required field).
+    /// <see cref="ClientException"/> is logged as Information level (logged by default), because it indicates that
+    /// the client application needs to be corrected.
+    /// Other exceptions are logged as Error level, because they represent internal error in the server application
+    /// that needs to be fixed.
+    /// </remarks>
     public class ApiExceptionFilter : IActionFilter, IOrderedFilter
     {
         private readonly JsonErrorHandler jsonErrorHandler;
@@ -81,28 +90,17 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
         {
             if (context.Exception != null)
             {
-                var (response, statusCode) = jsonErrorHandler.CreateResponseFromException(context.Exception);
-                context.Result = new JsonResult(response) { StatusCode = statusCode };
+                var error = jsonErrorHandler.CreateResponseFromException(context.Exception);
+                
+                context.Result = new JsonResult(error.Response) { StatusCode = error.StatusCode };
                 context.ExceptionHandled = true;
-                LogException(context.Exception);
-            }
-        }
 
-        private void LogException(Exception error)
-        {
-            if (error is UserException)
-                logger.LogTrace(error.ToString());
-            else if (error is LegacyClientException legacyException)
-            {
-                if (legacyException.Severe)
-                    logger.LogInformation(legacyException.ToString());
-                else
-                    logger.LogTrace(legacyException.ToString());
+                string commandSummerReport =
+                    string.IsNullOrEmpty(error.CommandSummary) ? ""
+                    : Environment.NewLine + "Command: " + error.CommandSummary;
+
+                logger.Log(error.Severity, context.Exception.ToString() + commandSummerReport);
             }
-            else if (error is ClientException)
-                logger.LogInformation(error.ToString());
-            else
-                logger.LogError(error.ToString());
         }
     }
 }

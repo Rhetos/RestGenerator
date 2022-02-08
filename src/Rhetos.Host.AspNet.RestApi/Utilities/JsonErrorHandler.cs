@@ -17,12 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Rhetos.Utilities;
+using System;
 
 namespace Rhetos.Host.AspNet.RestApi.Utilities
 {
@@ -48,41 +46,79 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             this.localizer = rhetosLocalizer.Value;
         }
 
-        public (object response, int statusCode) CreateResponseFromException(Exception error)
+        public ErrorDescription CreateResponseFromException(Exception error)
         {
-            object responseMessage;
-            int responseStatusCode;
+            string commandSummary = ExceptionsUtility.GetCommandSummary(error);
 
             if (error is UserException userException)
             {
-                responseStatusCode = StatusCodes.Status400BadRequest;
-                responseMessage = new ResponseMessage
-                {
-                    UserMessage = localizer[userException.Message, userException.MessageParameters],
-                    SystemMessage = userException.SystemMessage
-                };
+                return new ErrorDescription(
+                    StatusCodes.Status400BadRequest,
+                    new ResponseMessage
+                    {
+                        UserMessage = localizer[userException.Message, userException.MessageParameters],
+                        SystemMessage = userException.SystemMessage
+                    },
+                    LogLevel.Trace,
+                    commandSummary);
             }
             else if (error is LegacyClientException legacyClientException)
             {
-                responseStatusCode = (int)legacyClientException.HttpStatusCode;
-                responseMessage = legacyClientException.Message;
+                return new ErrorDescription(
+                    (int)legacyClientException.HttpStatusCode,
+                    legacyClientException.Message,
+                    legacyClientException.Severe ? LogLevel.Information : LogLevel.Trace,
+                    commandSummary);
             }
             else if (error is ClientException clientException)
             {
-                responseStatusCode = (int)clientException.HttpStatusCode;
-                responseMessage = new ResponseMessage { SystemMessage = clientException.Message };
-
-                // HACK: Old Rhetos plugins could not specify the status code. Here we match by message convention.
-                if (clientException.Message == "User is not authenticated." && responseStatusCode == StatusCodes.Status400BadRequest)
-                    responseStatusCode = StatusCodes.Status401Unauthorized;
+                return new ErrorDescription(
+                    GetStatusCode(clientException),
+                    new ResponseMessage
+                    {
+                        UserMessage = ErrorReporting.ClientExceptionUserMessage,
+                        SystemMessage = clientException.Message
+                    },
+                    LogLevel.Information,
+                    commandSummary);
             }
             else
             {
-                responseStatusCode = StatusCodes.Status500InternalServerError;
-                responseMessage = new ResponseMessage { SystemMessage = ErrorReporting.GetInternalServerErrorMessage(localizer, error) };
+                return new ErrorDescription(
+                    StatusCodes.Status500InternalServerError,
+                    new ResponseMessage { SystemMessage = ErrorReporting.GetInternalServerErrorMessage(localizer, error) },
+                    LogLevel.Error,
+                    commandSummary);
             }
+        }
 
-            return (responseMessage, responseStatusCode);
+        private int GetStatusCode(ClientException clientException)
+        {
+            // HACK: Old Rhetos plugins could not specify the status code. Here we match by message convention.
+            if (clientException.Message == "User is not authenticated." && (int)clientException.HttpStatusCode == StatusCodes.Status400BadRequest)
+                return StatusCodes.Status401Unauthorized;
+            else
+                return (int)clientException.HttpStatusCode;
+        }
+    }
+
+    public class ErrorDescription
+    {
+        /// <summary>HTTP response status code.</summary>
+        public int StatusCode { get; }
+
+        public object Response { get; }
+
+        public LogLevel Severity { get; }
+
+        public string CommandSummary { get; }
+
+        public ErrorDescription(int statusCode, object response, LogLevel severity, string commandSummary)
+        {
+            this.StatusCode = statusCode;
+            this.Response = response;
+            this.Severity = severity;
+            this.CommandSummary = commandSummary;
         }
     }
 }
