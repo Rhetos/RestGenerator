@@ -76,7 +76,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                     GetStatusCode(clientException),
                     new ResponseMessage
                     {
-                        UserMessage = ErrorReporting.ClientExceptionUserMessage,
+                        UserMessage = localizer[ErrorReporting.ClientExceptionUserMessage],
                         SystemMessage = clientException.Message
                     },
                     LogLevel.Information,
