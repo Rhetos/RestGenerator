@@ -56,7 +56,7 @@ namespace Rhetos
         /// <returns></returns>
         public static RhetosServiceCollectionBuilder AddRestApiFilters(this RhetosServiceCollectionBuilder builder)
         {
-            builder.Services.TryAddScoped<JsonErrorHandler>();
+            builder.Services.TryAddScoped<ErrorReporting>();
             builder.Services.TryAddScoped<ApiExceptionFilter>();
             builder.Services.TryAddScoped<ApiCommitOnSuccessFilter>();
 

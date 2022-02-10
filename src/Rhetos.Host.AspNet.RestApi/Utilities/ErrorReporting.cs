@@ -27,11 +27,11 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
     /// <summary>
     /// Converts exceptions to a HTTP WEB response that contains JSON-serialized string error message.
     /// </summary>
-    public class JsonErrorHandler
+    public class ErrorReporting
     {
         private readonly ILocalizer localizer;
 
-        public class ResponseMessage
+        public class ErrorResponse
         {
             public string UserMessage { get;set; }
             public string SystemMessage { get; set; }
@@ -41,7 +41,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             }
         }
 
-        public JsonErrorHandler(IRhetosComponent<ILocalizer> rhetosLocalizer)
+        public ErrorReporting(IRhetosComponent<ILocalizer> rhetosLocalizer)
         {
             this.localizer = rhetosLocalizer.Value;
         }
@@ -54,7 +54,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 return new ErrorDescription(
                     StatusCodes.Status400BadRequest,
-                    new ResponseMessage
+                    new ErrorResponse
                     {
                         UserMessage = localizer[userException.Message, userException.MessageParameters],
                         SystemMessage = userException.SystemMessage
@@ -74,9 +74,9 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 return new ErrorDescription(
                     GetStatusCode(clientException),
-                    new ResponseMessage
+                    new ErrorResponse
                     {
-                        UserMessage = localizer[ErrorReporting.ClientExceptionUserMessage],
+                        UserMessage = localizer[ErrorMessages.ClientExceptionUserMessage],
                         SystemMessage = clientException.Message
                     },
                     LogLevel.Information,
@@ -86,7 +86,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 return new ErrorDescription(
                     StatusCodes.Status500InternalServerError,
-                    new ResponseMessage { SystemMessage = ErrorReporting.GetInternalServerErrorMessage(localizer, error) },
+                    new ErrorResponse { SystemMessage = ErrorMessages.GetInternalServerErrorMessage(localizer, error) },
                     LogLevel.Error,
                     commandSummary);
             }

@@ -43,12 +43,12 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
     /// </remarks>
     public class ApiExceptionFilter : IActionFilter, IOrderedFilter
     {
-        private readonly JsonErrorHandler jsonErrorHandler;
+        private readonly ErrorReporting jsonErrorHandler;
         private readonly ILogger logger;
 
         public int Order { get; } = int.MaxValue - 10;
 
-        public ApiExceptionFilter(JsonErrorHandler jsonErrorHandler, ILogger<ApiExceptionFilter> logger)
+        public ApiExceptionFilter(ErrorReporting jsonErrorHandler, ILogger<ApiExceptionFilter> logger)
         {
             this.jsonErrorHandler = jsonErrorHandler;
             this.logger = logger;
@@ -70,7 +70,7 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
             
             if (string.IsNullOrEmpty(invalidModelEntry.Key))
             {
-                var responseMessage = new JsonErrorHandler.ResponseMessage
+                var responseMessage = new ErrorReporting.ErrorResponse
                 {
                     SystemMessage = "Serialization error: Please check if the request body has a valid JSON format.\n" + errors
                 };
@@ -78,7 +78,7 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
             }
             else
             {
-                var responseMessage = new JsonErrorHandler.ResponseMessage
+                var responseMessage = new ErrorReporting.ErrorResponse
                 {
                     SystemMessage = $"Parameter error: Supplied value for parameter '{invalidModelEntry.Key}' couldn't be parsed.\n" + errors
                 };
