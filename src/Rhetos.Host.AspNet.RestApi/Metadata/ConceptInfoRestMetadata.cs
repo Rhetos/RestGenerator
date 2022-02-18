@@ -17,15 +17,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Rhetos.Dsl;
+using Rhetos.Host.AspNet.RestApi.Controllers;
+using System;
 
 namespace Rhetos.Host.AspNet.RestApi.Metadata
 {
+    /// <summary>
+    /// Inherit this class if you need to provide additional custom metadata from
+    /// the concept metadata provider (implementation of <see cref="IConceptInfoRestMetadataProvider"/>)
+    /// the controller (derivation of <see cref="RhetosApiControllerBase{T}"/>).
+    /// </summary>
     public class ConceptInfoRestMetadata
     {
         public IConceptInfo ConceptInfo { get; set; }

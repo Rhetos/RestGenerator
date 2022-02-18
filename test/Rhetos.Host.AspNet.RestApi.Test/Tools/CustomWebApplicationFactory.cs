@@ -39,6 +39,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
                 logging.Services.AddSingleton<ILoggerProvider, FakeLoggerProvider>();
                 logging.Services.AddSingleton(typeof(ILogger<>), typeof(FakeLogger<>));
                 logging.Services.AddSingleton<LogEntries>();
+                logging.Services.AddSingleton<FakeLoggerOptions>();
             });
         }
 

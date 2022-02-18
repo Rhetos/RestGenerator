@@ -39,7 +39,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             _queryParameters = queryParameters;
         }
 
-        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, string filters, Tuple<string, Type>[] filterTypes, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
+        public RecordsAndTotalCountResult<T> GetData<T>(string filter, string fparam, string genericfilter, string filters, int top, int skip, int page, int psize, string sort, bool readRecords, bool readTotalCount)
         {
             // Legacy interface:
             if (page != 0 || psize != 0)
@@ -54,7 +54,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             var readCommandInfo = new ReadCommandInfo
             {
                 DataSource = typeof(T).FullName,
-                Filters = _queryParameters.ParseFilterParameters(filter, fparam, genericfilter, filters, filterTypes),
+                Filters = _queryParameters.ParseFilterParameters(filter, fparam, genericfilter, filters, typeof(T).FullName),
                 Top = top,
                 Skip = skip,
                 ReadRecords = readRecords,
@@ -82,7 +82,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             return (T)ExecuteReadCommand(new ReadCommandInfo
             {
                 DataSource = typeof(T).FullName,
-                Filters = new[] { new FilterCriteria { Filter = filterInstance.GetType().AssemblyQualifiedName, Value = filterInstance } },
+                Filters = new[] { new FilterCriteria(typeof(IEnumerable<Guid>), filterInstance) },
                 ReadRecords = true
             })
                 .Records.FirstOrDefault();

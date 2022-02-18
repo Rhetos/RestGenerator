@@ -1,0 +1,10 @@
+﻿Module TestFilters
+{
+    Entity Simple
+    {
+        ShortString Name;
+
+        FilterBy 'IEnumerable<IEntity>' '(r, p) => new[] { new Simple { Name = $"IE {p?.GetType()} {p?.Count()}." } }';
+        FilterBy 'List<object>' '(r, p) => new[] { new Simple { Name = $"List {p?.GetType()} {p?.Count()} {p?.FirstOrDefault()?.GetType()}." } }';
+    }
+}

@@ -17,9 +17,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Autofac;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Rhetos;
+using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Host.AspNet.RestApi.Test.Tools;
+using Rhetos.Host.AspNet.RestApi.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -49,37 +56,50 @@ namespace Rhetos.Host.AspNet.RestApi.Test
         [Theory]
 
         // Generic filter:
-        [InlineData("rest/Common/Claim/?filters=[{\"Property\":\"ID\",\"Operation\":\"in\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
+        [InlineData(false, "rest/Common/Claim/?filters=[{\"Property\":\"ID\",\"Operation\":\"in\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
 
         // Specific filter with simplified class name:
-        [InlineData("rest/Common/Claim/?filters=[{\"Filter\":\"Guid[]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
-        [InlineData("rest/Common/Claim/?filters=[{\"Filter\":\"System.Guid[]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
-        [InlineData("rest/Common/Claim/?filters=[{\"Filter\":\"System.Collections.Generic.IEnumerable`1[[System.Guid]]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
+        [InlineData(false, "rest/Common/Claim/?filters=[{\"Filter\":\"IEnumerable<Guid>\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
+        [InlineData(false, "rest/Common/Claim/?filters=[{\"Filter\":\"Guid[]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
+        [InlineData(true, "rest/Common/Claim/?filters=[{\"Filter\":\"System.Guid[]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
+        [InlineData(true, "rest/Common/Claim/?filters=[{\"Filter\":\"System.Collections.Generic.IEnumerable`1[[System.Guid]]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
 
         // Legacy filters:
-        [InlineData("rest/Common/Claim/?filter=Guid[]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
-        [InlineData("rest/Common/Claim/?filter=System.Guid[]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
-        [InlineData("rest/Common/Claim/?filter=System.Collections.Generic.IEnumerable`1[[System.Guid]]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
+        [InlineData(false, "rest/Common/Claim/?filter=IEnumerable<Guid>&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
+        [InlineData(false, "rest/Common/Claim/?filter=Guid[]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
+        [InlineData(true, "rest/Common/Claim/?filter=System.Guid[]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
+        [InlineData(true, "rest/Common/Claim/?filter=System.Collections.Generic.IEnumerable`1[[System.Guid]]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
 
         // Specific filter with parameter name:
-        [InlineData("rest/Common/MyClaim/?filters=[{\"Filter\":\"Common.Claim\",\"Value\":{\"ClaimResource\":\"Common.RolePermission\",\"ClaimRight\":\"Read\"}}]")]
-        [InlineData("rest/Common/MyClaim/?filters=[{\"Filter\":\"Claim\",\"Value\":{\"ClaimResource\":\"Common.RolePermission\",\"ClaimRight\":\"Read\"}}]")]
+        [InlineData(false, "rest/Common/MyClaim/?filters=[{\"Filter\":\"Common.Claim\",\"Value\":{\"ClaimResource\":\"Common.RolePermission\",\"ClaimRight\":\"Read\"}}]")]
+        [InlineData(false, "rest/Common/MyClaim/?filters=[{\"Filter\":\"Claim\",\"Value\":{\"ClaimResource\":\"Common.RolePermission\",\"ClaimRight\":\"Read\"}}]")]
 
         // Deactivatable:
-        [InlineData("rest/TestDeactivatable/BasicEnt/")]
-        [InlineData("rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"Rhetos.Dom.DefaultConcepts.ActiveItems,%20Rhetos.Dom.DefaultConcepts.Interfaces\"}]")]
-        [InlineData("rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"Rhetos.Dom.DefaultConcepts.ActiveItems\"}]")]
-        [InlineData("rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"ActiveItems\"}]")]
+        [InlineData(false, "rest/TestDeactivatable/BasicEnt/")]
+        [InlineData(true, "rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"Rhetos.Dom.DefaultConcepts.ActiveItems,%20Rhetos.Dom.DefaultConcepts.Interfaces\"}]")]
+        [InlineData(false, "rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"Rhetos.Dom.DefaultConcepts.ActiveItems\"}]")]
+        [InlineData(false, "rest/TestDeactivatable/BasicEnt/?filters=[{\"Filter\":\"ActiveItems\"}]")]
 
         // DateTime (old MS format):
-        [InlineData("rest/TestHistory/Standard/")]
-        [InlineData("rest/TestHistory/Standard/?filters=[{\"Filter\":\"System.DateTime\",\"Value\":\"/Date(1544195644420%2B0100)/\"}]")]
+        [InlineData(false, "rest/TestHistory/Standard/")]
+        [InlineData(false, "rest/TestHistory/Standard/?filters=[{\"Filter\":\"System.DateTime\",\"Value\":\"/Date(1544195644420%2B0100)/\"}]")]
 
-        public async Task SupportedFilterParameters(string url)
+        public async Task SupportedFilterParameters(bool dynamicOnly, string url)
+        {
+            await TestSupportedFilterParameters(false, url, shouldFail: dynamicOnly);
+            await TestSupportedFilterParameters(true, url, shouldFail: false);
+        }
+
+        private async Task TestSupportedFilterParameters(bool dynamicTypeResolution, string url, bool shouldFail)
         {
             var logEntries = new LogEntries();
             var client = _factory
-                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
+                .WithWebHostBuilder(builder =>
+                {
+                    builder.MonitorLogging(logEntries);
+                    if (dynamicTypeResolution)
+                        builder.SetRhetosDynamicTypeResolution();
+                })
                 .CreateClient();
             var response = await client.GetAsync(url);
             string responseContent = await response.Content.ReadAsStringAsync();
@@ -87,7 +107,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
             output.WriteLine(responseContent);
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(shouldFail ? HttpStatusCode.BadRequest : HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
@@ -119,6 +139,52 @@ namespace Rhetos.Host.AspNet.RestApi.Test
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
+        }
+
+        [Fact]
+
+        public void LimitedDeserialization()
+        {
+            // This test checks that the QueryParameters will try to deserialized only types that are specified on the DataStructure as read parameters.
+
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var queryParameters = scope.ServiceProvider.GetRequiredService<QueryParameters>();
+                var repository = scope.ServiceProvider.GetRequiredService<IRhetosComponent<Common.DomRepository>>().Value;
+
+                string json = JsonConvert.SerializeObject(
+                        new List<object> { new Common.Role { Name = "ABC" } },
+                        new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full });
+
+                {
+                    var extFilter = queryParameters.ParseFilterParameters("IEnumerable<IEntity>", "[]", null, null, "TestFilters.Simple");
+                    var result = repository.TestFilters.Simple.Load(extFilter).Single().Name;
+                    Assert.Equal("IE System.Collections.Generic.List`1[Rhetos.Dom.DefaultConcepts.IEntity] 0.", result);
+                }
+                {
+                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters("IEnumerable<IEntity>", json, null, null, "TestFilters.Simple"));
+                    Assert.Contains("invalid JSON format", e.Message);
+                }
+                {
+                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters("IEnumerable<Common.Role>", json, null, null, "TestFilters.Simple"));
+                    Assert.Contains("Filter type 'IEnumerable<Common.Role>' is not available", e.Message);
+                }
+
+                {
+                    var extFilter = queryParameters.ParseFilterParameters("List<object>", "[]", null, null, "TestFilters.Simple");
+                    var result = repository.TestFilters.Simple.Load(extFilter).Single().Name;
+                    Assert.Equal("List System.Collections.Generic.List`1[System.Object] 0 .", result);
+                }
+                {
+                    var extFilter = queryParameters.ParseFilterParameters("List<object>", json, null, null, "TestFilters.Simple");
+                    var result = repository.TestFilters.Simple.Load(extFilter).Single().Name;
+                    Assert.Equal("List System.Collections.Generic.List`1[System.Object] 1 Newtonsoft.Json.Linq.JObject.", result);
+                }
+                {
+                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters("List<Common.Role>", json, null, null, "TestFilters.Simple"));
+                    Assert.Contains("Filter type 'List<Common.Role>' is not available", e.Message);
+                }
+            }
         }
     }
 }

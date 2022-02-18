@@ -24,15 +24,17 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
     public class FakeLoggerProvider : ILoggerProvider
     {
         private readonly LogEntries logEntries;
+        private readonly FakeLoggerOptions options;
 
-        public FakeLoggerProvider(LogEntries logEntries)
+        public FakeLoggerProvider(LogEntries logEntries, FakeLoggerOptions options)
         {
             this.logEntries = logEntries;
+            this.options = options;
         }
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new FakeLogger(categoryName, logEntries);
+            return new FakeLogger(categoryName, logEntries, options);
         }
 
         public void Dispose()

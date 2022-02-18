@@ -30,8 +30,8 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
     // bug causes Actions which return TResult directly to ignore some serializer settings (e.g. MicrosoftDateTime).
     public class ReadWriteDataApiController<T> : ReadDataApiController<T>
     {
-        public ReadWriteDataApiController(ServiceUtility serviceUtility, ControllerRestInfoRepository controllerRestInfoRepository)
-            : base(serviceUtility, controllerRestInfoRepository)
+        public ReadWriteDataApiController(ServiceUtility serviceUtility)
+            : base(serviceUtility)
         {
         }
 

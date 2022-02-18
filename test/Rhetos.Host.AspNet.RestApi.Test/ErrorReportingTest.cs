@@ -18,6 +18,7 @@
 */
 
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Logging;
 using Rhetos.Host.AspNet.RestApi.Test.Tools;
 using System;
 using System.Linq;
@@ -52,18 +53,18 @@ namespace Rhetos.Host.AspNet.RestApi.Test
         [Theory]
         [InlineData("test1", "test2",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":""test2""}",
-            "[Trace]|Rhetos.UserException: test1|MessageParameters: null|SystemMessage: test2")]
+            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|MessageParameters: null|SystemMessage: test2")]
         [InlineData("test1", null,
             @"400 {""UserMessage"":""test1"",""SystemMessage"":null}",
-            "[Trace]|Rhetos.UserException: test1|MessageParameters: null|SystemMessage: ")]
+            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|MessageParameters: null|SystemMessage: ")]
         [InlineData(null, null,
             @"400 {""UserMessage"":""Exception of type 'Rhetos.UserException' was thrown."",""SystemMessage"":null}",
-            "[Trace]|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.|MessageParameters: null|SystemMessage: ")]
+            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.|MessageParameters: null|SystemMessage: ")]
         public async Task UserExceptionResponse(string testUserMessage, string testSystemMessage, string expectedResponse, string expectedLogPatterns)
         {
             var logEntries = new LogEntries();
             var client = _factory
-                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
+                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries, LogLevel.Trace))
                 .CreateClient();
             var requestData = new ReturnUserError { TestUserMessage = testUserMessage, TestSystemMessage = testSystemMessage };
             var response = await client.PostAsync("rest/TestAction/ReturnUserError", JsonContent.Create(requestData));
@@ -71,7 +72,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             Assert.Equal<object>(expectedResponse, $"{(int)response.StatusCode} {responseContent}");
 
-            output.WriteLine(string.Join(Environment.NewLine, logEntries));
+            output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
             string[] exceptedLogPatterns = expectedLogPatterns.Split('|');
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 // The command summary is not reported by ProcessingEngine for UserExceptions to improved performance.
@@ -95,7 +96,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
-                "[Information]",
+                "[Information] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
                 "Rhetos.ClientException: test exception",
                 "Command: ExecuteActionCommandInfo TestAction.ReturnClientError" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -123,9 +124,9 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
-                "[Error]",
+                "[Error] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
                 "System.ArgumentException: test exception",
-                "Command: ReadCommandInfo TestAction.ReturnServerError records, filters: System.Guid[] \"2 items: 15a1b223-aa2b-448a-9ddd-b4384188c489 ...\"" };
+                "Command: ReadCommandInfo TestAction.ReturnServerError records, filters: Guid[] \"2 items: 15a1b223-aa2b-448a-9ddd-b4384188c489 ...\"" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
         }

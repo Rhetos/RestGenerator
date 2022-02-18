@@ -17,10 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Autofac;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Rhetos;
+using Rhetos.Dom.DefaultConcepts;
 using System;
 using System.IO;
 
@@ -28,14 +31,29 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
 {
     public static class WebApplicationFactoryExtensions
     {
-        public static IWebHostBuilder MonitorLogging(this IWebHostBuilder builder, LogEntries logEntries)
+        public static IWebHostBuilder MonitorLogging(this IWebHostBuilder builder, LogEntries logEntries, LogLevel minLogLevel = LogLevel.Information)
         {
             builder.ConfigureLogging(logging =>
             {
                 logging.Services.AddSingleton(logEntries);
+                logging.Services.AddSingleton(new FakeLoggerOptions { MinLogLevel = minLogLevel });
             });
 
             return builder;
+        }
+
+        /// <summary>
+        /// See <see cref="CommonConceptsRuntimeOptions.DynamicTypeResolution"/>.
+        /// </summary>
+        public static IWebHostBuilder SetRhetosDynamicTypeResolution(this IWebHostBuilder webHostBuilder)
+        {
+            webHostBuilder.ConfigureServices(
+                services => services.AddRhetosHost(
+                    (serviceProvider, rhetosHostBuilder) => rhetosHostBuilder.ConfigureContainer(
+                        containerBuilder => containerBuilder.RegisterInstance(
+                            new CommonConceptsRuntimeOptions { DynamicTypeResolution = true }))));
+
+            return webHostBuilder;
         }
     }
 }

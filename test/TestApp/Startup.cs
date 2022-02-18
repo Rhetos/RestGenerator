@@ -63,6 +63,7 @@ namespace TestApp
             // Adding Rhetos to AspNetCore application.
             services.AddRhetosHost(ConfigureRhetosHostBuilder)
                 .AddAspNetCoreIdentityUser()
+                .AddHostLogging()
                 .AddRestApi(o =>
                 {
                     o.BaseRoute = "rest";

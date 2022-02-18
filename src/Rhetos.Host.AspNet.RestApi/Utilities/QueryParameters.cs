@@ -17,27 +17,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Rhetos.Dom;
 using Rhetos.Dom.DefaultConcepts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Rhetos.Host.AspNet.RestApi.Utilities
 {
     public class QueryParameters
     {
-        private readonly IDomainObjectModel domainObjectModel;
+        private readonly GenericFilterHelper _genericFilterHelper;
 
-        public QueryParameters(IRhetosComponent<IDomainObjectModel> rhetosDomainObjectModel)
+        public QueryParameters(IRhetosComponent<GenericFilterHelper> genericFilterHelper)
         {
-            this.domainObjectModel = rhetosDomainObjectModel.Value;
+            _genericFilterHelper = genericFilterHelper.Value;
         }
 
         /// <param name="filter">Legacy</param>
         /// <param name="fparam">Legacy</param>
         /// <param name="genericfilter">Legacy</param>
-        public FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, string filters, Tuple<string, Type>[] filterTypes)
+        public FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, string filters, string dataStructureFullName)
         {
             var parsedFilters = new List<FilterCriteria>();
 
@@ -51,10 +49,10 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             // Legacy:
             if (!string.IsNullOrEmpty(filter))
             {
-                Type filterType = GetFilterType(filter, filterTypes);
+                Type filterType = _genericFilterHelper.GetFilterType(dataStructureFullName, filter);
                 parsedFilters.Add(new FilterCriteria
                 {
-                    Filter = filterType.AssemblyQualifiedName,
+                    Filter = filter,
                     Value = !string.IsNullOrEmpty(fparam)
                         ? Json.DeserializeOrException(fparam, filterType)
                         : Activator.CreateInstance(filterType)
@@ -65,9 +63,8 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 if (!string.IsNullOrEmpty(filterCriteria.Filter))
                 {
-                    // Specify the exact filter type from a simplified filter name.
-                    Type filterType = GetFilterType(filterCriteria.Filter, filterTypes);
-                    filterCriteria.Filter = filterType.AssemblyQualifiedName;
+                    // Verifying the filter name format:
+                    Type filterType = _genericFilterHelper.GetFilterType(dataStructureFullName, filterCriteria.Filter);
 
                     // Resolve partially deserialized filter parameter with known filter types, if a parameter value is not completely deserialized.
                     filterCriteria.Value = Json.FinishPartiallyDeserializedObject(filterCriteria.Value, filterType);
@@ -80,36 +77,6 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             }
 
             return parsedFilters.ToArray();
-        }
-
-        private Type GetFilterType(string filterName, Tuple<string, Type>[] filterTypes)
-        {
-            Type filterType = null;
-
-            List<Type> matchingTypes = filterTypes
-                .Where(f => f.Item1.Equals(filterName)).Select(f => f.Item2).Distinct().ToList();
-
-            if (matchingTypes.Count > 1)
-                throw new ClientException($"Filter type '{filterName}' is ambiguous ({matchingTypes.First().FullName}, {matchingTypes.Last().FullName})." +
-                    $" Please specify full filter name.");
-
-            if (matchingTypes.Count == 1)
-                filterType = matchingTypes.Single();
-
-            // TODO: Remove usage of IDomainObjectModel.GetType and Type.GetType, to make REST API more predictable, since run-time type resolution depends on currently loaded assemblies,
-            // and may behave unpredictable on startup. The filterTypes should contain all available filters.
-            // This changes should be configurable to allow backward compatibility for old applications.
-
-            if (filterType == null)
-                filterType = domainObjectModel.GetType(filterName);
-
-            if (filterType == null)
-                filterType = Type.GetType(filterName);
-
-            if (filterType == null)
-                throw new ClientException($"Filter type '{filterName}' is not available for this data structure. Please make sure that correct filter name is provided in web request.");
-
-            return filterType;
         }
     }
 }

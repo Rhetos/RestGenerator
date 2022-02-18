@@ -26,11 +26,13 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
     {
         private readonly string categoryName;
         private readonly LogEntries logEntries;
+        private readonly FakeLoggerOptions options;
 
-        public FakeLogger(string categoryName, LogEntries logEntries)
+        public FakeLogger(string categoryName, LogEntries logEntries, FakeLoggerOptions options)
         {
             this.categoryName = categoryName;
             this.logEntries = logEntries;
+            this.options = options;
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -45,13 +47,14 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            logEntries.Add(logLevel, categoryName, formatter(state, exception));
+            if (logLevel >= options.MinLogLevel)
+                logEntries.Add(logLevel, categoryName, formatter(state, exception));
         }
     }
 
     public class FakeLogger<T> : FakeLogger, ILogger<T>
     {
-        public FakeLogger(LogEntries logEntries) : base(typeof(T).FullName, logEntries)
+        public FakeLogger(LogEntries logEntries, FakeLoggerOptions options) : base(typeof(T).FullName, logEntries, options)
         {
         }
     }

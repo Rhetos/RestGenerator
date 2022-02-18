@@ -17,15 +17,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Autofac;
 using Rhetos.Dom;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.Host.AspNet.RestApi.Controllers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rhetos.Host.AspNet.RestApi.Metadata
 {
@@ -37,15 +37,10 @@ namespace Rhetos.Host.AspNet.RestApi.Metadata
             var domainObjectModel = rhetosHost.GetRootContainer().Resolve<IDomainObjectModel>();
             var dataStructureReadParameters = rhetosHost.GetRootContainer().Resolve<IDataStructureReadParameters>();
 
-            DataStructureInfoMetadata CreateFromGenericController(Type genericControllerType, DataStructureInfo dataStructureInfo)
+            ConceptInfoRestMetadata CreateFromGenericController(Type genericControllerType, DataStructureInfo dataStructureInfo)
             {
-                var readParameters = dataStructureReadParameters.GetReadParameters(dataStructureInfo.FullName, true)
-                    .Select(parameter => Tuple.Create(parameter.Name, parameter.Type))
-                    .ToArray();
-
-                var dataStructureInfoMetadata = new DataStructureInfoMetadata
+                var dataStructureInfoMetadata = new ConceptInfoRestMetadata
                 {
-                    ReadParameters = readParameters,
                     ConceptInfo = dataStructureInfo,
                     ControllerType = genericControllerType.MakeGenericType(domainObjectModel.GetType($"{dataStructureInfo.FullName}")),
                     ControllerName = $"{dataStructureInfo.Module.Name}.{dataStructureInfo.Name}",
