@@ -40,11 +40,11 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             var parsedFilters = new List<FilterCriteria>();
 
             if (!string.IsNullOrEmpty(filters))
-                parsedFilters.AddRange(Json.DeserializeOrException<FilterCriteria[]>(filters));
+                parsedFilters.AddRange(JsonHelper.DeserializeOrException<FilterCriteria[]>(filters));
 
             // Legacy:
             if (!string.IsNullOrEmpty(genericfilter))
-                parsedFilters.AddRange(Json.DeserializeOrException<FilterCriteria[]>(genericfilter));
+                parsedFilters.AddRange(JsonHelper.DeserializeOrException<FilterCriteria[]>(genericfilter));
 
             // Legacy:
             if (!string.IsNullOrEmpty(filter))
@@ -54,7 +54,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                 {
                     Filter = filter,
                     Value = !string.IsNullOrEmpty(fparam)
-                        ? Json.DeserializeOrException(fparam, filterType)
+                        ? JsonHelper.DeserializeOrException(fparam, filterType)
                         : Activator.CreateInstance(filterType)
                 });
             }
@@ -67,13 +67,13 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                     Type filterType = _genericFilterHelper.GetFilterType(dataStructureFullName, filterCriteria.Filter);
 
                     // Resolve partially deserialized filter parameter with known filter types, if a parameter value is not completely deserialized.
-                    filterCriteria.Value = Json.FinishPartiallyDeserializedObject(filterCriteria.Value, filterType);
+                    filterCriteria.Value = JsonHelper.FinishPartiallyDeserializedObject(filterCriteria.Value, filterType);
                 }
 
                 // Resolve partially deserialized arrays, if a parameter value is not completely deserialized.
                 // This heuristics is important only for generic *property* filter (filterCriteria.Filter == null),
                 // otherwise it will be resolved previously with FinishPartiallyDeserializedObject.
-                filterCriteria.Value = Json.FinishPartiallyDeserializedArray(filterCriteria.Value);
+                filterCriteria.Value = JsonHelper.FinishPartiallyDeserializedArray(filterCriteria.Value);
             }
 
             return parsedFilters.ToArray();

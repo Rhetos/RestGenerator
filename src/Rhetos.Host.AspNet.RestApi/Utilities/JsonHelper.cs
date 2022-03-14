@@ -17,15 +17,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Rhetos.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Rhetos.Host.AspNet.RestApi.Utilities
 {
-    public static class Json
+    public static class JsonHelper
     {
         /// <summary>
         /// A custom error handler for JSON deserialization, that throws a Rhetos.ClientException with an error description.
@@ -47,7 +49,11 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             object deserialized = JsonConvert.DeserializeObject(serialized, type, jsonSettings);
 
             if (errors.Any())
-                throw new ClientException($"The provided filter parameter has invalid JSON format: {errors.First().Message} Filter parameter: {Limit(serialized, 200)}", errors.First());
+            {
+                var exception = new ClientException($"The provided filter parameter has invalid JSON format. See server log for more information.", errors.First());
+                ExceptionsUtility.SetCommandSummary(exception, $"Filter parameter: '{CsUtility.Limit(serialized, 500, true)}'.");
+                throw exception;
+            }
             else
                 return deserialized;
         }
@@ -60,14 +66,6 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
         public static T DeserializeOrException<T>(string serialized)
         {
             return (T)DeserializeOrException(serialized, typeof(T));
-        }
-
-        private static string Limit(string text, int maxLength)
-        {
-            if (text.Length > maxLength)
-                return text.Substring(0, maxLength) + " ...";
-            else
-                return text;
         }
 
         /// <summary>
