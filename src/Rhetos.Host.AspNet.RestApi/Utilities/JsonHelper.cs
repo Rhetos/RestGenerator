@@ -50,7 +50,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
 
             if (errors.Any())
             {
-                var exception = new ClientException($"The provided filter parameter has invalid JSON format. See server log for more information.", errors.First());
+                var exception = new ClientException("The provided filter parameter has invalid JSON format. See server log for more information.", errors.First());
                 ExceptionsUtility.SetCommandSummary(exception, $"Filter parameter: '{CsUtility.Limit(serialized, 500, true)}'.");
                 throw exception;
             }

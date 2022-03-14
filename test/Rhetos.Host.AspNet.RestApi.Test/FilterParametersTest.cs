@@ -128,13 +128,15 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             Assert.Equal<object>(
                 "400 {\"UserMessage\":\"Operation could not be completed because the request sent to the server was not valid or not properly formatted.\""
-                    + ",\"SystemMessage\":\"The provided filter parameter has invalid JSON format: Error parsing comment. Expected: *, got D. Path '', line 1, position 1. Filter parameter: /Date(1544195644420 0100)/\"}",
+                    + ",\"SystemMessage\":\"The provided filter parameter has invalid JSON format. See server log for more information.\"}",
                 $"{(int)response.StatusCode} {responseContent}");
 
             string[] exceptedLogPatterns = new[] {
                 "[Information]",
                 "Rhetos.ClientException: The provided filter",
-                "/Date(1544195644420 0100)/"
+                "/Date(1544195644420 0100)/",
+                "Error parsing comment. Expected: *, got D. Path '', line 1, position 1.",
+                "Filter parameter: '/Date(1544195644420 0100)/'."
                 // The command summary is not reported by ProcessingEngine, because the ClientException occurred before the command was constructed.
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(

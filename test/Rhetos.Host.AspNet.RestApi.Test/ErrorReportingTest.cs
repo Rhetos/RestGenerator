@@ -144,14 +144,15 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             Assert.Equal<object>(
                 "400 {\"UserMessage\":\"Operation could not be completed because the request sent to the server was not valid or not properly formatted.\""
-                    + ",\"SystemMessage\":\"The provided filter parameter has invalid JSON format: Invalid JavaScript property identifier character: }. Path '[0]', line 1, position 3. Filter parameter: [{0}\"}",
+                    + ",\"SystemMessage\":\"The provided filter parameter has invalid JSON format. See server log for more information.\"}",
                 $"{(int)response.StatusCode} {responseContent}");
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
                 "[Information]",
                 "Rhetos.ClientException: The provided filter",
-                "Filter parameter: [{0}"
+                "Invalid JavaScript property identifier character: }. Path '[0]', line 1, position 3.",
+                "Filter parameter: '[{0}'.",
                 // The command summary is not reported by ProcessingEngine, because the ClientException occurred before the command was constructed.
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
