@@ -3,6 +3,9 @@
 ## 5.0.0 (TO BE RELEASED)
 
 * Migrated from .NET Framework to .NET 5 (ASP.NET Core 5) and Rhetos 5.
+* To setup RestGenerator in .NET 5 application, follow the instructions in "Installation" chapter in [Readme.md](Readme.md#installation).
+* Swagger/OpenAPI is automatically available for the generated REST API.
+  See the configuration options in "Adding Swagger/OpenAPI" chapter in [Readme.md](Readme.md#adding-swaggeropenapi).
 
 ## 4.0.0 (2020-09-23)
 

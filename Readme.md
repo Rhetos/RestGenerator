@@ -17,9 +17,10 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 2. [Examples](#examples)
 3. [Developing client applications](#developing-client-applications)
 4. [HTTPS](#https)
-5. [Build](#build)
-6. [Installation](#installation)
-7. [Adding Swagger/OpenAPI](#adding-swaggeropenapi)
+5. [Installation](#installation)
+6. [Adding Swagger/OpenAPI](#adding-swaggeropenapi)
+7. [How to contribute](#how-to-contribute)
+   1. [Building and testing the source code](#building-and-testing-the-source-code)
 
 ## Features
 
@@ -202,14 +203,6 @@ or if using a REST library that will automatically encode URL query parameters f
 
 To enable HTTPS, follow the instructions in [Set up HTTPS](https://github.com/Rhetos/Rhetos/wiki/Setting-up-Rhetos-for-HTTPS).
 
-## Build
-
-**Note:** This package is already available at the [NuGet.org](https://www.nuget.org/) online gallery.
-You don't need to build it from source in order to use it in your application.
-
-To build the package from source, run `Build.bat`.
-The build output is a NuGet package in the "Install" subfolder.
-
 ## Installation
 
 Installing this package to a Rhetos web application:
@@ -272,3 +265,20 @@ As an alternative, you can show Rhetos REST API **split into multiple** Swagger 
       add `c.SwaggerEndpoint("/swagger/MyModuleName/swagger.json", "MyModuleName REST API");`.
       If there are multiple swagger endpoints configured here,  **place at the first position** the one that you want to open by default.
    3. For example, see lines with `SwaggerDoc` and `SwaggerEndpoint` in [Bookstore Startup.cs](https://github.com/Rhetos/Bookstore/blob/baa33901c71224d13e5bae2c8312f34cd759428e/src/Bookstore.Service/Startup.cs), for modules Bookstore, Common, AuthenticationDemo and DemoRowPermissions2.
+
+## How to contribute
+
+Contributions are very welcome. The easiest way is to fork this repo, and then
+make a pull request from your fork. The first time you make a pull request, you
+may be asked to sign a Contributor Agreement.
+For more info see [How to Contribute](https://github.com/Rhetos/Rhetos/wiki/How-to-Contribute) on Rhetos wiki.
+
+### Building and testing the source code
+
+* Note: This package is already available at the [NuGet.org](https://www.nuget.org/) online gallery.
+  You don't need to build it from source in order to use it in your application.
+* To build the package from source, run `Clean.bat`, `Build.bat` and `Test.bat`.
+* For the test script to work, you need to create an empty database and
+  a settings file `test\TestApp\ConnectionString.local.json`
+  with the database connection string (configuration key "ConnectionStrings:RhetosConnectionString").
+* The build output is a NuGet package in the "Install" subfolder.
