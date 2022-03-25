@@ -1,6 +1,6 @@
 # RestGenerator release notes
 
-## 5.0.0 (TO BE RELEASED)
+## 5.0.0 (2022-03-25)
 
 * Migrated from .NET Framework to .NET 5 (ASP.NET Core 5) and Rhetos 5.
 * To setup RestGenerator in .NET 5 application, follow the instructions in "Installation" chapter in [Readme.md](Readme.md#installation).
