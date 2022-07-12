@@ -6,6 +6,11 @@
 * To setup RestGenerator in .NET 5 application, follow the instructions in "Installation" chapter in [Readme.md](Readme.md#installation).
 * Swagger/OpenAPI is automatically available for the generated REST API.
   See the configuration options in "Adding Swagger/OpenAPI" chapter in [Readme.md](Readme.md#adding-swaggeropenapi).
+* **Breaking changes**: ASP.NET Core by default serializes **JSON response** differently from RestGenerator v4.
+  For backward compatibility with v4, see [Configure legacy JSON format](Readme.md#configure-legacy-json-format) section.
+  1. JSON properties starting with lowercase.
+  2. DateTime serialization uses standard ISO 8601 format instead of legacy Microsoft DateTime format.
+  3. Byte[] serialization uses Base64 string instead of legacy JSON array of integers.
 
 ## 4.0.0 (2020-09-23)
 

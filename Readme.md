@@ -16,8 +16,9 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
    6. [Obsolete features](#obsolete-features)
 2. [Examples](#examples)
 3. [Developing client applications](#developing-client-applications)
-4. [HTTPS](#https)
-5. [Installation](#installation)
+4. [Installation](#installation)
+   1. [Configure legacy JSON format](#configure-legacy-json-format)
+5. [HTTPS](#https)
 6. [Adding Swagger/OpenAPI](#adding-swaggeropenapi)
 7. [How to contribute](#how-to-contribute)
    1. [Building and testing the source code](#building-and-testing-the-source-code)
@@ -199,10 +200,6 @@ Note that URL query encoding should be skipped when sending parameters in reques
 or if using a REST library that will automatically encode URL query parameters for each request
 (**RestSharp**, for example).
 
-## HTTPS
-
-To enable HTTPS, follow the instructions in [Set up HTTPS](https://github.com/Rhetos/Rhetos/wiki/Setting-up-Rhetos-for-HTTPS).
-
 ## Installation
 
 Installing this package to a Rhetos web application:
@@ -215,20 +212,35 @@ Installing this package to a Rhetos web application:
        o.BaseRoute = "rest";
    });
    ```
-3. For backward compatible JSON format, add 'Microsoft.AspNetCore.Mvc.NewtonsoftJson' NuGet package, and
-   the following code to Startup.ConfigureServices method:
-   ```cs
-   // Using NewtonsoftJson for backward-compatibility with older versions of RestGenerator:
-   // 1. legacy Microsoft DateTime serialization,
-   // 2. byte[] serialization as JSON array of integers instead of Base64 string.
-   services.AddControllers()
-       .AddNewtonsoftJson(o =>
-       {
-           o.UseMemberCasing();
-           o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-           o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter());
-       });
-   ```
+
+### Configure legacy JSON format
+
+If needed, configure legacy JSON format for compatibility with existing applications and plugins (v1-v4):
+
+* A) Properties starting with uppercase in JSON objects:
+  ```cs
+  // Backward-compatibility with older versions of RestGenerator
+  services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+  ```
+* B) For full backward compatibility, add **Microsoft.AspNetCore.Mvc.NewtonsoftJson** NuGet package,
+  and the following code to Startup.ConfigureServices method:
+  ```cs
+  services.AddControllers()
+      .AddNewtonsoftJson(o =>
+      {
+          // Using NewtonsoftJson for backward-compatibility with older versions of RestGenerator:
+          // 1. Properties starting with uppercase in JSON objects.
+          o.UseMemberCasing();
+          // 2. Legacy Microsoft DateTime serialization.
+          o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
+          // 3. byte[] serialization as JSON array of integers instead of Base64 string.
+          o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter());
+      });
+  ```
+
+## HTTPS
+
+To enable HTTPS, follow the instructions in [Set up HTTPS](https://github.com/Rhetos/Rhetos/wiki/Setting-up-Rhetos-for-HTTPS).
 
 ## Adding Swagger/OpenAPI
 
