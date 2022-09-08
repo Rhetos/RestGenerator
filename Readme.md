@@ -30,12 +30,13 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 1. For each data structure or action, a service is available at base URI `<rhetos server url>/rest/<module name>/<entity name>/`
 2. Any POST request should contain a header: `Content-Type: application/json; charset=utf-8`
 
-For example, a service for entity *Claim* in module *Common*,
-on default local server installation (<http://localhost/Rhetos>):
+Examples in this article will assume that your application's base URI is `https://localhost:5000`.
 
-* Base service URI (reading service metadata): `http://localhost/Rhetos/rest/Common/Claim/`
+For example, a service for entity *Claim* in module *Common*:
+
+* Service URI (reading service metadata): `https://localhost:5000/rest/Common/Claim/`
 * To read all entity's records, simply enter the address in the web browser:
-  `http://localhost/Rhetos/rest/Common/Claim/` (don't forget the *slash* at the end)
+  `https://localhost:5000/rest/Common/Claim/` (don't forget the *slash* at the end)
 
 Response:
 
@@ -109,7 +110,7 @@ When applying multiple filters in a same request, the intersection of the filter
   * If the action has no parameters, the body must be set to an empty JSON object "{}" (until RestGenerator v2.5.0),
     or the body can by empty (since v2.6.0).
 * For example, execute an action "Common.AddToLog" to add a [custom log entry](https://github.com/Rhetos/Rhetos/wiki/Logging#logging-data-changes-and-auditing):
-  * POST `http://localhost/Rhetos/rest/Common/AddToLog/`
+  * POST `https://localhost:5000/rest/Common/AddToLog/`
   * Header: `Content-Type: application/json; charset=utf-8`
   * Request body: `{"Action":"just testing","Description":"abc"}`
 
@@ -117,7 +118,7 @@ When applying multiple filters in a same request, the intersection of the filter
 
 * Downloading a report: `/?parameter=...&convertFormat=...`
   * Query parameters `parameter` and `convertFormat` are optional.
-  * Example format `http://localhost/Rhetos/rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
+  * Example format `https://localhost:5000/rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
 
 ### Obsolete features
 
@@ -131,15 +132,15 @@ The following features are available for backward compatibility, they might be r
 
 ## Examples
 
-These examples expect that the Rhetos web application is available at URL <http://localhost/Rhetos/>
+These examples assume that the your web application is available at URL <https://localhost:5000/>
 
 Generic property filters:
 
 | Request | URL example |
 | --- | --- |
-| Using a generic filter to read **multiple items by ID** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]> |
-| Using a generic filter to search for **empty values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":""}]> |
-| Using a generic filter to search for **null values** | <http://localhost/Rhetos/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":null}]> |
+| Using a generic filter to read **multiple items by ID** | <https://localhost:5000/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]> |
+| Using a generic filter to search for **empty values** | <https://localhost:5000/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":""}]> |
+| Using a generic filter to search for **null values** | <https://localhost:5000/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":null}]> |
 
 ## Developing client applications
 
