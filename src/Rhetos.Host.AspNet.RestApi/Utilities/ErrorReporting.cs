@@ -56,7 +56,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                     StatusCodes.Status400BadRequest,
                     new ErrorResponse
                     {
-                        UserMessage = localizer[userException.Message, userException.MessageParameters],
+                        UserMessage = localizer[userException.UserMessage, userException.MessageParameters],
                         SystemMessage = userException.SystemMessage
                     },
                     LogLevel.Trace,

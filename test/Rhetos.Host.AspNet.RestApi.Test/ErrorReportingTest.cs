@@ -53,13 +53,13 @@ namespace Rhetos.Host.AspNet.RestApi.Test
         [Theory]
         [InlineData("test1", "test2",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":""test2""}",
-            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|MessageParameters: null|SystemMessage: test2")]
+            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|SystemMessage: test2")]
         [InlineData("test1", null,
             @"400 {""UserMessage"":""test1"",""SystemMessage"":null}",
-            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|MessageParameters: null|SystemMessage: ")]
+            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1")]
         [InlineData(null, null,
             @"400 {""UserMessage"":""Exception of type 'Rhetos.UserException' was thrown."",""SystemMessage"":null}",
-            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.|MessageParameters: null|SystemMessage: ")]
+            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.")]
         public async Task UserExceptionResponse(string testUserMessage, string testSystemMessage, string expectedResponse, string expectedLogPatterns)
         {
             var logEntries = new LogEntries();
@@ -73,7 +73,59 @@ namespace Rhetos.Host.AspNet.RestApi.Test
             Assert.Equal<object>(expectedResponse, $"{(int)response.StatusCode} {responseContent}");
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
-            string[] exceptedLogPatterns = expectedLogPatterns.Split('|');
+            string apiExceptionLog = logEntries.Select(e => e.ToString()).Where(e => e.Contains("ApiExceptionFilter")).Single();
+            foreach (var pattern in expectedLogPatterns.Split('|'))
+                Assert.Contains(pattern, apiExceptionLog);
+        }
+
+        [Fact]
+        public async Task LocalizedUserException()
+        {
+            var logEntries = new LogEntries();
+            var client = _factory
+                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries, LogLevel.Trace))
+                .CreateClient();
+            var requestData = new ReturnLocalizedUserError { TestUserMessage = "TestErrorMessage {0}", MessageParameterCount = 1 };
+            var response = await client.PostAsync("rest/TestAction/ReturnLocalizedUserError", JsonContent.Create(requestData));
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(@"400 {""UserMessage"":""TestErrorMessage 1000"",""SystemMessage"":null}", $"{(int)response.StatusCode} {responseContent}");
+
+            output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
+            string[] exceptedLogPatterns = new[]
+            {
+                "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
+                "Rhetos.UserException: TestErrorMessage 1000",
+            };
+            Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
+                // The command summary is not reported by ProcessingEngine for UserExceptions to improved performance.
+                entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
+        }
+
+        [Fact]
+        public async Task LocalizedUserExceptionInvalidFormat()
+        {
+            var logEntries = new LogEntries();
+            var client = _factory
+                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries, LogLevel.Trace))
+                .CreateClient();
+            var requestData = new ReturnLocalizedUserError { TestUserMessage = "TestErrorMessage {0} {1}", MessageParameterCount = 1 };
+            var response = await client.PostAsync("rest/TestAction/ReturnLocalizedUserError", JsonContent.Create(requestData));
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.StartsWith(
+                @"500 {""UserMessage"":null,""SystemMessage"":""Internal server error occurred. See server log for more information. (ArgumentException, ",
+                $"{(int)response.StatusCode} {responseContent}");
+
+            Assert.DoesNotContain(@"TestErrorMessage", $"{(int)response.StatusCode} {responseContent}");
+            Assert.DoesNotContain(@"1000", $"{(int)response.StatusCode} {responseContent}");
+
+            output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
+            string[] exceptedLogPatterns = new[]
+            {
+                "[Error] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter",
+                "System.ArgumentException: Invalid error message format. Message: \"TestErrorMessage {0} {1}\", Parameters: \"1000\". Index (zero based) must be greater than or equal to zero and less than the size of the argument list.",
+            };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 // The command summary is not reported by ProcessingEngine for UserExceptions to improved performance.
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));

@@ -24,4 +24,13 @@
 
 	QueryableExtension ReturnServerError Common.Claim '(query, repository)
 		=> throw new ArgumentException("test exception")';
+
+	Action ReturnLocalizedUserError '(parameter, repository, userInfo)
+		=> throw new Rhetos.UserException(
+			parameter.TestUserMessage,
+			Enumerable.Range(0, parameter.MessageParameterCount.Value).Select(x => (object)(x+1000)).ToArray())'
+	{
+		ShortString TestUserMessage;
+		Integer MessageParameterCount;
+	}
 }
