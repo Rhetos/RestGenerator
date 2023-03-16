@@ -2,7 +2,7 @@
 
 ## 5.1.0 (2023-03-16)
 
-* Update to Rhetos 5.4.0, because of new UserException localization.
+* Update to Rhetos 5.4.0, because of the new UserException localization.
 * Minor changes in error result on ClientException, compatible with Rhetos v4:
   `UserMessage` contains "request not properly formatted" *only* for default error code 400, otherwise it will be same as SystemMessage.
 
