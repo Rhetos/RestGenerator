@@ -1,5 +1,11 @@
 # RestGenerator release notes
 
+## 5.1.0 (2023-03-16)
+
+* Update to Rhetos 5.4.0, because of new UserException localization.
+* Minor changes in error result on ClientException, compatible with Rhetos v4:
+  `UserMessage` contains "request not properly formatted" *only* for default error code 400, otherwise it will be same as SystemMessage.
+
 ## 5.0.0 (2022-03-25)
 
 * Migrated from .NET Framework to .NET 5 (ASP.NET Core 5) and Rhetos 5.
