@@ -71,12 +71,8 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             };
         }
 
-        public T GetDataById<T>(string idString)
+        public T GetDataById<T>(Guid id)
         {
-            Guid id;
-            if (!Guid.TryParse(idString, out id))
-                throw new LegacyClientException("Invalid format of GUID parametar 'ID'.");
-
             var filterInstance = new[] { id };
 
             return (T)ExecuteReadCommand(new ReadCommandInfo

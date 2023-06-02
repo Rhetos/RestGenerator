@@ -86,7 +86,7 @@ namespace Rhetos.Host.AspNet.RestApi.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<T> GetById(string id)
+        public ActionResult<T> GetById(Guid id)
         {
             var result = serviceUtility.GetDataById<T>(id);
             if (result == null)
