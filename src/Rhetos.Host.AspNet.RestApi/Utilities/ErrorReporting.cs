@@ -78,9 +78,14 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                     new ErrorResponse
                     {
                         UserMessage = statusCode == (int)System.Net.HttpStatusCode.BadRequest
+                            // The ClientExceptionUserMessage is intended for invalid request format with status code BadRequest (default).
+                            // Other error types are not correctly described with that message so clientException.Message is returned instead.
                             ? localizer[ErrorMessages.ClientExceptionUserMessage]
-                            // ClientExceptionUserMessage is intended for invalid request format (default). Other errors are not correctly described with that message.
-                            : clientException.Message, // This is compatible with v4 behavior, but this might be a breaking change for v5.0 apps.
+                            // Differences between versions when statusCode <> BadRequest:
+                            // - v4 and v5.1 returns clientException.Message
+                            // - v5.0 returns ClientExceptionUserMessage
+                            // - v5.1 returns localized clientException.Message
+                            : localizer[clientException.Message],
                         SystemMessage = clientException.Message
                     },
                     LogLevel.Information,
