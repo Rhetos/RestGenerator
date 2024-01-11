@@ -45,7 +45,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
 
         private void ConfigureRhetos(IServiceProvider serviceProvider, IRhetosHostBuilder rhetosHostBuilder)
         {
-            rhetosHostBuilder.UseRootFolder(Path.Combine("..", "..", "..", "..", "TestApp", "bin", "Debug", "net5.0"));
+            rhetosHostBuilder.UseRootFolder(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "TestApp", "bin", "Debug", "net8.0"));
         }
     }
 }

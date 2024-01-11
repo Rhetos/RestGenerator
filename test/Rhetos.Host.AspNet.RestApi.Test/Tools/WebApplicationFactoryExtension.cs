@@ -41,19 +41,5 @@ namespace Rhetos.Host.AspNet.RestApi.Test.Tools
 
             return builder;
         }
-
-        /// <summary>
-        /// See <see cref="CommonConceptsRuntimeOptions.DynamicTypeResolution"/>.
-        /// </summary>
-        public static IWebHostBuilder SetRhetosDynamicTypeResolution(this IWebHostBuilder webHostBuilder)
-        {
-            webHostBuilder.ConfigureServices(
-                services => services.AddRhetosHost(
-                    (serviceProvider, rhetosHostBuilder) => rhetosHostBuilder.ConfigureContainer(
-                        containerBuilder => containerBuilder.RegisterInstance(
-                            new CommonConceptsRuntimeOptions { DynamicTypeResolution = true }))));
-
-            return webHostBuilder;
-        }
     }
 }

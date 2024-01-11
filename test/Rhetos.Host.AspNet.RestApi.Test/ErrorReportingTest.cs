@@ -170,11 +170,12 @@ namespace Rhetos.Host.AspNet.RestApi.Test
                 $"rest/TestAction/ReturnServerError/?filters=[{{\"Filter\":\"Guid[]\",\"Value\":{JsonSerializer.Serialize(ids)}}}]");
             string responseContent = await response.Content.ReadAsStringAsync();
 
+            output.WriteLine(string.Join(Environment.NewLine, logEntries));
+
             Assert.StartsWith
                 ("500 {\"UserMessage\":null,\"SystemMessage\":\"Internal server error occurred. See server log for more information. (ArgumentException, " + DateTime.Now.ToString("yyyy-MM-dd"),
                 $"{(int)response.StatusCode} {responseContent}");
 
-            output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
                 "[Error] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
                 "System.ArgumentException: test exception",

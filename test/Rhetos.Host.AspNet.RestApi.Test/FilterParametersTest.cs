@@ -84,22 +84,16 @@ namespace Rhetos.Host.AspNet.RestApi.Test
         [InlineData(false, "rest/TestHistory/Standard/")]
         [InlineData(false, "rest/TestHistory/Standard/?filters=[{\"Filter\":\"System.DateTime\",\"Value\":\"/Date(1544195644420%2B0100)/\"}]")]
 
-        public async Task SupportedFilterParameters(bool dynamicOnly, string url)
+        public async Task SupportedFilterParameters(bool shouldFail, string url)
         {
-            await TestSupportedFilterParameters(false, url, shouldFail: dynamicOnly);
-            await TestSupportedFilterParameters(true, url, shouldFail: false);
+            await TestSupportedFilterParameters(url, shouldFail);
         }
 
-        private async Task TestSupportedFilterParameters(bool dynamicTypeResolution, string url, bool shouldFail)
+        private async Task TestSupportedFilterParameters(string url, bool shouldFail)
         {
             var logEntries = new LogEntries();
             var client = _factory
-                .WithWebHostBuilder(builder =>
-                {
-                    builder.MonitorLogging(logEntries);
-                    if (dynamicTypeResolution)
-                        builder.SetRhetosDynamicTypeResolution();
-                })
+                .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
                 .CreateClient();
             var response = await client.GetAsync(url);
             string responseContent = await response.Content.ReadAsStringAsync();

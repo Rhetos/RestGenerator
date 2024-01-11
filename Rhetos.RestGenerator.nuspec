@@ -12,11 +12,11 @@
     <copyright>Copyright Omega software 2015</copyright>
     <tags>Rhetos plugin</tags>
     <dependencies>
-      <dependency id="Rhetos.CommonConcepts" version="5.4.0" />
-      <dependency id="Rhetos.Host.AspNet" version="5.4.0" />
+      <dependency id="Rhetos.CommonConcepts" version="6.0.0-dev24011711054c6feb" />
+      <dependency id="Rhetos.Host.AspNet" version="6.0.0-dev24011711054c6feb" />
     </dependencies>
     <frameworkReferences>
-      <group targetFramework="net5.0">
+      <group targetFramework="net8.0">
         <frameworkReference name="Microsoft.AspNetCore.App" />
       </group>
     </frameworkReferences>
@@ -24,8 +24,8 @@
   <files>
     <file src="Readme.md" target="" />
     <file src="ChangeLog.md" target="" />
-    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.dll" target="lib\net5.0" />
-    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.pdb" target="lib\net5.0" />
-    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.xml" target="lib\net5.0" />
+    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net8.0\Rhetos.Host.AspNet.RestApi.dll" target="lib\net8.0" />
+    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net8.0\Rhetos.Host.AspNet.RestApi.pdb" target="lib\net8.0" />
+    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net8.0\Rhetos.Host.AspNet.RestApi.xml" target="lib\net8.0" />
   </files>
 </package>
