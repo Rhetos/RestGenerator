@@ -5,15 +5,17 @@
     <version>6.0.0-dev</version>
     <authors>Omega software</authors>
     <owners>Omega software</owners>
-    <licenseUrl>http://opensource.org/licenses/AGPL-3.0</licenseUrl>
+    <license type="expression">AGPL-3.0-only</license>
     <projectUrl>https://github.com/rhetos/rhetos</projectUrl>
     <description>RestGenerator is a plugin package for Rhetos development platform.
       It automatically generates RESTful JSON web service for all entities, actions and other data structures that are defined in a Rhetos application.</description>
     <copyright>Copyright Omega software 2015</copyright>
     <tags>Rhetos plugin</tags>
     <dependencies>
-      <dependency id="Rhetos.CommonConcepts" version="6.0.0-dev24011711054c6feb" />
-      <dependency id="Rhetos.Host.AspNet" version="6.0.0-dev24011711054c6feb" />
+      <group targetFramework="net8.0">
+        <dependency id="Rhetos.CommonConcepts" version="6.0.0-dev24011711054c6feb" />
+        <dependency id="Rhetos.Host.AspNet" version="6.0.0-dev24011711054c6feb" />
+      </group>
     </dependencies>
     <frameworkReferences>
       <group targetFramework="net8.0">
