@@ -67,7 +67,7 @@ namespace TestApp
                 .AddRestApi(o =>
                 {
                     o.BaseRoute = "rest";
-                    o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
+                    //o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
                     o.GroupNameMapper = (conceptInfo, controller, oldName) => "rhetos"; // OpenAPI document name.
                 });
         }
@@ -82,7 +82,7 @@ namespace TestApp
                 app.UseSwaggerUI(c =>
                 {
                     // Add Swagger endpoint for Rhetos REST API.
-                    c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");
+                    // c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApp v1");
                 });
             }

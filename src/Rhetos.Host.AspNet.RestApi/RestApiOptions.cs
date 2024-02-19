@@ -38,9 +38,6 @@ namespace Rhetos.Host.AspNet.RestApi
     {
         private static readonly IConceptInfoRestMetadataProvider[] _defaultMetadataProviders =
         {
-            new ActionInfoRestMetadataProvider(),
-            new ReportDataInfoRestMetadataProvider(),
-            new DataStructureInfoRestMetadataProvider(),
         };
 
         /// <summary>

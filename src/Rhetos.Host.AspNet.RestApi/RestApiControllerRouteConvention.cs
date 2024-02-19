@@ -41,7 +41,8 @@ namespace Rhetos.Host.AspNet.RestApi
 
         public void Apply(ControllerModel controller)
         {
-            if (controller.ControllerType.IsClosedTypeOf(typeof(RhetosApiControllerBase<>)))
+            return;
+            if (controller.ControllerType.IsClosedTypeOf(typeof(JsonCommandsController)))
             {
                 var restMetadata = controllerRestInfoRepository.ControllerConceptInfo[controller.ControllerType.AsType()];
                 var route = $"{restApiOptions.BaseRoute}/{restMetadata.RelativeRoute}";

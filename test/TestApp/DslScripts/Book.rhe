@@ -1,0 +1,6 @@
+Module Bookstore{
+	Entity Book{
+		ShortString Name;
+		Decimal NumberOfPages;
+	}
+}
