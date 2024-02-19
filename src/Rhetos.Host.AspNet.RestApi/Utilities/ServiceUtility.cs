@@ -162,9 +162,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             {
                 parameterInstance = JsonConvert.DeserializeObject(parameterJson, reportType);
                 if (parameterInstance == null)
-#pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
-                    throw new LegacyClientException($"Invalid parameter format for report '{reportType.FullName}', data: '{parameterJson}'.");
-#pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
+                    throw new ClientException($"Invalid parameter format for report '{reportType.FullName}', data: '{parameterJson}'.");
             }
             else
                 parameterInstance = Activator.CreateInstance(reportType);
@@ -183,9 +181,7 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
             catch (Autofac.Core.Registration.ComponentNotRegisteredException ex)
             {
                 if (ex.Message.Contains(typeof(IReportRepository).FullName))
-#pragma warning disable CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
-                    throw new LegacyClientException($"Report {reportType.FullName} does not provide file downloading.", ex);
-#pragma warning restore CS0618 // 'LegacyClientException' is obsolete: 'Use ClientException instead.'
+                    throw new ClientException($"Report {reportType.FullName} does not provide file downloading.", ex);
                 else
                     throw;
             }

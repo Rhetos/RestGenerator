@@ -62,14 +62,6 @@ namespace Rhetos.Host.AspNet.RestApi.Utilities
                     LogLevel.Trace,
                     commandSummary);
             }
-            else if (error is LegacyClientException legacyClientException)
-            {
-                return new ErrorDescription(
-                    (int)legacyClientException.HttpStatusCode,
-                    legacyClientException.Message,
-                    legacyClientException.Severe ? LogLevel.Information : LogLevel.Trace,
-                    commandSummary);
-            }
             else if (error is ClientException clientException)
             {
                 int statusCode = GetStatusCode(clientException);
