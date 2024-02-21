@@ -22,7 +22,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rhetos;
 using Rhetos.Host.AspNet.RestApi;
 using Rhetos.Host.AspNet.RestApi.Filters;
-using Rhetos.Host.AspNet.RestApi.Metadata;
 using Rhetos.Host.AspNet.RestApi.Utilities;
 using System;
 
@@ -44,7 +43,6 @@ namespace Rhetos
 
             builder.Services.TryAddScoped<QueryParameters>();
             builder.Services.TryAddScoped<ServiceUtility>();
-            builder.Services.TryAddSingleton<ControllerRestInfoRepository>();
             
             return builder;
         }

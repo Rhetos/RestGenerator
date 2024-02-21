@@ -87,8 +87,6 @@ namespace TestApp
                 });
             }
 
-            app.UseRhetosRestApi();
-
             app.UseRouting();
 
             app.UseAuthorization();
