@@ -41,9 +41,6 @@ namespace Rhetos
                 builder.Services.Configure<RestApiOptions>(configureOptions);
             }
 
-            builder.Services.TryAddScoped<QueryParameters>();
-            builder.Services.TryAddScoped<ServiceUtility>();
-            
             return builder;
         }
 
