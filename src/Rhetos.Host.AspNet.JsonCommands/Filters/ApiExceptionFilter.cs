@@ -22,11 +22,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
-using Rhetos.Host.AspNet.RestApi.Utilities;
+using Rhetos.Host.AspNet.JsonCommands.Utilities;
 using System;
 using System.Linq;
 
-namespace Rhetos.Host.AspNet.RestApi.Filters
+namespace Rhetos.Host.AspNet.JsonCommands.Filters
 {
     /// <summary>
     /// Standard Rhetos REST error response format:

@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31019.35
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34601.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Host.AspNet.RestApi", "src\Rhetos.Host.AspNet.RestApi\Rhetos.Host.AspNet.RestApi.csproj", "{8FE70079-395C-4CD2-9584-223173E14B90}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "test\TestApp\TestApp.csproj", "{5F2269FD-4048-4C6A-8143-555B84D8DDE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAE39472-6157-4E0E-AF6A-844AE36AFB93}"
@@ -19,7 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Test.bat = Test.bat
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhetos.Host.AspNet.RestApi.Test", "test\Rhetos.Host.AspNet.RestApi.Test\Rhetos.Host.AspNet.RestApi.Test.csproj", "{32DB4275-CDD9-489C-8DB5-4FD68263D95C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Host.AspNet.JsonCommands", "src\Rhetos.Host.AspNet.JsonCommands\Rhetos.Host.AspNet.JsonCommands.csproj", "{F356A560-9A88-483E-A1F4-16E888FFA6DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Host.AspNet.JsonCommands.Test", "test\Rhetos.Host.AspNet.JsonCommands.Test\Rhetos.Host.AspNet.JsonCommands.Test.csproj", "{38C5B537-AE6B-4DE0-BA03-8D6F69088506}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,18 +27,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8FE70079-395C-4CD2-9584-223173E14B90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8FE70079-395C-4CD2-9584-223173E14B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8FE70079-395C-4CD2-9584-223173E14B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8FE70079-395C-4CD2-9584-223173E14B90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32DB4275-CDD9-489C-8DB5-4FD68263D95C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32DB4275-CDD9-489C-8DB5-4FD68263D95C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32DB4275-CDD9-489C-8DB5-4FD68263D95C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32DB4275-CDD9-489C-8DB5-4FD68263D95C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

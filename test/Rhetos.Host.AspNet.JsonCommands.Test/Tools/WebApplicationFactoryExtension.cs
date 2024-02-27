@@ -27,7 +27,7 @@ using Rhetos.Dom.DefaultConcepts;
 using System;
 using System.IO;
 
-namespace Rhetos.Host.AspNet.RestApi.Test.Tools
+namespace Rhetos.Host.AspNet.JsonCommands.Test.Tools
 {
     public static class WebApplicationFactoryExtensions
     {

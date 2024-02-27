@@ -19,7 +19,7 @@
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Logging;
-using Rhetos.Host.AspNet.RestApi.Test.Tools;
+using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
 using System;
 using System.Linq;
 using System.Net.Http.Json;
@@ -30,7 +30,7 @@ using TestApp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Rhetos.Host.AspNet.RestApi.Test
+namespace Rhetos.Host.AspNet.JsonCommands.Test
 {
     public class ErrorReportingTest : IDisposable
     {
@@ -53,13 +53,13 @@ namespace Rhetos.Host.AspNet.RestApi.Test
         [Theory]
         [InlineData("test1", "test2",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":""test2""}",
-            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|SystemMessage: test2")]
+            "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|SystemMessage: test2")]
         [InlineData("test1", null,
             @"400 {""UserMessage"":""test1"",""SystemMessage"":null}",
-            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: test1")]
+            "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: test1")]
         [InlineData(null, null,
             @"400 {""UserMessage"":""Exception of type 'Rhetos.UserException' was thrown."",""SystemMessage"":null}",
-            "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.")]
+            "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.")]
         public async Task UserExceptionResponse(string testUserMessage, string testSystemMessage, string expectedResponse, string expectedLogPatterns)
         {
             var logEntries = new LogEntries();
@@ -94,7 +94,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
             output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
             string[] exceptedLogPatterns = new[]
             {
-                "[Trace] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
+                "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
                 "Rhetos.UserException: TestErrorMessage 1000",
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -123,7 +123,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
             output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
             string[] exceptedLogPatterns = new[]
             {
-                "[Error] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter",
+                "[Error] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter",
                 "System.ArgumentException: Invalid error message format. Message: \"TestErrorMessage {0} {1}\", Parameters: \"1000\". Index (zero based) must be greater than or equal to zero and less than the size of the argument list.",
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -148,7 +148,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
-                "[Information] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
+                "[Information] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
                 "Rhetos.ClientException: test exception",
                 "Command: ExecuteActionCommandInfo TestAction.ReturnClientError" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -176,7 +176,7 @@ namespace Rhetos.Host.AspNet.RestApi.Test
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
-                "[Error] Rhetos.Host.AspNet.RestApi.Filters.ApiExceptionFilter:",
+                "[Error] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
                 "System.ArgumentException: test exception",
                 "Command: ReadCommandInfo TestAction.ReturnServerError records, filters: Guid[] \"2 items: 15a1b223-aa2b-448a-9ddd-b4384188c489 ...\"" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(

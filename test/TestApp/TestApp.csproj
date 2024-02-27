@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Rhetos.Host.AspNet.RestApi\Rhetos.Host.AspNet.RestApi.csproj" />
+    <ProjectReference Include="..\..\src\Rhetos.Host.AspNet.JsonCommands\Rhetos.Host.AspNet.JsonCommands.csproj" />
   </ItemGroup>
 
   <ItemGroup>

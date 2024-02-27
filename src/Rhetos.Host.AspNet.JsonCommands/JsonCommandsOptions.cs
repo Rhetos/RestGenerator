@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
 using Rhetos.Dsl;
 
-namespace Rhetos.Host.AspNet.RestApi
+namespace Rhetos.Host.AspNet.JsonCommands
 {
     /// <summary>
     /// Options class for Rhetos REST API.
@@ -33,7 +33,7 @@ namespace Rhetos.Host.AspNet.RestApi
     /// <remarks>
     /// It is intended by be configured within Startup.ConfigureServices method, by a delegate parameter of <see cref="RhetosRestApiServiceCollectionExtensions.AddRestApi"/> method call.
     /// </remarks>
-    public class RestApiOptions
+    public class JsonCommandsOptions
     {
         /// <summary>
         /// Base route for REST API.

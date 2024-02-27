@@ -24,7 +24,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 
-namespace Rhetos.Host.AspNet.RestApi.Test.Tools
+namespace Rhetos.Host.AspNet.JsonCommands.Test.Tools
 {
     public class CustomWebApplicationFactory<TStartup>
         : WebApplicationFactory<TStartup> where TStartup : class

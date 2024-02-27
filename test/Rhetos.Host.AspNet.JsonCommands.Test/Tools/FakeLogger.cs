@@ -18,26 +18,43 @@
 */
 
 using Microsoft.Extensions.Logging;
+using System;
 
-namespace Rhetos.Host.AspNet.RestApi.Test.Tools
+namespace Rhetos.Host.AspNet.JsonCommands.Test.Tools
 {
-    public class FakeLoggerProvider : ILoggerProvider
+    public class FakeLogger : ILogger
     {
+        private readonly string categoryName;
         private readonly LogEntries logEntries;
         private readonly FakeLoggerOptions options;
 
-        public FakeLoggerProvider(LogEntries logEntries, FakeLoggerOptions options)
+        public FakeLogger(string categoryName, LogEntries logEntries, FakeLoggerOptions options)
         {
+            this.categoryName = categoryName;
             this.logEntries = logEntries;
             this.options = options;
         }
 
-        public ILogger CreateLogger(string categoryName)
+        public IDisposable BeginScope<TState>(TState state)
         {
-            return new FakeLogger(categoryName, logEntries, options);
+            return new FakeDisposable();
         }
 
-        public void Dispose()
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            if (logLevel >= options.MinLogLevel)
+                logEntries.Add(logLevel, categoryName, formatter(state, exception));
+        }
+    }
+
+    public class FakeLogger<T> : FakeLogger, ILogger<T>
+    {
+        public FakeLogger(LogEntries logEntries, FakeLoggerOptions options) : base(typeof(T).FullName, logEntries, options)
         {
         }
     }

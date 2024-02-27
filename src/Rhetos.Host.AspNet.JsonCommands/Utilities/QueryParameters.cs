@@ -21,7 +21,7 @@ using Rhetos.Dom.DefaultConcepts;
 using System;
 using System.Collections.Generic;
 
-namespace Rhetos.Host.AspNet.RestApi.Utilities
+namespace Rhetos.Host.AspNet.JsonCommands.Utilities
 {
     public class QueryParameters
     {

@@ -19,23 +19,10 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Rhetos.Host.AspNet.RestApi.Test.Tools
+namespace Rhetos.Host.AspNet.JsonCommands.Test.Tools
 {
-    public class FakeLogEntry
+    public class FakeLoggerOptions
     {
-        public LogLevel LogLevel { get; }
-
-        public string CategoryName { get; }
-
-        public string Message { get; }
-
-        public FakeLogEntry(LogLevel logLevel, string categoryName, string message)
-        {
-            LogLevel = logLevel;
-            CategoryName = categoryName;
-            Message = message;
-        }
-
-        public override string ToString() => $"[{LogLevel}] {CategoryName}: {Message}";
+        public LogLevel MinLogLevel { get; set; } = LogLevel.Information;
     }
 }

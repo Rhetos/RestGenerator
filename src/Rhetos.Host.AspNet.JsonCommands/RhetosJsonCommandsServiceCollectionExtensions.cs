@@ -20,25 +20,25 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rhetos;
-using Rhetos.Host.AspNet.RestApi;
-using Rhetos.Host.AspNet.RestApi.Filters;
-using Rhetos.Host.AspNet.RestApi.Utilities;
+using Rhetos.Host.AspNet.JsonCommands;
+using Rhetos.Host.AspNet.JsonCommands.Filters;
+using Rhetos.Host.AspNet.JsonCommands.Utilities;
 using System;
 
 namespace Rhetos
 {
-    public static class RhetosRestApiServiceCollectionExtensions
+    public static class RhetosJsonCommandsServiceCollectionExtensions
     {
-        public static RhetosServiceCollectionBuilder AddRestApi(this RhetosServiceCollectionBuilder builder,
-            Action<RestApiOptions> configureOptions = null)
+        public static RhetosServiceCollectionBuilder AddJsonCommands(this RhetosServiceCollectionBuilder builder,
+            Action<JsonCommandsOptions> configureOptions = null)
         {
-            builder.AddRestApiFilters();
+            builder.AddJsonCommandsFilters();
 
             builder.Services.AddOptions();
 
             if (configureOptions != null)
             {
-                builder.Services.Configure<RestApiOptions>(configureOptions);
+                builder.Services.Configure<JsonCommandsOptions>(configureOptions);
             }
 
             return builder;
@@ -49,7 +49,7 @@ namespace Rhetos
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static RhetosServiceCollectionBuilder AddRestApiFilters(this RhetosServiceCollectionBuilder builder)
+        public static RhetosServiceCollectionBuilder AddJsonCommandsFilters(this RhetosServiceCollectionBuilder builder)
         {
             builder.Services.TryAddScoped<ErrorReporting>();
             builder.Services.TryAddScoped<ApiExceptionFilter>();

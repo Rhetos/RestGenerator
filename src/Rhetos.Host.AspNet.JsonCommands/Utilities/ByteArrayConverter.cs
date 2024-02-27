@@ -23,7 +23,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Rhetos.Host.AspNet.RestApi.Utilities
+namespace Rhetos.Host.AspNet.JsonCommands.Utilities
 {
     public class ByteArrayConverter : JsonConverter
     {

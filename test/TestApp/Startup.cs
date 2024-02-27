@@ -57,14 +57,14 @@ namespace TestApp
                 {
                     o.UseMemberCasing();
                     o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-                    o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter());
+                    o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.JsonCommands.Utilities.ByteArrayConverter());
                 });
 
             // Adding Rhetos to AspNetCore application.
             services.AddRhetosHost(ConfigureRhetosHostBuilder)
                 .AddAspNetCoreIdentityUser()
                 .AddHostLogging()
-                .AddRestApi(o =>
+                .AddJsonCommands(o =>
                 {
                     o.BaseRoute = "rest";
                     //o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
