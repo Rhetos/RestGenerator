@@ -1,21 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json.Linq;
-using Rhetos;
-using Rhetos.Dom;
-using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet.JsonCommands.Controllers;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
-using Rhetos.Processing;
-using Rhetos.Processing.DefaultCommands;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
 using TestApp;
 using Xunit;
@@ -23,15 +10,17 @@ using Xunit.Abstractions;
 
 namespace Rhetos.Host.AspNet.JsonCommands.Tests
 {
-    public class JsonCommandsControllerTests : IDisposable
+    public class JsonCommandsControllerTests : IDisposable, IClassFixture<JsonCommandsTestCleanup>
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        private readonly ITestOutputHelper output;
+#pragma warning disable IDE0052 // Remove unread private members
+        private readonly JsonCommandsTestCleanup _cleanup; // The 'cleanup' instance is used for its constructor and Dispose method for setup and teardown logic. It is injected by xUnit and not directly used in the test methods.
+#pragma warning restore IDE0052 // Remove unread private members
 
-        public JsonCommandsControllerTests(ITestOutputHelper output)
+        public JsonCommandsControllerTests(JsonCommandsTestCleanup cleanup)
         {
             _factory = new CustomWebApplicationFactory<Startup>();
-            this.output = output;
+            _cleanup = cleanup;
         }
 
         public void Dispose()
