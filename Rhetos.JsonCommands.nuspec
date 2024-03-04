@@ -24,8 +24,8 @@
   <files>
     <file src="Readme.md" target="" />
     <file src="ChangeLog.md" target="" />
-    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.dll" target="lib\net5.0" />
-    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.pdb" target="lib\net5.0" />
-    <file src="src\Rhetos.Host.AspNet.RestApi\bin\Debug\net5.0\Rhetos.Host.AspNet.RestApi.xml" target="lib\net5.0" />
+    <file src="src\Rhetos.Host.AspNet.JsonCommands\bin\Debug\net5.0\Rhetos.Host.AspNet.JsonCommands.dll" target="lib\net5.0" />
+    <file src="src\Rhetos.Host.AspNet.JsonCommands\bin\Debug\net5.0\Rhetos.Host.AspNet.JsonCommands.pdb" target="lib\net5.0" />
+    <file src="src\Rhetos.Host.AspNet.JsonCommands\bin\Debug\net5.0\Rhetos.Host.AspNet.JsonCommands.xml" target="lib\net5.0" />
   </files>
 </package>
