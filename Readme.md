@@ -1,9 +1,9 @@
 # JsonCommands
 
 JsonCommands is a web API plugin package for [Rhetos development platform](https://github.com/Rhetos/Rhetos).
-It automatically provides **RESTful JSON web service** for all entities, actions and other data structures that are defined in a Rhetos application.
 
-It is intended to be used on an ASP.NET application that contains or references the Rhetos domain object model.
+It provides **a JSON web service** for all entities and other readable data structures,
+that allows executing multiple read or write commands in one web request.
 
 See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
