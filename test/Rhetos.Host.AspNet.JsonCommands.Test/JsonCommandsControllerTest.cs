@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Rhetos.Dom.DefaultConcepts;
 using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
+using Rhetos.Host.AspNet.JsonCommands.Utilities;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -32,61 +36,71 @@ namespace Rhetos.Host.AspNet.JsonCommands.Tests
         [Fact]
         public async Task BatchJsonCommands()
         {
-            var client = SetupClient();
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var repository = scope.ServiceProvider.GetRequiredService<IRhetosComponent<Common.DomRepository>>().Value;
 
-            Guid guid = Guid.NewGuid();
-            Guid guid2 = Guid.NewGuid();
-            Guid guid3 = Guid.NewGuid();
+                var client = SetupClient();
 
-            string insertJson = $@"
-            [
-              {{
-                ""Bookstore.Book"": {{
-                  ""Insert"": [
-                    {{ ""ID"": ""{guid}"", ""Name"": ""__Test__This is a test book"" }},
-                    {{ ""ID"": ""{guid2}"", ""Name"": ""__Test__This is the second test book"" }}
-                  ]
-                }}
-              }}
-            ]";
+                Guid guid = Guid.NewGuid();
+                Guid guid2 = Guid.NewGuid();
+                Guid guid3 = Guid.NewGuid();
 
-            string updateJson = $@"
-            [
-              {{
-                ""Bookstore.Book"": {{
-                  ""Delete"": [
-                    {{ ""ID"": ""{guid}"" }}
-                  ],
-                  ""Update"": [
-                    {{ ""ID"": ""{guid2}"", ""Name"": ""__Test__Updated name"" }}
-                  ],
-                  ""Insert"": [
-                    {{ ""ID"": ""{guid3}"", ""Name"": ""__Test__This is a another book"" }}
-                  ]
-                }}
-              }}
-            ]";
+                string insertJson = $@"
+                [
+                  {{
+                    ""Bookstore.Book"": {{
+                      ""Insert"": [
+                        {{ ""ID"": ""{guid}"", ""Name"": ""__Test__This is a test book"" }},
+                        {{ ""ID"": ""{guid2}"", ""Name"": ""__Test__This is the second test book"" }}
+                      ]
+                    }}
+                  }}
+                ]";
 
-            string deleteJson = $@"
-            [
-              {{
-                ""Bookstore.Book"": {{
-                  ""Delete"": [
-                    {{ ""ID"": ""{guid2}"" }},
-                    {{ ""ID"": ""{guid3}"" }}
-                  ],
-                }}
-              }}
-            ]";
+                string updateJson = $@"
+                [
+                  {{
+                    ""Bookstore.Book"": {{
+                      ""Delete"": [
+                        {{ ""ID"": ""{guid}"" }}
+                      ],
+                      ""Update"": [
+                        {{ ""ID"": ""{guid2}"", ""Name"": ""__Test__Updated name"" }}
+                      ],
+                      ""Insert"": [
+                        {{ ""ID"": ""{guid3}"", ""Name"": ""__Test__This is a another book"" }}
+                      ]
+                    }}
+                  }}
+                ]";
 
-            var response = await Execute(insertJson, client);
-            Assert.True(response.IsSuccessStatusCode);
+                string deleteJson = $@"
+                [
+                  {{
+                    ""Bookstore.Book"": {{
+                      ""Delete"": [
+                        {{ ""ID"": ""{guid2}"" }},
+                        {{ ""ID"": ""{guid3}"" }}
+                      ],
+                    }}
+                  }}
+                ]";
 
-            await Execute(updateJson, client);
-            Assert.True(response.IsSuccessStatusCode);
+                Guid[] guids = new[] { guid, guid2, guid3 };
 
-            await Execute(deleteJson, client);
-            Assert.True(response.IsSuccessStatusCode);
+                var response = await Execute(insertJson, client);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal(2, repository.Bookstore.Book.Query(guids).Count());
+
+                await Execute(updateJson, client);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal(2, repository.Bookstore.Book.Query(guids).Count());
+
+                await Execute(deleteJson, client);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal(0, repository.Bookstore.Book.Query(guids).Count());
+            }
         }
 
         [Fact]
@@ -114,7 +128,6 @@ namespace Rhetos.Host.AspNet.JsonCommands.Tests
             Assert.StartsWith("{\"UserMessage\":\"Operation could not be completed because the request sent to the server was not valid or not properly formatted.\""
                     + ",\"SystemMessage\":\"Inserting a record that already exists in database.", responseContent);
         }
-
 
         private HttpClient SetupClient()
         {
