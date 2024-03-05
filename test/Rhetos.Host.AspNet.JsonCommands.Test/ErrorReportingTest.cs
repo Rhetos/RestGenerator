@@ -22,6 +22,8 @@ using Microsoft.Extensions.Logging;
 using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -51,23 +53,23 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
         }
 
         [Theory]
-        [InlineData("test1", "test2",
+        [InlineData("1",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":""test2""}",
             "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|SystemMessage: test2")]
-        [InlineData("test1", null,
+        [InlineData("2",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":null}",
             "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: test1")]
-        [InlineData(null, null,
+        [InlineData("3",
             @"400 {""UserMessage"":""Exception of type 'Rhetos.UserException' was thrown."",""SystemMessage"":null}",
             "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.")]
-        public async Task UserExceptionResponse(string testUserMessage, string testSystemMessage, string expectedResponse, string expectedLogPatterns)
+        public async Task UserExceptionResponse(string index, string expectedResponse, string expectedLogPatterns)
         {
             var logEntries = new LogEntries();
             var client = _factory
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries, LogLevel.Trace))
                 .CreateClient();
-            var requestData = new ReturnUserError { TestUserMessage = testUserMessage, TestSystemMessage = testSystemMessage };
-            var response = await client.PostAsync("rest/TestAction/ReturnUserError", JsonContent.Create(requestData));
+
+            var response = await PostAsyncTest(client, $"__Test__UserExceptionResponse{index}");
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.Equal<object>(expectedResponse, $"{(int)response.StatusCode} {responseContent}");
@@ -85,8 +87,8 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             var client = _factory
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries, LogLevel.Trace))
                 .CreateClient();
-            var requestData = new ReturnLocalizedUserError { TestUserMessage = "TestErrorMessage {0}", MessageParameterCount = 1 };
-            var response = await client.PostAsync("rest/TestAction/ReturnLocalizedUserError", JsonContent.Create(requestData));
+
+            var response = await PostAsyncTest(client, $"__Test__LocalizedUserException");
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.Equal(@"400 {""UserMessage"":""TestErrorMessage 1000"",""SystemMessage"":null}", $"{(int)response.StatusCode} {responseContent}");
@@ -109,8 +111,8 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             var client = _factory
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries, LogLevel.Trace))
                 .CreateClient();
-            var requestData = new ReturnLocalizedUserError { TestUserMessage = "TestErrorMessage {0} {1}", MessageParameterCount = 1 };
-            var response = await client.PostAsync("rest/TestAction/ReturnLocalizedUserError", JsonContent.Create(requestData));
+
+            var response = await PostAsyncTest(client, $"__Test__LocalizedUserExceptionInvalidFormat");
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.StartsWith(
@@ -138,7 +140,8 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             var client = _factory
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
                 .CreateClient();
-            var response = await client.PostAsync("rest/TestAction/ReturnClientError", JsonContent.Create(new { }));
+
+            var response = await PostAsyncTest(client, $"__Test__ClientExceptionResponse");
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.Equal<object>(
@@ -150,7 +153,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             string[] exceptedLogPatterns = new[] {
                 "[Information] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
                 "Rhetos.ClientException: test exception",
-                "Command: ExecuteActionCommandInfo TestAction.ReturnClientError" };
+                "Command: SaveEntityCommandInfo Bookstore.Book" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
         }
@@ -163,11 +166,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
                 .CreateClient();
 
-            Guid[] ids = new Guid[] {
-                new Guid("15a1b223-aa2b-448a-9ddd-b4384188c489"),
-                new Guid("25a1b223-aa2b-448a-9ddd-b4384188c489") };
-            var response = await client.GetAsync(
-                $"rest/TestAction/ReturnServerError/?filters=[{{\"Filter\":\"Guid[]\",\"Value\":{JsonSerializer.Serialize(ids)}}}]");
+            var response = await PostAsyncTest(client, $"__Test__ServerExceptionResponse");
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.StartsWith
@@ -178,11 +177,12 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             string[] exceptedLogPatterns = new[] {
                 "[Error] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
                 "System.ArgumentException: test exception",
-                "Command: ReadCommandInfo TestAction.ReturnServerError records, filters: Guid[] \"2 items: 15a1b223-aa2b-448a-9ddd-b4384188c489 ...\"" };
+                "Command: SaveEntityCommandInfo Bookstore.Book" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
         }
 
+        //TODO Change the test to throw the same Exception as before
         [Fact]
         public async Task InvalidWebRequestFormatResponse()
         {
@@ -191,7 +191,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
                 .CreateClient();
 
-            var response = await client.GetAsync("rest/TestAction/ReturnServerError/?filters=[{0}");
+            var response = await PostAsyncTest(client, $"__Test__ServerExceptionResponse");
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.Equal<object>(
@@ -209,6 +209,25 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
+        }
+
+        private async Task<HttpResponseMessage> PostAsyncTest(HttpClient client, string testName)
+        {
+            string json = $@"
+                [
+                  {{
+                    ""Bookstore.Book"": {{
+                      ""Insert"": [
+                        {{ ""ID"": ""{Guid.NewGuid()}"", ""Name"": ""{testName}"" }}
+                      ]
+                    }}
+                  }}
+                ]";
+
+            var content = new StringContent(json);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            return await client.PostAsync("jc/write", content);
         }
     }
 }

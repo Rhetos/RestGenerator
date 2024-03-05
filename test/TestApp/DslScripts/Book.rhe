@@ -2,5 +2,33 @@ Module Bookstore{
 	Entity Book{
 		ShortString Name;
 		Decimal NumberOfPages;
+
+		SaveMethod {
+			ArgumentValidation CustomErrors
+			'
+				foreach(var book in insertedNew){
+					switch(book.Name){
+						case "__Test__UserExceptionResponse1":
+							throw new Rhetos.UserException("test1", "test2");
+						case "__Test__UserExceptionResponse2":
+							throw new Rhetos.UserException("test1");
+						case "__Test__UserExceptionResponse3":
+							throw new Rhetos.UserException();
+						case "__Test__LocalizedUserException":
+							throw new Rhetos.UserException("TestErrorMessage 1000");
+						case "__Test__LocalizedUserExceptionInvalidFormat":
+							throw new Rhetos.UserException("TestErrorMessage {0} {1}", Enumerable.Range(0, 1).Select(x => (object)(x+1000)).ToArray());
+						case "__Test__ClientExceptionResponse":
+							throw new Rhetos.ClientException("test exception");
+						case "__Test__ServerExceptionResponse":
+							throw new ArgumentException("test exception");
+						case "__Test__InvalidWebRequestFormatResponse":
+							throw new ArgumentException("test exception");
+						default:
+							break;
+					}
+				}
+			';
+		}
 	}
 }
