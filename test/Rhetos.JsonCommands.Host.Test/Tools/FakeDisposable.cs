@@ -17,25 +17,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.Extensions.Logging;
+using System;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Test.Tools
+namespace Rhetos.JsonCommands.Host
 {
-    public class FakeLogEntry
+    public class FakeDisposable : IDisposable
     {
-        public LogLevel LogLevel { get; }
-
-        public string CategoryName { get; }
-
-        public string Message { get; }
-
-        public FakeLogEntry(LogLevel logLevel, string categoryName, string message)
+        public void Dispose()
         {
-            LogLevel = logLevel;
-            CategoryName = categoryName;
-            Message = message;
         }
-
-        public override string ToString() => $"[{LogLevel}] {CategoryName}: {Message}";
     }
 }

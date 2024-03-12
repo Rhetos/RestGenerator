@@ -22,11 +22,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
-using Rhetos.Host.AspNet.JsonCommands.Utilities;
+using Rhetos.JsonCommands.Host.Utilities;
 using System;
 using System.Linq;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Filters
+namespace Rhetos.JsonCommands.Host.Filters
 {
     /// <summary>
     /// Standard Rhetos REST error response format:
@@ -67,14 +67,14 @@ namespace Rhetos.Host.AspNet.JsonCommands.Filters
             var errors = string.Join("\n", invalidModelEntry.Value.Errors.Select(a => a.ErrorMessage));
 
             // If no key is present, it means there is an error deserializing body.
-            
+
             if (string.IsNullOrEmpty(invalidModelEntry.Key))
             {
                 var responseMessage = new ErrorReporting.ErrorResponse
                 {
                     SystemMessage = "Serialization error: Please check if the request body has a valid JSON format.\n" + errors
                 };
-                context.Result = new JsonResult(responseMessage) {StatusCode = StatusCodes.Status400BadRequest};
+                context.Result = new JsonResult(responseMessage) { StatusCode = StatusCodes.Status400BadRequest };
             }
             else
             {
@@ -82,7 +82,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Filters
                 {
                     SystemMessage = $"Parameter error: Supplied value for parameter '{invalidModelEntry.Key}' couldn't be parsed.\n" + errors
                 };
-                context.Result = new JsonResult(responseMessage) {StatusCode = StatusCodes.Status400BadRequest};
+                context.Result = new JsonResult(responseMessage) { StatusCode = StatusCodes.Status400BadRequest };
             }
         }
 
@@ -91,7 +91,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Filters
             if (context.Exception != null)
             {
                 var error = jsonErrorHandler.CreateResponseFromException(context.Exception);
-                
+
                 context.Result = new JsonResult(error.Response) { StatusCode = error.StatusCode };
                 context.ExceptionHandled = true;
 

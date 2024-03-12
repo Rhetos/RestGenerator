@@ -20,12 +20,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rhetos;
-using Rhetos.Host.AspNet.JsonCommands;
-using Rhetos.Host.AspNet.JsonCommands.Filters;
-using Rhetos.Host.AspNet.JsonCommands.Utilities;
+using Rhetos.JsonCommands.Host.Filters;
+using Rhetos.JsonCommands.Host.Utilities;
 using System;
 
-namespace Rhetos
+namespace Rhetos.JsonCommands.Host
 {
     public static class RhetosJsonCommandsServiceCollectionExtensions
     {

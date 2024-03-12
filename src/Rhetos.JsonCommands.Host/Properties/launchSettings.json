@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Rhetos.Host.AspNet.JsonCommands": {
+    "Rhetos.JsonCommands.Host": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

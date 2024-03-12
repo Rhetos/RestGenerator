@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
 using Rhetos.Dsl;
 
-namespace Rhetos.Host.AspNet.JsonCommands
+namespace Rhetos.JsonCommands.Host
 {
     /// <summary>
     /// Options class for Rhetos REST API.

@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Rhetos;
+using Rhetos.JsonCommands.Host;
 using System;
 
 namespace TestApp
@@ -57,7 +58,7 @@ namespace TestApp
                 {
                     o.UseMemberCasing();
                     o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-                    o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.JsonCommands.Utilities.ByteArrayConverter());
+                    o.SerializerSettings.Converters.Add(new Rhetos.JsonCommands.Host.Utilities.ByteArrayConverter());
                 });
 
             // Adding Rhetos to AspNetCore application.

@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Utilities
+namespace Rhetos.JsonCommands.Host.Utilities
 {
     public static class JsonHelper
     {

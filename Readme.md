@@ -1,6 +1,6 @@
-# RestGenerator
+# JsonCommands
 
-RestGenerator is a web API plugin package for [Rhetos development platform](https://github.com/Rhetos/Rhetos).
+JsonCommands is a web API plugin package for [Rhetos development platform](https://github.com/Rhetos/Rhetos).
 It automatically provides **RESTful JSON web service** for all entities, actions and other data structures that are defined in a Rhetos application.
 
 It is intended to be used on an ASP.NET application that contains or references the Rhetos domain object model.
@@ -27,23 +27,16 @@ See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
 
 ### General rules
 
-1. For each data structure or action, a service is available at base URI `<rhetos server url>/rest/<module name>/<entity name>/`
-2. Any POST request should contain a header: `Content-Type: application/json; charset=utf-8`
+1. Any POST request should contain a header: `Content-Type: application/json; charset=utf-8`
 
 Examples in this article will assume that your application's base URI is `https://localhost:5000`.
-
-For example, a service for entity *Claim* in module *Common*:
-
-* Service URI (reading service metadata): `https://localhost:5000/rest/Common/Claim/`
-* To read all entity's records, simply enter the address in the web browser:
-  `https://localhost:5000/rest/Common/Claim/` (don't forget the *slash* at the end)
 
 Response:
 
 * The response status code will indicate the success of the request:
-  200 - OK,
-  4xx - client error (incorrect data or request format, authentication or authorization error),
-  500 - internal server error.
+  * 200 - OK,
+  * 4xx - client error (incorrect data or request format, authentication or authorization error),
+  * 500 - internal server error.
 * In case of an error, the response body will contain more information on the error. It is a JSON object with properties:
   * UserMessage - a message to be displayed to the user.
   * SystemMessage - additional error metadata for better client UX
@@ -51,96 +44,46 @@ Response:
 
 Following are URI templates for the web methods.
 
-### Reading data
-
-To read the data from the entity, or any other readable data structure,
-execute a GET request on its [base URI](#general-rules):
-
-* Reading records: `/?filters=...&top=...&skip=...&sort=...`
-  * The parameters are optional.
-  * *Top* and *skip* values are integer number of records.
-  * See *Filters* description below.
-  * Example of *sorting* by multiple properties: `sort=CreationDate desc,Name,ID`.
-* Reading total records count for paging: `/TotalCount?filters=...&sort=...`
-* Reading records and total count: `/RecordsAndTotalCount?filters=...&top=...&skip=...&sort=...`
-* Reading a single record: `/<id>`
-
-See the [Examples](#examples) chapter below.
-
-**Filters** are provided as a JSON-serialized **array** containing any number of filters of the following types:
-
-1. **Generic** property filter
-   * Format: `{"Property":...,"Operation":..., "Value":...}`
-   * Example: select items where year is greater than 2005: `[{"Property":"Year","Operation":"Greater", "Value":2005}]`
-   * Available operations:
-     * `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
-     * `In`, `NotIn` -- Parameter Value is a JSON array.
-     * `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
-     * `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
-       Returns whether the property's value is within a given day, month or year.
-       Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
-2. **Specific filter** without a parameter
-   * Format: `{"Filter":...}` (provide a full name of the filter)
-   * Specific filters refer to concepts such as **ItemFilter**, **ComposableFilterBy** and **FilterBy**,
-     and also other [predefined filters](https://github.com/Rhetos/Rhetos/wiki/Filters-and-other-read-methods#predefined-filters) available in the object model.
-   * Example: get long books from the Bookstore demo by applying
-     [ItemFilter LongBooks](https://github.com/Rhetos/Bookstore/blob/master/src/Bookstore.Service/DslScripts/AdditionalExamples/ExampleFilters.rhe)
-     on Book entity: `[{"Filter":"Bookstore.LongBooks"}]`
-3. **Specific filter** with a parameter
-   * Format: `{"Filter":...,"Value":...}` (value is usually a JSON object)
-   * Example: get books with at least 700 pages from the Bookstore demo by applying
-     [ComposableFilterBy LongBooks3](https://github.com/Rhetos/Bookstore/blob/master/src/Bookstore.Service/DslScripts/AdditionalExamples/ExampleFilters.rhe)
-     on Book entity: `[{"Filter":"Bookstore.LongBooks3","Value":{"MinimumPages":700}}]`
-
-When applying multiple filters in a same request, the intersection of the filtered data is returned (AND).
-
 ### Writing data
 
-* **Inserting** a record: POST at the entity's service [base URI](#general-rules).
-  * You may provide the "ID" value of the new record in the request body (just include the ID property in the JSON object).
-    If not, it will be automatically generated.
-* Update and delete commands use the same URI as reading a single record (`/<id>`), but with different HTTP methods:
-  * **Updating** a record: PUT `/<id>`
-  * **Deleting** a record: DELETE `/<id>`
+Send a POST request to `https://localhost:5000/jc/write`
+The post request should have a following format:
+```json
+[
+  {
+    "Bookstore.Book": {
+      "Delete": [
+        { "ID": "00a7302a-df84-43a4-8c1c-6f7aa13c63b4" }
+      ],
+      "Update": [
+        { "ID": "8faa49db-aa6a-4e0c-9459-c1a16826ffc5", "Title": "Some other book" },
+        { "ID": "9e76a291-a76f-43e3-85ba-60bb88c3900b", "Title": "Yet another book" }
+      ],
+      "Insert": [
+        { "ID": "ed609ccf-346e-423d-9e21-145571dbaee9", "Title": "The Art of Computer Programming" }
+      ]
+    }
+  },
+  {
+    "Bookstore.Comment": {
+      "Insert": [
+        { "Text": "Very interesting", "BookID": "ed609ccf-346e-423d-9e21-145571dbaee9" },
+        { "Text": "Educational", "BookID": "ed609ccf-346e-423d-9e21-145571dbaee9" }
+      ]
+    }
+  }
+]
+```
 
-### Actions
+For each entity write block (for example for Bookstore.Book above), internally Rhetos will always execute delete operation first, then update, then insert. If a custom order is needed within one write command, the client can control it by using multiple blocks for same entity. For example:
 
-* Executing an action: POST at the action's service [base URI](#general-rules).
-* The request body should contain a JSON serialized parameters object (properties of the Action in DSL script).
-  * If the action has no parameters, the body must be set to an empty JSON object "{}" (until RestGenerator v2.5.0),
-    or the body can by empty (since v2.6.0).
-* For example, execute an action "Common.AddToLog" to add a [custom log entry](https://github.com/Rhetos/Rhetos/wiki/Logging#logging-data-changes-and-auditing):
-  * POST `https://localhost:5000/rest/Common/AddToLog/`
-  * Header: `Content-Type: application/json; charset=utf-8`
-  * Request body: `{"Action":"just testing","Description":"abc"}`
-
-### Reports
-
-* Downloading a report: `/?parameter=...&convertFormat=...`
-  * Query parameters `parameter` and `convertFormat` are optional.
-  * Example format `https://localhost:5000/rest/TestModule/TestReport/?parameter={"Prefix":"a"}&convertFormat=pdf`
-
-### Obsolete features
-
-The following features are available for backward compatibility, they might be removed in future versions:
-
-* `/Count` WEB API method. Use `/TotalCount` method instead.
-* Reading method query parameters `page` and `psize`. Use `top` and `skip`.
-* Reading method query parameters `filter` and `fparam`. Use `filters` instead (see "Specific filter with a parameter").
-* Reading method query parameter `genericfilter`. Renamed to `filters`.
-* Generic property filter operations `Equal` and `NotEqual`. Use `Equals` and `NotEquals` instead.
-
-## Examples
-
-These examples assume that the your web application is available at URL <https://localhost:5000/>
-
-Generic property filters:
-
-| Request | URL example |
-| --- | --- |
-| Using a generic filter to read **multiple items by ID** | <https://localhost:5000/rest/Common/Principal/?filters=[{"Property":"ID","Operation":"in","Value":["c62bc1c1-cc47-40cd-9e91-2dd682d55f95","1b1688c4-4a8a-4131-a151-f04d4d2773a2"]}]> |
-| Using a generic filter to search for **empty values** | <https://localhost:5000/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":""}]> |
-| Using a generic filter to search for **null values** | <https://localhost:5000/rest/Common/Principal/?filters=[{"Property":"Name","Operation":"equal","Value":null}]> |
+```json
+[
+  {  "Bookstore.Book": { "Insert": [...] } },
+  {  "Bookstore.Book": { "Delete": [...] } },
+  {  "Bookstore.Book": { "Update": [...] } }
+]
+```
 
 ## Developing client applications
 
@@ -182,11 +125,11 @@ namespace JsonUrlEncoded
             var filters = new[] { myCustomFilter };
 
             var jsonSettings = new JsonSerializerSettings();
-            // If needed, configure Newtonsoft.Json for backward-compatibility with older versions of RestGenerator v1-v4:
+            // If needed, configure Newtonsoft.Json for backward-compatibility with older versions of JsonCommands v1-v4:
             // 1. legacy Microsoft DateTime serialization,
             // 2. byte[] serialization as JSON array of integers instead of Base64 string.
             //jsonSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-            //jsonSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter()); // Rhetos.RestGenerator NuGet
+            //jsonSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter()); // Rhetos.JsonCommands NuGet
             
             string json = JsonConvert.SerializeObject(filters, jsonSettings);
             string urlQuery = WebUtility.UrlEncode(json);
@@ -205,7 +148,7 @@ or if using a REST library that will automatically encode URL query parameters f
 
 Installing this package to a Rhetos web application:
 
-1. Add 'Rhetos.RestGenerator' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery.
+1. Add 'Rhetos.JsonCommands' NuGet package, available at the [NuGet.org](https://www.nuget.org/) on-line gallery.
 2. Extend Rhetos services configuration (at `services.AddRhetosHost`) with the REST API:
    ```cs
    .AddRestApi(o =>
@@ -220,7 +163,7 @@ If needed, configure legacy JSON format for compatibility with existing applicat
 
 * A) Properties starting with uppercase in JSON objects:
   ```cs
-  // Backward-compatibility with older versions of RestGenerator
+  // Backward-compatibility with older versions of JsonCommands
   services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
   ```
 * B) For full backward compatibility, add **Microsoft.AspNetCore.Mvc.NewtonsoftJson** NuGet package,
@@ -229,7 +172,7 @@ If needed, configure legacy JSON format for compatibility with existing applicat
   services.AddControllers()
       .AddNewtonsoftJson(o =>
       {
-          // Using NewtonsoftJson for backward-compatibility with older versions of RestGenerator:
+          // Using NewtonsoftJson for backward-compatibility with older versions of JsonCommands:
           // 1. Properties starting with uppercase in JSON objects.
           o.UseMemberCasing();
           // 2. Legacy Microsoft DateTime serialization.

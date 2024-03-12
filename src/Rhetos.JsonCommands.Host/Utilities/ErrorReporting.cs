@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 using Rhetos.Utilities;
 using System;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Utilities
+namespace Rhetos.JsonCommands.Host.Utilities
 {
     /// <summary>
     /// Converts exceptions to a HTTP WEB response that contains JSON-serialized string error message.

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
-using Rhetos.Host.AspNet.JsonCommands.Utilities;
+using Rhetos.JsonCommands.Host.Test;
+using Rhetos.JsonCommands.Host.Test.Tools;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -12,7 +12,7 @@ using TestApp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Tests
+namespace Rhetos.JsonCommands.Host
 {
     public class JsonCommandsControllerTests : IDisposable, IClassFixture<JsonCommandsTestCleanup>
     {

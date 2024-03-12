@@ -21,7 +21,7 @@ using System;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Rhetos.Persistence;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Filters
+namespace Rhetos.JsonCommands.Host.Filters
 {
     /// <summary>
     /// Automatically commit unit of work on successful response with code 200, rollback otherwise.

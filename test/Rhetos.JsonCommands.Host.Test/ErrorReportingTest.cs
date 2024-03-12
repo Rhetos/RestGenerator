@@ -19,7 +19,7 @@
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Logging;
-using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
+using Rhetos.JsonCommands.Host.Test.Tools;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -32,7 +32,7 @@ using TestApp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Test
+namespace Rhetos.JsonCommands.Host.Test
 {
     public class ErrorReportingTest : IDisposable
     {
@@ -55,13 +55,13 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
         [Theory]
         [InlineData("1",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":""test2""}",
-            "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|SystemMessage: test2")]
+            "[Trace] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter:|Rhetos.UserException: test1|SystemMessage: test2")]
         [InlineData("2",
             @"400 {""UserMessage"":""test1"",""SystemMessage"":null}",
-            "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: test1")]
+            "[Trace] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter:|Rhetos.UserException: test1")]
         [InlineData("3",
             @"400 {""UserMessage"":""Exception of type 'Rhetos.UserException' was thrown."",""SystemMessage"":null}",
-            "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.")]
+            "[Trace] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter:|Rhetos.UserException: Exception of type 'Rhetos.UserException' was thrown.")]
         public async Task UserExceptionResponse(string index, string expectedResponse, string expectedLogPatterns)
         {
             var logEntries = new LogEntries();
@@ -96,7 +96,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
             string[] exceptedLogPatterns = new[]
             {
-                "[Trace] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
+                "[Trace] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter:",
                 "Rhetos.UserException: TestErrorMessage 1000",
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -125,7 +125,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
             output.WriteLine(string.Join(Environment.NewLine, logEntries.Where(e => e.Message.Contains("Exception"))));
             string[] exceptedLogPatterns = new[]
             {
-                "[Error] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter",
+                "[Error] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter",
                 "System.ArgumentException: Invalid error message format. Message: \"TestErrorMessage {0} {1}\", Parameters: \"1000\". Index (zero based) must be greater than or equal to zero and less than the size of the argument list.",
             };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -151,7 +151,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
-                "[Information] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
+                "[Information] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter:",
                 "Rhetos.ClientException: test exception",
                 "Command: SaveEntityCommandInfo Bookstore.Book" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(
@@ -175,7 +175,7 @@ namespace Rhetos.Host.AspNet.JsonCommands.Test
 
             output.WriteLine(string.Join(Environment.NewLine, logEntries));
             string[] exceptedLogPatterns = new[] {
-                "[Error] Rhetos.Host.AspNet.JsonCommands.Filters.ApiExceptionFilter:",
+                "[Error] Rhetos.JsonCommands.Host.Filters.ApiExceptionFilter:",
                 "System.ArgumentException: test exception",
                 "Command: SaveEntityCommandInfo Bookstore.Book" };
             Assert.Equal(1, logEntries.Select(e => e.ToString()).Count(

@@ -3,14 +3,14 @@ using Newtonsoft.Json.Linq;
 using Rhetos;
 using Rhetos.Dom;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet.JsonCommands.Filters;
+using Rhetos.JsonCommands.Host.Filters;
 using Rhetos.Processing;
 using Rhetos.Processing.DefaultCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Controllers
+namespace Rhetos.JsonCommands.Host.Controllers
 {
     /// <summary>
     /// Web API za snimanje više zapisa odjednom.

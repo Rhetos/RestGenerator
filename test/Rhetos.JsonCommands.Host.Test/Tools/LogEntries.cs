@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Test.Tools
+namespace Rhetos.JsonCommands.Host
 {
     public class LogEntries : ConcurrentQueue<FakeLogEntry>
     {

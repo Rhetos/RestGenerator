@@ -23,8 +23,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Rhetos;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
-using Rhetos.Host.AspNet.JsonCommands.Utilities;
+using Rhetos.JsonCommands.Host.Test.Tools;
+using Rhetos.JsonCommands.Host.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,7 @@ using TestApp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Test
+namespace Rhetos.JsonCommands.Host
 {
     public class FilterParametersTest : IDisposable
     {

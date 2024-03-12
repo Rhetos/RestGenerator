@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Test.bat = Test.bat
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Host.AspNet.JsonCommands", "src\Rhetos.Host.AspNet.JsonCommands\Rhetos.Host.AspNet.JsonCommands.csproj", "{F356A560-9A88-483E-A1F4-16E888FFA6DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.JsonCommands.Host", "src\Rhetos.JsonCommands.Host\Rhetos.JsonCommands.Host.csproj", "{F356A560-9A88-483E-A1F4-16E888FFA6DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.Host.AspNet.JsonCommands.Test", "test\Rhetos.Host.AspNet.JsonCommands.Test\Rhetos.Host.AspNet.JsonCommands.Test.csproj", "{38C5B537-AE6B-4DE0-BA03-8D6F69088506}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.JsonCommands.Host.Test", "test\Rhetos.JsonCommands.Host.Test\Rhetos.JsonCommands.Host.Test.csproj", "{38C5B537-AE6B-4DE0-BA03-8D6F69088506}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

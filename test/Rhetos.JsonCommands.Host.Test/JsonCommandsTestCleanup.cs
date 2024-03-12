@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Rhetos.Dom.DefaultConcepts;
-using Rhetos.Host.AspNet.JsonCommands.Test.Tools;
+using Rhetos.JsonCommands.Host.Test.Tools;
 using System;
 using TestApp;
 
-namespace Rhetos.Host.AspNet.JsonCommands.Tests
+namespace Rhetos.JsonCommands.Host.Test
 {
     public class JsonCommandsTestCleanup : IDisposable
     {
