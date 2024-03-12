@@ -64,12 +64,7 @@ namespace TestApp
             services.AddRhetosHost(ConfigureRhetosHostBuilder)
                 .AddAspNetCoreIdentityUser()
                 .AddHostLogging()
-                .AddJsonCommands(o =>
-                {
-                    o.BaseRoute = "rest";
-                    //o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
-                    o.GroupNameMapper = (conceptInfo, controller, oldName) => "rhetos"; // OpenAPI document name.
-                });
+                .AddJsonCommands();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +77,6 @@ namespace TestApp
                 app.UseSwaggerUI(c =>
                 {
                     // Add Swagger endpoint for Rhetos REST API.
-                    // c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApp v1");
                 });
             }
