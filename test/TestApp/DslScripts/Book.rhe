@@ -3,6 +3,8 @@ Module Bookstore{
 		ShortString Name;
 		Decimal NumberOfPages;
 
+		ItemFilter CommonMisspelling 'book => book.Name.Contains("Programing")';
+
 		SaveMethod {
 			ArgumentValidation CustomErrors
 			'
