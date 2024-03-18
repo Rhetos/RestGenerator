@@ -2,10 +2,10 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Rhetos.JsonCommands</id>
-    <version>5.2.0-dev</version>
+    <version>1.0.0-dev</version>
     <authors>Omega software</authors>
     <owners>Omega software</owners>
-    <licenseUrl>http://opensource.org/licenses/AGPL-3.0</licenseUrl>
+    <license type="expression">AGPL-3.0-only</license>
     <projectUrl>https://github.com/rhetos/rhetos</projectUrl>
     <description>
       JsonCommands is a plugin package for Rhetos development platform.
@@ -14,8 +14,10 @@
     <copyright>Copyright Omega software 2024</copyright>
     <tags>Rhetos plugin</tags>
     <dependencies>
-      <dependency id="Rhetos.CommonConcepts" version="5.4.0" />
-      <dependency id="Rhetos.Host.AspNet" version="5.4.0" />
+      <group targetFramework="net5.0">
+        <dependency id="Rhetos.CommonConcepts" version="5.4.0" />
+        <dependency id="Rhetos.Host.AspNet" version="5.4.0" />
+      </group>
     </dependencies>
     <frameworkReferences>
       <group targetFramework="net5.0">
@@ -26,8 +28,8 @@
   <files>
     <file src="Readme.md" target="" />
     <file src="ChangeLog.md" target="" />
-    <file src="src\Rhetos.Host.AspNet.JsonCommands\bin\Debug\net5.0\Rhetos.Host.AspNet.JsonCommands.dll" target="lib\net5.0" />
-    <file src="src\Rhetos.Host.AspNet.JsonCommands\bin\Debug\net5.0\Rhetos.Host.AspNet.JsonCommands.pdb" target="lib\net5.0" />
-    <file src="src\Rhetos.Host.AspNet.JsonCommands\bin\Debug\net5.0\Rhetos.Host.AspNet.JsonCommands.xml" target="lib\net5.0" />
+    <file src="src\Rhetos.JsonCommands.Host\bin\Debug\net5.0\Rhetos.JsonCommands.Host.dll" target="lib\net5.0" />
+    <file src="src\Rhetos.JsonCommands.Host\bin\Debug\net5.0\Rhetos.JsonCommands.Host.pdb" target="lib\net5.0" />
+    <file src="src\Rhetos.JsonCommands.Host\bin\Debug\net5.0\Rhetos.JsonCommands.Host.xml" target="lib\net5.0" />
   </files>
 </package>

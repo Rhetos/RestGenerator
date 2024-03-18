@@ -17,33 +17,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.Extensions.DependencyInjection;
-using Rhetos.Dsl;
-
 namespace Rhetos.JsonCommands.Host
 {
     /// <summary>
-    /// Options class for Rhetos REST API.
+    /// Options class for Rhetos JsonCommands API.
     /// </summary>
     /// <remarks>
-    /// It is intended by be configured within Startup.ConfigureServices method, by a delegate parameter of <see cref="RhetosRestApiServiceCollectionExtensions.AddRestApi"/> method call.
+    /// It is intended by be configured in Program.cs or Startup.cs, by a delegate parameter of <see cref="RhetosJsonCommandsServiceCollectionExtensions.AddJsonCommands"/> method call.
     /// </remarks>
     public class JsonCommandsOptions
     {
         /// <summary>
-        /// Base route for REST API.
+        /// Base route for JsonCommands API.
         /// </summary>
-        public string BaseRoute { get; set; } = "rest";
+        public string BaseRoute { get; set; } = "jc";
 
         /// <summary>
-        /// Overrides ApiExplorer group names, initially provided by <see cref="IConceptInfoRestMetadataProvider"/>.
-        /// Initial group names are typically module names.
+        /// ApiExplorer group name for JsonCommands API.
         /// </summary>
-        public Func<IConceptInfo, Type, string, string> GroupNameMapper { get; set; }
+        public string ApiExplorerGroupName { get; set; } = "JsonCommands";
     }
 }

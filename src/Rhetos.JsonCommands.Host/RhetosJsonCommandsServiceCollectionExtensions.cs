@@ -28,6 +28,9 @@ namespace Rhetos.JsonCommands.Host
 {
     public static class RhetosJsonCommandsServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds the required services for Rhetos JsonCommands API.
+        /// </summary>
         public static RhetosServiceCollectionBuilder AddJsonCommands(this RhetosServiceCollectionBuilder builder,
             Action<JsonCommandsOptions> configureOptions = null)
         {

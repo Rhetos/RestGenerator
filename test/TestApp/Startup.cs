@@ -41,7 +41,6 @@ namespace TestApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(type => type.ToString()); // Allows multiple entities with the same name in different modules.

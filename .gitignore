@@ -365,6 +365,5 @@ FodyWeavers.xsd
 # Custom build results
 Install/
 
-# Rhetos user-specific files
-*.local.settings.json
-*.local.json
+# Project-specific files
+/test/TestApp/ConnectionString.local.json

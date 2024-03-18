@@ -29,7 +29,7 @@ using System.Linq;
 namespace Rhetos.JsonCommands.Host.Filters
 {
     /// <summary>
-    /// Standard Rhetos REST error response format:
+    /// Standard Rhetos JsonCommands API error response format:
     /// In case of exception, the web response body will be an object with UserMessage and SystemMessage properties.
     /// </summary>
     /// <remarks>
