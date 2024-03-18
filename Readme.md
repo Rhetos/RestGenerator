@@ -93,7 +93,8 @@ Installing this package to a Rhetos web application:
 Depending on your intended client applications, you can use standard ASP.NET Core features
 to configure the JSON response formatting in Program.cs or Startup.cs.
 
-A common configuration is to set the **JSON objects properties to start with uppercase**:
+For compatibility with [Rhetos.FloydExtensions](https://www.nuget.org/packages/Rhetos.FloydExtensions),
+you can configure the JSON object serialization for all properties to start with an uppercase letter:
 
 ```cs
 // If not using Newtonsoft.Json:

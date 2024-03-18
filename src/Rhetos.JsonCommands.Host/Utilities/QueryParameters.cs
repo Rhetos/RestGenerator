@@ -32,32 +32,12 @@ namespace Rhetos.JsonCommands.Host.Utilities
             _genericFilterHelper = genericFilterHelper.Value;
         }
 
-        /// <param name="filter">Legacy</param>
-        /// <param name="fparam">Legacy</param>
-        /// <param name="genericfilter">Legacy</param>
-        public FilterCriteria[] ParseFilterParameters(string filter, string fparam, string genericfilter, string filters, string dataStructureFullName)
+        public FilterCriteria[] ParseFilterParameters(string filters, string dataStructureFullName)
         {
             var parsedFilters = new List<FilterCriteria>();
 
             if (!string.IsNullOrEmpty(filters))
                 parsedFilters.AddRange(JsonHelper.DeserializeOrException<FilterCriteria[]>(filters));
-
-            // Legacy:
-            if (!string.IsNullOrEmpty(genericfilter))
-                parsedFilters.AddRange(JsonHelper.DeserializeOrException<FilterCriteria[]>(genericfilter));
-
-            // Legacy:
-            if (!string.IsNullOrEmpty(filter))
-            {
-                Type filterType = _genericFilterHelper.GetFilterType(dataStructureFullName, filter);
-                parsedFilters.Add(new FilterCriteria
-                {
-                    Filter = filter,
-                    Value = !string.IsNullOrEmpty(fparam)
-                        ? JsonHelper.DeserializeOrException(fparam, filterType)
-                        : Activator.CreateInstance(filterType)
-                });
-            }
 
             foreach (var filterCriteria in parsedFilters)
             {

@@ -19,13 +19,9 @@
 
 using Autofac;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Rhetos;
 using Rhetos.Dom.DefaultConcepts;
-using System;
-using System.IO;
 
 namespace Rhetos.JsonCommands.Host
 {

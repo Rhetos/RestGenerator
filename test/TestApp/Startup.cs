@@ -49,16 +49,8 @@ namespace TestApp
                 c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });
             });
 
-            // Using NewtonsoftJson for backward-compatibility with older versions of Rhetos.RestGenerator:
-            // legacy Microsoft DateTime serialization and
-            // byte[] serialization as JSON array of integers instead of Base64 string.
-            services.AddControllers()
-                .AddNewtonsoftJson(o =>
-                {
-                    o.UseMemberCasing();
-                    o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-                    o.SerializerSettings.Converters.Add(new Rhetos.JsonCommands.Host.Utilities.ByteArrayConverter());
-                });
+            // Configure the JSON object serialization for all properties to start with an uppercase letter, to simplify testing.
+            services.AddControllers().AddNewtonsoftJson(o => o.UseMemberCasing());
 
             // Adding Rhetos to AspNetCore application.
             services.AddRhetosHost(ConfigureRhetosHostBuilder)

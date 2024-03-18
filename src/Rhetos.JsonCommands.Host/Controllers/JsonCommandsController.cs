@@ -82,7 +82,7 @@ namespace Rhetos.JsonCommands.Host.Controllers
                     DataSource = entityName,
                     Filters = hasFilter
                         ? new QueryParameters(_genericFilterHelper)
-                            .ParseFilterParameters("", "", "", filters.ToString(), entityName)
+                            .ParseFilterParameters(filters.ToString(), entityName)
                         : Array.Empty<FilterCriteria>(),
                     OrderByProperties = hasSort
                         ? sort

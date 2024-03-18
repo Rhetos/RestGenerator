@@ -17,11 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Autofac;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Rhetos;
 using Rhetos.Dom.DefaultConcepts;
 using Rhetos.JsonCommands.Host.Test.Tools;
 using Rhetos.JsonCommands.Host.Utilities;
@@ -63,12 +61,6 @@ namespace Rhetos.JsonCommands.Host
         [InlineData(false, "rest/Common/Claim/?filters=[{\"Filter\":\"Guid[]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
         [InlineData(true, "rest/Common/Claim/?filters=[{\"Filter\":\"System.Guid[]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
         [InlineData(true, "rest/Common/Claim/?filters=[{\"Filter\":\"System.Collections.Generic.IEnumerable`1[[System.Guid]]\",\"Value\":[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]}]")]
-
-        // Legacy filters:
-        [InlineData(false, "rest/Common/Claim/?filter=IEnumerable<Guid>&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
-        [InlineData(false, "rest/Common/Claim/?filter=Guid[]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
-        [InlineData(true, "rest/Common/Claim/?filter=System.Guid[]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
-        [InlineData(true, "rest/Common/Claim/?filter=System.Collections.Generic.IEnumerable`1[[System.Guid]]&fparam=[\"4a5c23ff-6525-4e17-b848-185e082a6974\",\"0f6618b1-074a-482f-be74-c6e394641209\"]")]
 
         // Specific filter with parameter name:
         [InlineData(false, "rest/Common/MyClaim/?filters=[{\"Filter\":\"Common.Claim\",\"Value\":{\"ClaimResource\":\"Common.RolePermission\",\"ClaimRight\":\"Read\"}}]")]
@@ -158,32 +150,34 @@ namespace Rhetos.JsonCommands.Host
                         new List<object> { new Common.Role { Name = "ABC" } },
                         new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full });
 
+                string CreateFilters(string filterType, string filterValueJson) => $@"[{{""Filter"":""{filterType}"",""Value"":filterValueJson}}]";
+
                 {
-                    var extFilter = queryParameters.ParseFilterParameters("IEnumerable<IEntity>", "[]", null, null, "TestFilters.Simple");
+                    var extFilter = queryParameters.ParseFilterParameters(CreateFilters("IEnumerable<IEntity>", "[]"), "TestFilters.Simple");
                     var result = repository.TestFilters.Simple.Load(extFilter).Single().Name;
                     Assert.Equal("IE System.Collections.Generic.List`1[Rhetos.Dom.DefaultConcepts.IEntity] 0.", result);
                 }
                 {
-                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters("IEnumerable<IEntity>", json, null, null, "TestFilters.Simple"));
+                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters(CreateFilters("IEnumerable<IEntity>", json), "TestFilters.Simple"));
                     Assert.Contains("invalid JSON format", e.Message);
                 }
                 {
-                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters("IEnumerable<Common.Role>", json, null, null, "TestFilters.Simple"));
+                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters(CreateFilters("IEnumerable<Common.Role>", json), "TestFilters.Simple"));
                     Assert.Contains("Filter type 'IEnumerable<Common.Role>' is not available", e.Message);
                 }
 
                 {
-                    var extFilter = queryParameters.ParseFilterParameters("List<object>", "[]", null, null, "TestFilters.Simple");
+                    var extFilter = queryParameters.ParseFilterParameters(CreateFilters("List<object>", "[]"), "TestFilters.Simple");
                     var result = repository.TestFilters.Simple.Load(extFilter).Single().Name;
                     Assert.Equal("List System.Collections.Generic.List`1[System.Object] 0 .", result);
                 }
                 {
-                    var extFilter = queryParameters.ParseFilterParameters("List<object>", json, null, null, "TestFilters.Simple");
+                    var extFilter = queryParameters.ParseFilterParameters(CreateFilters("List<object>", json), "TestFilters.Simple");
                     var result = repository.TestFilters.Simple.Load(extFilter).Single().Name;
                     Assert.Equal("List System.Collections.Generic.List`1[System.Object] 1 Newtonsoft.Json.Linq.JObject.", result);
                 }
                 {
-                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters("List<Common.Role>", json, null, null, "TestFilters.Simple"));
+                    var e = Assert.Throws<ClientException>(() => queryParameters.ParseFilterParameters(CreateFilters("List<Common.Role>", json), "TestFilters.Simple"));
                     Assert.Contains("Filter type 'List<Common.Role>' is not available", e.Message);
                 }
             }
