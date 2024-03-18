@@ -19,6 +19,7 @@
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Rhetos.JsonCommands.Host.Test.Tools;
 using System;
 using System.Linq;
@@ -182,16 +183,21 @@ namespace Rhetos.JsonCommands.Host.Test
                 entry => exceptedLogPatterns.All(pattern => entry.Contains(pattern))));
         }
 
-        //TODO Change the test to throw the same Exception as before
-        [Fact]
-        public async Task InvalidWebRequestFormatResponse()
+        //TODO Change the controller implementation to match the test.
+        [Theory]
+        [InlineData("[{0}]")]
+        [InlineData(@"[{""Bookstore.Book"": {""Insert"": [0]}}]")]
+        public async Task InvalidWebRequestFormatResponse(string json)
         {
             var logEntries = new LogEntries();
             var client = _factory
                 .WithWebHostBuilder(builder => builder.MonitorLogging(logEntries))
                 .CreateClient();
 
-            var response = await PostAsyncTest(client, $"__Test__ServerExceptionResponse");
+            var content = new StringContent(json);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await client.PostAsync("jc/write", content);
             string responseContent = await response.Content.ReadAsStringAsync();
 
             Assert.Equal<object>(
