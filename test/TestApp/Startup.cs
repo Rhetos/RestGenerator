@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Rhetos;
+using Rhetos.JsonCommands.Host;
 using System;
 
 namespace TestApp
@@ -40,7 +41,6 @@ namespace TestApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(type => type.ToString()); // Allows multiple entities with the same name in different modules.
@@ -49,27 +49,14 @@ namespace TestApp
                 c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });
             });
 
-            // Using NewtonsoftJson for backward-compatibility with older versions of Rhetos.RestGenerator:
-            // legacy Microsoft DateTime serialization and
-            // byte[] serialization as JSON array of integers instead of Base64 string.
-            services.AddControllers()
-                .AddNewtonsoftJson(o =>
-                {
-                    o.UseMemberCasing();
-                    o.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat;
-                    o.SerializerSettings.Converters.Add(new Rhetos.Host.AspNet.RestApi.Utilities.ByteArrayConverter());
-                });
+            // Configure the JSON object serialization for all properties to start with an uppercase letter, to simplify testing.
+            services.AddControllers().AddNewtonsoftJson(o => o.UseMemberCasing());
 
             // Adding Rhetos to AspNetCore application.
             services.AddRhetosHost(ConfigureRhetosHostBuilder)
                 .AddAspNetCoreIdentityUser()
                 .AddHostLogging()
-                .AddRestApi(o =>
-                {
-                    o.BaseRoute = "rest";
-                    o.ConceptInfoRestMetadataProviders.Add(new RhetosExtendedControllerMetadataProvider());
-                    o.GroupNameMapper = (conceptInfo, controller, oldName) => "rhetos"; // OpenAPI document name.
-                });
+                .AddJsonCommands();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,12 +69,9 @@ namespace TestApp
                 app.UseSwaggerUI(c =>
                 {
                     // Add Swagger endpoint for Rhetos REST API.
-                    c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApp v1");
                 });
             }
-
-            app.UseRhetosRestApi();
 
             app.UseRouting();
 

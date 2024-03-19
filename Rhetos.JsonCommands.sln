@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34601.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "test\TestApp\TestApp.csproj", "{5F2269FD-4048-4C6A-8143-555B84D8DDE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAE39472-6157-4E0E-AF6A-844AE36AFB93}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Build.bat = Build.bat
+		ChangeLog.md = ChangeLog.md
+		Clean.bat = Clean.bat
+		Directory.Build.props = Directory.Build.props
+		Readme.md = Readme.md
+		Rhetos.JsonCommands.nuspec = Rhetos.JsonCommands.nuspec
+		Test.bat = Test.bat
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.JsonCommands.Host", "src\Rhetos.JsonCommands.Host\Rhetos.JsonCommands.Host.csproj", "{F356A560-9A88-483E-A1F4-16E888FFA6DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhetos.JsonCommands.Host.Test", "test\Rhetos.JsonCommands.Host.Test\Rhetos.JsonCommands.Host.Test.csproj", "{38C5B537-AE6B-4DE0-BA03-8D6F69088506}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F2269FD-4048-4C6A-8143-555B84D8DDE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F356A560-9A88-483E-A1F4-16E888FFA6DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38C5B537-AE6B-4DE0-BA03-8D6F69088506}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67979022-446D-472C-9E82-77AEDF455B12}
+	EndGlobalSection
+EndGlobal

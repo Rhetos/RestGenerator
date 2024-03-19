@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Rhetos.JsonCommands</id>
+    <version>1.0.0-dev</version>
+    <authors>Omega software</authors>
+    <owners>Omega software</owners>
+    <license type="expression">AGPL-3.0-only</license>
+    <projectUrl>https://github.com/rhetos/rhetos</projectUrl>
+    <description>
+      JsonCommands is a plugin package for Rhetos development platform.
+      It provides a generic JSON web service that allows executing multiple read or write commands in one web request.
+    </description>
+    <copyright>Copyright Omega software 2024</copyright>
+    <tags>Rhetos plugin</tags>
+    <dependencies>
+      <group targetFramework="net5.0">
+        <dependency id="Rhetos.CommonConcepts" version="5.4.0" />
+        <dependency id="Rhetos.Host.AspNet" version="5.4.0" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net5.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="Readme.md" target="" />
+    <file src="ChangeLog.md" target="" />
+    <file src="src\Rhetos.JsonCommands.Host\bin\Debug\net5.0\Rhetos.JsonCommands.Host.dll" target="lib\net5.0" />
+    <file src="src\Rhetos.JsonCommands.Host\bin\Debug\net5.0\Rhetos.JsonCommands.Host.pdb" target="lib\net5.0" />
+    <file src="src\Rhetos.JsonCommands.Host\bin\Debug\net5.0\Rhetos.JsonCommands.Host.xml" target="lib\net5.0" />
+  </files>
+</package>
