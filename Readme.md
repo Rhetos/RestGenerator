@@ -213,6 +213,7 @@ Installing this package to a Rhetos web application:
        o.BaseRoute = "rest";
    });
    ```
+3. Add `app.UseRhetosRestApi();`. It should be place **before** the existing lines `app.MapControllers`, `app.UseEndpoints` or `app.UseSwagger`.
 
 ### Configure legacy JSON format
 
@@ -249,7 +250,7 @@ If not already included, add Swashbuckle to your ASP.NET Core application, see i
 
 Add support for multiple entities with the same name in different modules:
 
-1. By default, Swashbuckle will return "Failed to load API definition." error, it the same type name occurs in different namespaces. To fix this, in Startup.ConfigureServices method, inside `services.AddSwaggerGen` method call add `c.CustomSchemaIds(type => type.ToString()); // Allows multiple entities with the same name in different modules`.
+1. By default, Swashbuckle will return "Failed to load API definition." error, if the same type name occurs in different namespaces. To fix this, in Startup.ConfigureServices method, inside `services.AddSwaggerGen` method call add `c.CustomSchemaIds(type => type.ToString()); // Allows multiple entities with the same name in different modules`.
 For more info see "Conflicting schemaIds" in the [Swagger documentation](https://github.com/domaindrivendev/Swashbuckle.AspNetCore#customize-schema-ids).
 
 Show Rhetos REST API in the Swagger UI:

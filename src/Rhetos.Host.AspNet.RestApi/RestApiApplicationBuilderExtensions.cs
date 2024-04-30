@@ -36,7 +36,7 @@ namespace Rhetos
     {
         /// <summary>
         /// Add discovered Rhetos controllers to MVC feature pipeline and maps them to their respective routes.
-        /// Call before 'app.UseEndpoints()'.
+        /// Call before 'app.UseEndpoints()', `app.MapControllers()` and `app.UseSwagger()`.
         /// </summary>
         public static IApplicationBuilder UseRhetosRestApi(this IApplicationBuilder app)
         {
