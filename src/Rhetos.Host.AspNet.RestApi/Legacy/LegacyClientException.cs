@@ -24,16 +24,13 @@ namespace Rhetos
     /// <summary>
     /// Legacy exception allows backward compatible JSON response format (a string instead of an object).
     /// </summary>
-    [Serializable]
     public class LegacyClientException : ClientException
     {
         public LegacyClientException() : base() { }
+
         public LegacyClientException(string message) : base(message) { }
+        
         public LegacyClientException(string message, Exception inner) : base(message, inner) { }
-        protected LegacyClientException(
-            System.Runtime.Serialization.SerializationInfo info,
-            System.Runtime.Serialization.StreamingContext context)
-                : base(info, context) { }
 
         public bool Severe { get; set; } = true;
     }
