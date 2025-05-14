@@ -95,11 +95,11 @@ namespace Rhetos.Host.AspNet.RestApi.Filters
                 context.Result = new JsonResult(error.Response) { StatusCode = error.StatusCode };
                 context.ExceptionHandled = true;
 
-                string commandSummerReport =
+                string commandSummaryReport =
                     string.IsNullOrEmpty(error.CommandSummary) ? ""
                     : Environment.NewLine + "Command: " + error.CommandSummary;
 
-                logger.Log(error.Severity, context.Exception.ToString() + commandSummerReport);
+                logger.Log(error.Severity, context.Exception.ToString() + commandSummaryReport);
             }
         }
     }
