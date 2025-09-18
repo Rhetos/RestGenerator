@@ -260,7 +260,7 @@ Show Rhetos REST API in the Swagger UI:
 2. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call,
    add `c.SwaggerDoc("rhetos", new OpenApiInfo { Title = "Rhetos REST API", Version = "v1" });`.
 3. In Startup.Configure method add, in `.UseSwaggerUI` method call,
-   add `c.SwaggerEndpoint("/swagger/rhetos/swagger.json", "Rhetos REST API");`.
+   add `c.SwaggerEndpoint("rhetos/swagger.json", "Rhetos REST API");`.
    If there are multiple swagger endpoints configured here, **place this one first** if you want to open it by default.
 
 As an alternative, you can show Rhetos REST API **split into multiple** Swagger documents (pages) to improve load time of the Swagger UI for large projects.
@@ -276,8 +276,8 @@ As an alternative, you can show Rhetos REST API **split into multiple** Swagger 
    1. In Startup.ConfigureServices method, in `.AddSwaggerGen` method call,
       add `c.SwaggerDoc("MyModuleName", new OpenApiInfo { Title = "MyModuleName REST API", Version = "v1" });`.
    2. In Startup.Configure method add, in `.UseSwaggerUI` method call,
-      add `c.SwaggerEndpoint("/swagger/MyModuleName/swagger.json", "MyModuleName REST API");`.
-      If there are multiple swagger endpoints configured here,  **place at the first position** the one that you want to open by default.
+      add `c.SwaggerEndpoint("MyModuleName/swagger.json", "MyModuleName REST API");`.
+      If there are multiple swagger endpoints configured here, **place at the first position** the one that you want to open by default.
    3. For example, see lines with `SwaggerDoc` and `SwaggerEndpoint` in [Bookstore Startup.cs](https://github.com/Rhetos/Bookstore/blob/baa33901c71224d13e5bae2c8312f34cd759428e/src/Bookstore.Service/Startup.cs), for modules Bookstore, Common, AuthenticationDemo and DemoRowPermissions2.
 
 ## How to contribute
