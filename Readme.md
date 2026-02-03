@@ -76,6 +76,7 @@ See the [Examples](#examples) chapter below.
      * `Equals`, `NotEquals`, `Greater`, `GreaterEqual`, `Less`, `LessEqual`
      * `In`, `NotIn` -- Parameter Value is a JSON array.
      * `StartsWith`, `EndsWith`, `Contains`, `NotContains` -- String only.
+     * `StartsWithAny`, `EndsWithAny`, `ContainsAny` -- Parameter is a string array (since Rhetos v5.6 and v6.1).
      * `DateIn`, `DateNotIn` -- Date or DateTime property only, provided value must be string.
        Returns whether the property's value is within a given day, month or year.
        Valid value format is *yyyy-mm-dd*, *yyyy-mm* or *yyyy*.
