@@ -5,7 +5,7 @@ It automatically provides **RESTful JSON web service** for all entities, actions
 
 It is intended to be used on an ASP.NET application that contains or references the Rhetos domain object model.
 
-See [rhetos.org](http://www.rhetos.org/) for more information on Rhetos.
+See <https://github.com/Rhetos/Rhetos> for more information on Rhetos.
 
 1. [Features](#features)
    1. [General rules](#general-rules)
